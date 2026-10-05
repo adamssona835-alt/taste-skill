@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Studio Name | Interior architecture</title>
+<meta name="description" content="One sentence about the studio, its city and its work.">
+<meta property="og:title" content="Studio Name">
+<meta property="og:description" content="One sentence about the studio, its city and its work.">
+<meta property="og:image" content="og.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<!-- Swap the pair per brand. Light display serif + quiet grotesk. -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,300;0,400;1,300&family=Hanken+Grotesk:wght@400;500&display=swap">
+<script>document.documentElement.classList.add("js")</script>
+<style>
+/* ── Tokens ─────────────────────────────────────────────────────────────
+   The page colour MUST equal the backdrop colour of the generated footage
+   (sample it from frame 1). That is what makes the media float.          */
+:root {
+  --page: #f6f5f2;          /* = seamless backdrop of the renders */
+  --ink: #1b1a18;
+  --ink-2: #4a4843;
+  --muted: #77746d;
+  --line: rgb(27 26 24 / 0.1);
+  --accent: #5f6b5e;
+  --card: rgb(246 245 242 / 0.78);
+  --display: "Cormorant", "Cormorant Garamond", Georgia, serif;
+  --sans: "Hanken Grotesk", ui-sans-serif, system-ui, sans-serif;
+  --ease: cubic-bezier(0.32, 0.72, 0, 1);
+  --margin: clamp(20px, 4vw, 64px);
+  --radius: 20px;           /* one radius for frames and cards; buttons are pills */
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --page: #141413; --ink: #ecebe6; --ink-2: #bdbbb4; --muted: #8d8a83;
+    --line: rgb(236 235 230 / 0.12); --accent: #9fae9d; --card: rgb(20 20 19 / 0.72);
+    color-scheme: dark;
+  }
+  /* Light studio footage on a dark page: invert nothing, just let the mask
+     dissolve it into darkness and dim it slightly. */
+  .float-media { filter: brightness(0.86) contrast(1.05); }
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html { background: var(--page); color: var(--ink); scroll-padding-top: 5rem; }
+body { margin: 0; font: 400 1.0625rem/1.65 var(--sans); -webkit-font-smoothing: antialiased; overflow-x: clip; }
+img, video, canvas { display: block; max-width: 100%; }
+a { color: inherit; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
+.frame { padding-inline: var(--margin); max-width: 1440px; margin-inline: auto; }
+
+.display { font-family: var(--display); font-weight: 300; letter-spacing: -0.02em; line-height: 1.02; margin: 0; text-wrap: balance; }
+.h1 { font-size: clamp(3.2rem, 8vw, 7.5rem); }
+.h2 { font-size: clamp(2.3rem, 5vw, 4.4rem); }
+.h3 { font-size: clamp(1.6rem, 2.4vw, 2.2rem); line-height: 1.1; }
+.lead { font-size: clamp(1.06rem, 1.3vw, 1.25rem); color: var(--ink-2); max-width: 46ch; }
+.meta { font-size: 0.75rem; letter-spacing: 0.16em; text-transform: uppercase; font-weight: 500; color: var(--muted); }
+
+/* ── Floating media ─────────────────────────────────────────────────────
+   A mask, not a colour overlay: works on any page colour and in dark mode. */
+.float-media {
+  -webkit-mask-image: radial-gradient(ellipse 72% 64% at 50% 50%, #000 42%, transparent 80%);
+          mask-image: radial-gradient(ellipse 72% 64% at 50% 50%, #000 42%, transparent 80%);
+}
+
+/* ── Nav ─────────────────────────────────────────────────────────────── */
+.nav { position: fixed; inset: 0 0 auto; z-index: 40; transition: background .7s var(--ease), box-shadow .7s var(--ease); }
+.nav.is-scrolled { background: color-mix(in srgb, var(--page) 84%, transparent); backdrop-filter: blur(18px); box-shadow: 0 1px 0 var(--line); }
+.nav-inner { display: flex; align-items: center; justify-content: space-between; height: 72px; }
+.nav-links { display: none; gap: 2.4rem; font-size: .875rem; }
+.nav-links a { text-decoration: none; color: var(--ink-2); transition: color .5s var(--ease); }
+.nav-links a:hover { color: var(--ink); }
+@media (min-width: 820px) { .nav-links { display: flex; } }
+.logo { font-family: var(--display); font-size: 1.5rem; text-decoration: none; letter-spacing: -0.01em; }
+
+/* ── Button: pill with a nested arrow disc ───────────────────────────── */
+.btn { display: inline-flex; align-items: center; gap: .9rem; padding: .55rem .55rem .55rem 1.5rem; border-radius: 999px;
+  background: var(--ink); color: var(--page); text-decoration: none; font-size: .9375rem; font-weight: 500; white-space: nowrap;
+  transition: transform .7s var(--ease); }
+.btn:active { transform: scale(.98); }
+.btn-disc { display: grid; place-items: center; width: 2.4rem; height: 2.4rem; border-radius: 50%;
+  background: color-mix(in srgb, var(--page) 14%, transparent); transition: transform .7s var(--ease); }
+.btn:hover .btn-disc { transform: translate(2px, -2px) scale(1.06); }
+
+/* ── Hero ────────────────────────────────────────────────────────────── */
+/* Stage composition: type above, the floating subject below it. Copy never sits
+   on top of the footage, so no text-shadow halos are needed for legibility. */
+.hero { min-height: 100svh; display: grid; grid-template-rows: auto 1fr; overflow: hidden; }
+.hero-copy { text-align: center; padding: clamp(6.5rem, 14vh, 9rem) var(--margin) 0; display: grid; justify-items: center; gap: 1.4rem; }
+.hero-stage { position: relative; min-height: 48svh; margin-top: -4vh; }
+.hero-media { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 55%; }
+/* Phones: give the stage the footage's own ratio so the mask fades its real edges. */
+@media (max-width: 640px) { .hero-stage { min-height: 0; aspect-ratio: 16 / 10; margin-top: 2.5rem; } .hero-media { transform: scale(1.3); } }
+
+/* ── Scroll sequence ─────────────────────────────────────────────────── */
+.seq { position: relative; height: 420vh; }
+.seq-sticky { position: sticky; top: 0; height: 100svh; overflow: hidden; }
+.seq-canvas, .seq-fallback { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.seq-fallback { display: none; }
+.seq-steps { position: absolute; inset: auto var(--margin) clamp(1.5rem, 6vh, 4rem); display: grid; }
+.seq-step { grid-area: 1 / 1; max-width: 30rem; padding: 1.75rem 2rem; border-radius: var(--radius);
+  background: var(--card); backdrop-filter: blur(20px); box-shadow: inset 0 0 0 1px var(--line);
+  opacity: 0; transform: translateY(1.25rem); transition: opacity .7s var(--ease), transform .7s var(--ease); }
+.seq-step.is-active { opacity: 1; transform: none; }
+.seq-step p { margin: .75rem 0 0; color: var(--ink-2); }
+.seq-bar { position: absolute; left: var(--margin); right: var(--margin); top: 88px; height: 1px; background: var(--line); }
+.seq-bar::after { content: ""; position: absolute; inset: 0; background: var(--ink); transform-origin: left; transform: scaleX(var(--seq-progress, 0)); }
+@media (min-width: 900px) { .seq-steps { inset: auto auto clamp(2rem, 8vh, 5rem) var(--margin); } }
+
+/* No JS, or reduced motion: a still of the final frame and the steps in normal flow. */
+html:not(.js) .seq, .seq.seq--static { height: auto; }
+html:not(.js) .seq-sticky, .seq--static .seq-sticky { position: relative; height: auto; overflow: visible; }
+html:not(.js) .seq-canvas { display: none; }
+html:not(.js) .seq-fallback { display: block; position: relative; height: 70svh; }
+.seq--static .seq-canvas { position: relative; height: 70svh; }
+html:not(.js) .seq-steps, .seq--static .seq-steps { position: relative; inset: auto; padding: 2rem var(--margin); gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr)); }
+html:not(.js) .seq-step, .seq--static .seq-step { grid-area: auto; opacity: 1; transform: none; max-width: none; }
+html:not(.js) .seq-bar, .seq--static .seq-bar { display: none; }
+
+/* ── Work: double-bezel frames ──────────────────────────────────────── */
+.work { display: grid; gap: clamp(2.5rem, 5vw, 4rem) var(--margin); padding-block: clamp(6rem, 12vw, 10rem); }
+@media (min-width: 820px) {
+  .work { grid-template-columns: 1.6fr 1fr; }
+  .work > :nth-child(3) { grid-column: 1 / -1; width: 72%; margin-left: auto; }
+}
+.bezel { padding: 6px; border-radius: var(--radius); background: color-mix(in srgb, var(--ink) 3%, transparent); box-shadow: inset 0 0 0 1px var(--line); }
+.bezel > div { overflow: hidden; border-radius: calc(var(--radius) - 6px); }
+.bezel img { width: 100%; height: 100%; object-fit: cover; transition: transform 1.2s var(--ease); }
+.project a { text-decoration: none; }
+.project a:hover img { transform: scale(1.04); }
+.project .meta { margin-top: 1.1rem; }
+.project h3 { margin-top: .35rem; }
+
+/* ── Reveal ─────────────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: no-preference) {
+  .js .reveal { opacity: 0; transform: translateY(2rem); filter: blur(4px);
+    transition: opacity .9s var(--ease), transform .9s var(--ease), filter .9s var(--ease); transition-delay: calc(var(--d, 0) * 90ms); }
+  .js .reveal.in { opacity: 1; transform: none; filter: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition-duration: .01ms !important; animation-duration: .01ms !important; }
+}
+</style>
+</head>
+<body>
+
+<header class="nav" id="nav">
+  <div class="frame nav-inner">
+    <a class="logo" href="#top">Studio Name</a>
+    <nav class="nav-links" aria-label="Primary">
+      <a href="#process">Process</a><a href="#work">Work</a><a href="#contact">Contact</a>
+    </nav>
+    <a class="btn" href="#contact">Book a visit<span class="btn-disc" aria-hidden="true">&#8599;</span></a>
+  </div>
+</header>
+
+<main id="top">
+  <!-- 1. Hero: generated studio footage floating on the page -->
+  <section class="hero" aria-labelledby="hero-title">
+    <div class="hero-copy">
+      <p class="meta reveal">Interior architecture, City</p>
+      <h1 id="hero-title" class="display h1 reveal" style="--d:1">A short, confident line</h1>
+      <p class="lead reveal" style="--d:2">One or two sentences about what the studio does and for whom. Twenty words at most.</p>
+      <a class="btn reveal" style="--d:3" href="#work">See the work<span class="btn-disc" aria-hidden="true">&#8595;</span></a>
+    </div>
+    <div class="hero-stage">
+      <video class="hero-media float-media" autoplay muted loop playsinline preload="metadata" poster="hero-poster.jpg" aria-hidden="true">
+        <source src="hero.webm" type="video/webm">
+        <source src="hero.mp4" type="video/mp4">
+      </video>
+    </div>
+  </section>
+
+  <!-- 2. Scroll sequence -->
+  <section id="process" class="seq" data-seq data-frames="121" data-src="frames/frame_{i}.jpg" data-pad="3" data-focus="50% 58%" data-portrait-zoom="1.35" aria-label="How we work">
+    <div class="seq-sticky">
+      <canvas class="seq-canvas" role="img" aria-label="Describe what the sequence shows, start to end."></canvas>
+      <img class="seq-fallback float-media" src="frames/frame_121.jpg" alt="Describe the final frame.">
+      <div class="seq-bar" aria-hidden="true"></div>
+      <div class="seq-steps">
+        <div class="seq-step" data-range="0.04,0.30"><h2 class="display h3">Step one, in the studio's words</h2><p>What happens in the first third of the sequence.</p></div>
+        <div class="seq-step" data-range="0.36,0.63"><h2 class="display h3">Step two</h2><p>What the middle of the sequence reveals.</p></div>
+        <div class="seq-step" data-range="0.69,1.00"><h2 class="display h3">Step three</h2><p>Where it ends up, and why that matters to the client.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. Work -->
+  <section id="work" class="frame" aria-labelledby="work-title">
+    <h2 id="work-title" class="display h2 reveal" style="padding-top:clamp(6rem,12vw,10rem);max-width:16ch">Recent rooms</h2>
+    <div class="work">
+      <article class="project reveal"><a href="#"><div class="bezel"><div style="aspect-ratio:16/10"><img src="work-1.jpg" alt="Describe the room." loading="lazy"></div></div>
+        <p class="meta">City, 2025</p><h3 class="display h3">Project name</h3></a></article>
+      <article class="project reveal" style="--d:1"><a href="#"><div class="bezel"><div style="aspect-ratio:3/4"><img src="work-2.jpg" alt="Describe the room." loading="lazy"></div></div>
+        <p class="meta">City, 2024</p><h3 class="display h3">Project name</h3></a></article>
+      <article class="project reveal"><a href="#"><div class="bezel"><div style="aspect-ratio:21/9"><img src="work-3.jpg" alt="Describe the room." loading="lazy"></div></div>
+        <p class="meta">City, 2024</p><h3 class="display h3">Project name</h3></a></article>
+    </div>
+  </section>
+
+  <!-- 4. Contact -->
+  <section id="contact" class="frame" style="padding-block:clamp(6rem,14vw,12rem);text-align:center;display:grid;justify-items:center;gap:1.6rem" aria-labelledby="contact-title">
+    <h2 id="contact-title" class="display h2 reveal">Tell us about the room</h2>
+    <p class="lead reveal" style="--d:1">The first conversation is free and happens in the space itself.</p>
+    <a class="btn reveal" style="--d:2" href="mailto:studio@example.com">Book a visit<span class="btn-disc" aria-hidden="true">&#8599;</span></a>
+    <p class="meta" style="margin-top:1rem">studio@example.com</p>
+  </section>
+</main>
+
+<script src="scroll-sequence.js"></script>
+<script>
+  // Reveal on enter
+  const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); } }), { threshold: 0.12 });
+  document.querySelectorAll(".reveal").forEach((el) => io.observe(el));
+
+  // Nav: glass once the hero has scrolled under it (observer, not a scroll listener)
+  const nav = document.getElementById("nav");
+  new IntersectionObserver(([e]) => nav.classList.toggle("is-scrolled", !e.isIntersecting), { rootMargin: "-80px 0px 0px 0px" })
+    .observe(document.querySelector(".hero-copy"));
+
+  // Hero video: pause off screen; never autoplay under reduced motion
+  const vid = document.querySelector(".hero-media");
+  if (matchMedia("(prefers-reduced-motion: reduce)").matches) { vid.removeAttribute("autoplay"); vid.pause(); }
+  else new IntersectionObserver(([e]) => (e.isIntersecting ? vid.play().catch(() => {}) : vid.pause())).observe(vid);
+
+  // Magnetic buttons (mouse only)
+  if (matchMedia("(hover: hover) and (pointer: fine)").matches && !matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    document.querySelectorAll(".btn").forEach((b) => {
+      b.addEventListener("pointermove", (e) => { const r = b.getBoundingClientRect();
+        b.style.transition = "none"; b.style.transform = `translate(${(e.clientX - r.left - r.width / 2) * 0.12}px, ${(e.clientY - r.top - r.height / 2) * 0.12}px)`; });
+      b.addEventListener("pointerleave", () => { b.style.transition = ""; b.style.transform = ""; });
+    });
+  }
+</script>
+</body>
+</html>

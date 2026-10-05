@@ -138,6 +138,7 @@ The `Install name` column is the exact value you pass to `--skill`.
 | **minimalist-skill** | `minimalist-ui` | Editorial product UI (Notion/Linear vibes), restrained palette, crisp structure. |
 | **brutalist-skill** | `industrial-brutalist-ui` | Hard mechanical language: Swiss type, sharp contrast, experimental layout. |
 | **stitch-skill** | `stitch-design-taste` | Google Stitch-compatible rules, including optional `DESIGN.md` export format. |
+| **cinematic-scroll-skill** | `cinematic-scroll` | Studio-site format built on AI-generated footage that floats on the page plus a scroll-scrubbed image sequence (exploding view, cutaway, assembly). Ships a dependency-free sequence player, a starter page, a frame-extraction script and footage prompts. |
 
 ### Image generation skills
 
