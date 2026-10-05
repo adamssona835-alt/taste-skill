@@ -10,4 +10,5 @@ soft-skill: Focuses on an expensive, soft UI look with premium fonts, whitespace
 output-skill: Prevents AI from being lazy, skipping code blocks, or using placeholder comments.
 minimalist-skill: Enforces clean, editorial-style interfaces (Notion/Linear style) with strict monochrome palettes.
 brutalist-skill: Raw mechanical interfaces, Swiss typography, extreme scale contrast. (Beta)
+cinematic-scroll: Studio and product sites built around AI-generated footage that floats on the page and a scroll-scrubbed image sequence. Includes a sequence player, starter page, ffmpeg frame extraction and footage prompts.
 stitch-skill: Google Stitch-compatible semantic design rules for premium AI UI generation.

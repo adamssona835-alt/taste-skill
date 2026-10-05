@@ -15,6 +15,7 @@ declare -A SKILLS=(
   [minimalist-skill]="skills/minimalist-skill/SKILL.md"
   [brutalist-skill]="skills/brutalist-skill/SKILL.md"
   [stitch-skill]="skills/stitch-skill/SKILL.md"
+  [cinematic-scroll-skill]="skills/cinematic-scroll-skill/SKILL.md"
 )
 
 if [[ $# -eq 0 ]]; then
