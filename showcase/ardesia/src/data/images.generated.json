@@ -1,0 +1,365 @@
+{
+ "slate": {
+  "width": 960,
+  "height": 636,
+  "widths": [
+   640,
+   960
+  ],
+  "blur": "data:image/webp;base64,UklGRjYAAABXRUJQVlA4ICoAAACQAQCdASoQAAsAA4BaJaQAAjjREAAA/uV0i1E3DGKb6Hj7ZAfMeLVYAAA=",
+  "credit": {
+   "creator": "Huney Co",
+   "source": "StockSnap",
+   "license": "CC0",
+   "url": "https://stocksnap.io/photo/grey-stone-RS9VQHBKMO"
+  }
+ },
+ "coast-mist": {
+  "width": 1536,
+  "height": 2048,
+  "widths": [
+   640,
+   960,
+   1440,
+   1536
+  ],
+  "blur": "data:image/webp;base64,UklGRoQAAABXRUJQVlA4IHgAAADQAwCdASoQABUAPu1kqk4ppaQiMAgBMB2JZQAAW5zyFok4bGeaYoAA/ovS/+Ew/DPEIX2rDISKpssvyX3Q00IDZynOQa9I9jI7mqcaY9V/7a3TUJ5dJtXP0++gUz7Wgxz937lUqr9/e0/Uy3dgw8SXbBKyuEvAAAA=",
+  "credit": {
+   "creator": "Ehsan Moin",
+   "source": "WordPress Photo Directory",
+   "license": "CC0",
+   "url": "https://wordpress.org/photos/photo/36663dbd6f/"
+  }
+ },
+ "light-slits": {
+  "width": 960,
+  "height": 640,
+  "widths": [
+   640,
+   960
+  ],
+  "blur": "data:image/webp;base64,UklGRkYAAABXRUJQVlA4IDoAAADwAQCdASoQAAsAA4BaJaQAAu0d9rfMr4AA/vTDn3kjN6Km2yFJcWCAl9QgnXlbDFneRC1p+heAAAAA",
+  "credit": {
+   "creator": "Altered Reality",
+   "source": "StockSnap",
+   "license": "CC0",
+   "url": "https://stocksnap.io/photo/industrial-concrete-MGQ4FGU9ZB"
+  }
+ },
+ "threshold": {
+  "width": 1536,
+  "height": 2048,
+  "widths": [
+   640,
+   960,
+   1440,
+   1536
+  ],
+  "blur": "data:image/webp;base64,UklGRl4AAABXRUJQVlA4IFIAAACQAwCdASoQABUAPu1iqU2ppaQiMAgBMB2JaQAAXlcYdkpfA3IgAP7asUuos0HxyMukv3gHNK+tPmQl2KCi0p5RH/TxT84y4tl377wLC53y3MgA",
+  "credit": {
+   "creator": "Olesja Debrova",
+   "source": "WordPress Photo Directory",
+   "license": "CC0",
+   "url": "https://wordpress.org/photos/photo/868690bb6f/"
+  }
+ },
+ "hands-clay": {
+  "width": 960,
+  "height": 640,
+  "widths": [
+   640,
+   960
+  ],
+  "blur": "data:image/webp;base64,UklGRmAAAABXRUJQVlA4IFQAAADwAQCdASoQAAsAA4BaJZgCdAYt82H+kAAAzfAyVFydH/UWX/yEFEEveSJcNij88qoEqbDTnJexCiw9iERL1PRdEpeV7r0vjMdAvKi1ffa+x7XAAAA=",
+  "credit": {
+   "creator": "Alex Jones",
+   "source": "StockSnap",
+   "license": "CC0",
+   "url": "https://stocksnap.io/photo/clay-hands-469424D4C3"
+  }
+ },
+ "stair-spiral": {
+  "width": 2048,
+  "height": 2048,
+  "widths": [
+   640,
+   960,
+   1440,
+   2048
+  ],
+  "blur": "data:image/webp;base64,UklGRmIAAABXRUJQVlA4IFYAAAAwAgCdASoQABAAA4BaJYwCdAywDJslpMGAAADNRqDmZop+vp9q5xpfC+RLU9LPR3jbTF9Cp9U/itk1uL7E+yKfuTYh3pMQ6ahWhiNK9wHeYAun0+AAAA==",
+  "credit": {
+   "creator": "Elena Zheng",
+   "source": "WordPress Photo Directory",
+   "license": "CC0",
+   "url": "https://wordpress.org/photos/photo/69469d277e/"
+  }
+ },
+ "interior-niche": {
+  "width": 960,
+  "height": 640,
+  "widths": [
+   640,
+   960
+  ],
+  "blur": "data:image/webp;base64,UklGRl4AAABXRUJQVlA4IFIAAADwAQCdASoQAAsAA4BaJagCdADwwWLEnQAA/u0IJcvwyw6swbV4PEyf8HNJmMIZbzbQAR1pq/IGuV5021oepNQ187dj6Lhi0Lob4M1NDzW6AAAA",
+  "credit": {
+   "creator": "World Travel Adventures",
+   "source": "StockSnap",
+   "license": "CC0",
+   "url": "https://stocksnap.io/photo/modern-room-ORRHZ1VULX"
+  }
+ },
+ "stone-house": {
+  "width": 1638,
+  "height": 2048,
+  "widths": [
+   640,
+   960,
+   1440,
+   1638
+  ],
+  "blur": "data:image/webp;base64,UklGRpYAAABXRUJQVlA4IIoAAAAwBACdASoQABQAPu1iqU2ppaOiMAgBMB2JYwC7LwABPIVfy7LJrlNhnAAA/HXs/QGdKdIrOEt1cB8IyAldzL3sZ9BIT7e5OM5m3Zijx4tm6WgBEpePcMDtxmSJJqYjKxLtIC2H4RwJjVFBgGJvCt1eobHosBh9xgt3KjQb2C4lnEWdJxrIVHrVQAA=",
+  "credit": {
+   "creator": "Maggie Cabrera",
+   "source": "WordPress Photo Directory",
+   "license": "CC0",
+   "url": "https://wordpress.org/photos/photo/90766ed3cc/"
+  }
+ },
+ "rock-reflection": {
+  "width": 960,
+  "height": 768,
+  "widths": [
+   640,
+   960
+  ],
+  "blur": "data:image/webp;base64,UklGRlYAAABXRUJQVlA4IEoAAADwAQCdASoQAA0AA4BaJZQAAuRyqar48gAA/vHa/tPq1OhUs26aZvPic7WvmnsiIn07o+Bd0U7x9LYo/zdeQziLGPhZCiXhnAQAAA==",
+  "credit": {
+   "creator": "Rosan Harmens",
+   "source": "StockSnap",
+   "license": "CC0",
+   "url": "https://stocksnap.io/photo/beach-water-F357936L0Z"
+  }
+ },
+ "workshop": {
+  "width": 960,
+  "height": 640,
+  "widths": [
+   640,
+   960
+  ],
+  "blur": "data:image/webp;base64,UklGRmAAAABXRUJQVlA4IFQAAADwAQCdASoQAAsAA4BaJQBOgCP7mMD9FgAA/vNlLDKH6VlxjbpPzrGIOwjjk1+8azAN+/BHCJHKY80PI5nlyq0vUNZae5msHQPHGPRnD/X2FkPYAAA=",
+  "credit": {
+   "creator": "James Frid",
+   "source": "StockSnap",
+   "license": "CC0",
+   "url": "https://stocksnap.io/photo/carpenter-workshop-YPM6VH3FCW"
+  }
+ },
+ "torre": {
+  "width": 2048,
+  "height": 1536,
+  "widths": [
+   640,
+   960,
+   1440,
+   2048
+  ],
+  "blur": "data:image/webp;base64,UklGRk4AAABXRUJQVlA4IEIAAADQAQCdASoQAAwAA4BaJZwCw7EDxfyWgAD3w90WS7IRFosHfXDDiIXCD+hC0PrzZ0KqRcVgBA/4AwshEWF/RCTxgAA=",
+  "credit": {
+   "creator": "渡邉厚夫(たいちょ渡邉)",
+   "source": "WordPress Photo Directory",
+   "license": "CC0",
+   "url": "https://wordpress.org/photos/photo/14869f6dc5/"
+  }
+ },
+ "plaster-stair": {
+  "width": 1536,
+  "height": 2048,
+  "widths": [
+   640,
+   960,
+   1440,
+   1536
+  ],
+  "blur": "data:image/webp;base64,UklGRnwAAABXRUJQVlA4IHAAAAAwBACdASoQABUAPu1iqU2ppaOiMAgBMB2JYgCdMoACIp3X/CS7NaEapsQA/rvO93R7G00wnY+BBkp4Yw6FqRxr4SsKnB6VepRqyscJsEvHfafsWdCM8W4ewudykc7ey+NJyevPmZVt/rgIjm43yAAA",
+  "credit": {
+   "creator": "Tawhid Sadman",
+   "source": "WordPress Photo Directory",
+   "license": "CC0",
+   "url": "https://wordpress.org/photos/photo/265692f05b/"
+  }
+ },
+ "stair-morning": {
+  "width": 1536,
+  "height": 2048,
+  "widths": [
+   640,
+   960,
+   1440,
+   1536
+  ],
+  "blur": "data:image/webp;base64,UklGRoAAAABXRUJQVlA4IHQAAACQAwCdASoQABUAPu1iqU2ppaOiMAgBMB2JQBYdgYBqBmLnnsaQAP7e7HAipW8A2Xa3SObydua9C3fWxeG1alKs8v+Y+nPm13ZdmUfabF4B0tD2ZdXrL98N7gZP3C+Q04Qr+eJl3+Af6K+MQDCEH3fKAAAAAA==",
+  "credit": {
+   "creator": "Manjil Aryal",
+   "source": "WordPress Photo Directory",
+   "license": "CC0",
+   "url": "https://wordpress.org/photos/photo/476695e5be/"
+  }
+ },
+ "terraces-noon": {
+  "width": 2048,
+  "height": 1365,
+  "widths": [
+   640,
+   960,
+   1440,
+   2048
+  ],
+  "blur": "data:image/webp;base64,UklGRlIAAABXRUJQVlA4IEYAAADwAQCdASoQAAsAA4BaJQBOgCIgrykumAAA/ueIrcALefSqo1rTieiqKOURS5MNmsvpNB9/Jv72vbYWRgsOUe1dbIlyPYAA",
+  "credit": {
+   "creator": "Bigul Malayi",
+   "source": "WordPress Photo Directory",
+   "license": "CC0",
+   "url": "https://wordpress.org/photos/photo/589685e223/"
+  }
+ },
+ "round-window": {
+  "width": 960,
+  "height": 600,
+  "widths": [
+   640,
+   960
+  ],
+  "blur": "data:image/webp;base64,UklGRkQAAABXRUJQVlA4IDgAAADwAQCdASoQAAoAA4BaJZwAAxQbri2ipwAA/vnIPP5+fJ6R7ky++DeP49LKvYs3LA78ZMmsTAgAAA==",
+  "credit": {
+   "creator": "Tyler Lastovich",
+   "source": "StockSnap",
+   "license": "CC0",
+   "url": "https://stocksnap.io/photo/window-light-9RANMJTK90"
+  }
+ },
+ "concrete": {
+  "width": 2048,
+  "height": 1365,
+  "widths": [
+   640,
+   960,
+   1440,
+   2048
+  ],
+  "blur": "data:image/webp;base64,UklGRjQAAABXRUJQVlA4ICgAAADQAQCdASoQAAsAA4BaJZwAAq5tMpITAAD8v/pH4RBESvUl7ZXSiBAA",
+  "credit": {
+   "creator": "Nilo Velez",
+   "source": "WordPress Photo Directory",
+   "license": "CC0",
+   "url": "https://wordpress.org/photos/photo/56667d70d9/"
+  }
+ },
+ "cliffs": {
+  "width": 960,
+  "height": 640,
+  "widths": [
+   640,
+   960
+  ],
+  "blur": "data:image/webp;base64,UklGRkoAAABXRUJQVlA4ID4AAADwAQCdASoQAAsAA4BaJYwC7AELVh6kd2AA/u4lAhN2zy8wOlA5wcI8fOttvBXHyWFKITjMTyYmHh1SFeAAAA==",
+  "credit": {
+   "creator": "Aaron Kato",
+   "source": "StockSnap",
+   "license": "CC0",
+   "url": "https://stocksnap.io/photo/ocean-sea-8P8FMRCOSZ"
+  }
+ },
+ "casa-lavagna-day": {
+  "width": 2400,
+  "height": 1600,
+  "widths": [
+   640,
+   960,
+   1440,
+   2048,
+   2400
+  ],
+  "blur": "data:image/webp;base64,UklGRmoAAABXRUJQVlA4IF4AAABQAgCdASoQAAsAA4BaJQBdgMW+o+JGUpDAtQAA/Pum82L4eOclZPbOQ5mHI6Sq0/btUV3uWHpb3afPs1l8dOpH9wFE+iszMRIu0KDlmxQW1yqTgx8NGKlde7rgwAAA",
+  "credit": {
+   "creator": null,
+   "source": "Unsplash",
+   "license": "Unsplash License",
+   "url": "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3"
+  }
+ },
+ "casa-lavagna-dusk": {
+  "width": 2400,
+  "height": 1600,
+  "widths": [
+   640,
+   960,
+   1440,
+   2048,
+   2400
+  ],
+  "blur": "data:image/webp;base64,UklGRmIAAABXRUJQVlA4IFYAAAAQAgCdASoQAAsAA4BaJaACdAEf3TYRMsQAAP7vhJYrsJofkRVrjJU/ytl7np2ItPgyNBwu+LjMlaZv/gydgJ8gQC8NFjUFPqzh2iM3lvsHT53r/wAAAA==",
+  "credit": {
+   "creator": null,
+   "source": "Unsplash",
+   "license": "Unsplash License",
+   "url": "https://images.unsplash.com/photo-1600566753376-12c8ab7fb75b"
+  }
+ },
+ "casa-bianca": {
+  "width": 2400,
+  "height": 2400,
+  "widths": [
+   640,
+   960,
+   1440,
+   2048,
+   2400
+  ],
+  "blur": "data:image/webp;base64,UklGRnoAAABXRUJQVlA4IG4AAACQAgCdASoQABAAA4BaJQBOgMX17SvHbON33zbMAAD+Zspouoi+RU2unEwq0xE20klG4dWYnkfQtyHeHlbk/qCNSu0iX5EvHuslykVmaz323F0D1jCh+17gwK4O2Xrtt8a70icsGjKGYuEuHAAAAA==",
+  "credit": {
+   "creator": null,
+   "source": "Unsplash",
+   "license": "Unsplash License",
+   "url": "https://images.unsplash.com/photo-1523217582562-09d0def993a6"
+  }
+ },
+ "casa-nera": {
+  "width": 2400,
+  "height": 1600,
+  "widths": [
+   640,
+   960,
+   1440,
+   2048,
+   2400
+  ],
+  "blur": "data:image/webp;base64,UklGRnAAAABXRUJQVlA4IGQAAAAwAgCdASoQAAsAA4BaJQBOj+AQV5e7nuZWAAD+AT0KXGYqjdxaKbe3xUdo2A72byq2cvC2IhnC+eMdN7e3550LITCnVFKHee8KtDv51jsBw85DeEpGrZdVU00uRIRtdgs9oAAA",
+  "credit": {
+   "creator": null,
+   "source": "Unsplash",
+   "license": "Unsplash License",
+   "url": "https://images.unsplash.com/photo-1600585153490-76fb20a32601"
+  }
+ },
+ "deck-dusk": {
+  "width": 2400,
+  "height": 3600,
+  "widths": [
+   640,
+   960,
+   1440,
+   2048,
+   2400
+  ],
+  "blur": "data:image/webp;base64,UklGRnAAAABXRUJQVlA4IGQAAADwAwCdASoQABgAPu1iqU2ppaOiMAgBMB2JQBOgBDvP45RzAhb29UrgAP7Qux6oHPEUXSHARVracC1woMjSKUCxd4R/pPSnf3cd+YHBFaEctjiaoC9LoNJxCEpAlKgvZppxUAAA",
+  "credit": {
+   "creator": null,
+   "source": "Unsplash",
+   "license": "Unsplash License",
+   "url": "https://images.unsplash.com/photo-1544984243-ec57ea16fe25"
+  }
+ }
+}

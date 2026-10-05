@@ -1,0 +1,324 @@
+@import "tailwindcss";
+
+/* ------------------------------------------------------------------
+   Ardesia design tokens
+   Palette: slate + limestone, one terracotta accent (the Genoese
+   facades). Corners: all-sharp, everywhere. Theme: follows the OS.
+   ------------------------------------------------------------------ */
+
+:root {
+  --bg: #e8e7e2;
+  --bg-2: #dddcd6;
+  --ink: #151718;
+  --ink-2: #3f4345;
+  --muted: #5d6163;
+  --line: rgb(21 23 24 / 0.14);
+  --accent: #a3482a;
+  --night: #111314;
+  --night-ink: #e6e4de;
+  --night-muted: #9a9c99;
+  --night-line: rgb(230 228 222 / 0.16);
+
+  --gutter: clamp(16px, 2vw, 32px);
+  --margin: clamp(20px, 4.2vw, 72px);
+  --nav-h: 72px;
+
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out: cubic-bezier(0.76, 0, 0.24, 1);
+
+  /* z-index scale: the only layers the page has */
+  --z-nav: 40;
+  --z-menu: 50;
+  --z-intro: 60;
+  --z-grain: 70;
+
+  color-scheme: light dark;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #121415;
+    --bg-2: #1a1d1e;
+    --ink: #e6e4de;
+    --ink-2: #b9bab5;
+    --muted: #8f928f;
+    --line: rgb(230 228 222 / 0.14);
+    --accent: #cf7350;
+    --night: #0a0b0c;
+  }
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-bg-2: var(--bg-2);
+  --color-ink: var(--ink);
+  --color-ink-2: var(--ink-2);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-accent: var(--accent);
+  --color-night: var(--night);
+  --color-night-ink: var(--night-ink);
+  --color-night-muted: var(--night-muted);
+  --color-night-line: var(--night-line);
+
+  --font-display: var(--font-bodoni), "Didot", "Bodoni 72", Georgia, serif;
+  --font-sans: var(--font-hanken), ui-sans-serif, system-ui, sans-serif;
+
+  --ease-out-expo: var(--ease-out);
+}
+
+/* ------------------------------------------------------------------ */
+
+html {
+  background: var(--bg);
+  color: var(--ink);
+  -webkit-text-size-adjust: 100%;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+.lenis.lenis-stopped {
+  overflow: clip;
+}
+
+body {
+  font-family: var(--font-sans);
+  font-size: 1.0625rem;
+  line-height: 1.6;
+  background: var(--bg);
+  overflow-x: clip;
+}
+
+::selection {
+  background: var(--accent);
+  color: #f4f2ee;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 4px;
+}
+
+@layer base {
+  img {
+    max-width: 100%;
+    height: auto;
+  }
+}
+
+/* ------------------------------------------------------------------
+   Type scale
+   ------------------------------------------------------------------ */
+
+.t-hero {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(3.1rem, 8.4vw, 9.6rem);
+  line-height: 0.98;
+  letter-spacing: -0.025em;
+  font-variation-settings: "opsz" 96;
+}
+
+.t-h2 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(2.35rem, 5vw, 5.4rem);
+  line-height: 1.02;
+  letter-spacing: -0.02em;
+  font-variation-settings: "opsz" 96;
+}
+
+.t-h3 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(1.55rem, 2.3vw, 2.4rem);
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+  font-variation-settings: "opsz" 48;
+}
+
+.t-statement {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(1.7rem, 3.5vw, 3.75rem);
+  line-height: 1.16;
+  letter-spacing: -0.015em;
+  font-variation-settings: "opsz" 72;
+}
+
+.t-lead {
+  font-size: clamp(1.0625rem, 1.25vw, 1.25rem);
+  line-height: 1.55;
+}
+
+.t-meta {
+  font-size: 0.75rem;
+  line-height: 1.4;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+
+.t-small {
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+/* Italics with descenders need room: 1.1 minimum, plus a little reserve. */
+.it {
+  font-style: italic;
+  line-height: 1.1;
+  padding-bottom: 0.06em;
+}
+
+/* ------------------------------------------------------------------
+   Layout primitives
+   ------------------------------------------------------------------ */
+
+.frame {
+  padding-inline: var(--margin);
+}
+
+.grid-12 {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  column-gap: var(--gutter);
+}
+@media (min-width: 768px) {
+  .grid-12 {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+  }
+}
+
+/* ------------------------------------------------------------------
+   Links and controls
+   ------------------------------------------------------------------ */
+
+.link-line {
+  background-image: linear-gradient(currentColor, currentColor);
+  background-size: 0% 1px;
+  background-position: 0 100%;
+  background-repeat: no-repeat;
+  transition: background-size 0.7s var(--ease-out);
+  padding-bottom: 2px;
+}
+.link-line:hover,
+.link-line:focus-visible {
+  background-size: 100% 1px;
+}
+
+.link-line--on {
+  background-size: 100% 1px;
+}
+.link-line--on:hover {
+  animation: relink 0.9s var(--ease-out);
+}
+@keyframes relink {
+  0% { background-size: 100% 1px; background-position: 100% 100%; }
+  45% { background-size: 0% 1px; background-position: 100% 100%; }
+  46% { background-size: 0% 1px; background-position: 0 100%; }
+  100% { background-size: 100% 1px; background-position: 0 100%; }
+}
+
+/* Rolling label used on the primary button */
+.roll {
+  display: inline-grid;
+  overflow: hidden;
+}
+.roll > span {
+  grid-area: 1 / 1;
+  transition: transform 0.75s var(--ease-out);
+}
+.roll > span:last-child {
+  transform: translateY(105%);
+}
+.group:hover .roll > span:first-child,
+.group:focus-visible .roll > span:first-child {
+  transform: translateY(-105%);
+}
+.group:hover .roll > span:last-child,
+.group:focus-visible .roll > span:last-child {
+  transform: translateY(0);
+}
+
+/* Images: slow, heavy hover */
+.img-hover img {
+  transition: transform 1.4s var(--ease-out);
+}
+.img-hover:hover img,
+.img-hover:focus-visible img {
+  transform: scale(1.035);
+}
+
+/* ------------------------------------------------------------------
+   Grain: one fixed layer, never on scrolling containers
+   ------------------------------------------------------------------ */
+
+.grain {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-grain);
+  pointer-events: none;
+  background-image: url("/grain.png");
+  background-size: 256px;
+  opacity: 0.05;
+  mix-blend-mode: multiply;
+}
+@media (prefers-color-scheme: dark) {
+  .grain {
+    mix-blend-mode: screen;
+    opacity: 0.035;
+  }
+}
+
+/* ------------------------------------------------------------------
+   Pre-animation states. Only applied when JS is running and motion
+   is allowed, so content is never hidden for no-JS or reduced motion.
+   ------------------------------------------------------------------ */
+
+@media (prefers-reduced-motion: no-preference) {
+  .js [data-intro] {
+    opacity: 0;
+  }
+  .js [data-reveal] {
+    visibility: hidden;
+  }
+}
+
+.intro-curtain {
+  display: none;
+}
+.js .intro-curtain {
+  display: flex;
+}
+@media (prefers-reduced-motion: reduce) {
+  .js .intro-curtain {
+    display: none;
+  }
+}
+
+.sr-only-focusable:not(:focus) {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}
