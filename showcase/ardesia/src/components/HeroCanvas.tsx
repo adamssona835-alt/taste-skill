@@ -2,7 +2,6 @@
 
 import { useEffect, useRef, useState } from "react";
 import { ScrollTrigger, finePointer, prefersReducedMotion } from "@/lib/gsap";
-import { emitSceneReady, onReveal } from "@/lib/intro";
 import { Picture } from "./Picture";
 
 /**
@@ -22,11 +21,12 @@ export function HeroCanvas() {
     let disposed = false;
     const cleanups: (() => void)[] = [];
 
-    import("@/lib/scene").then(({ LightStudy, webglAvailable }) => {
+    // The page is already readable without the scene, so fetch and build it only
+    // once the page has loaded and the main thread is idle.
+    const boot = () => import("@/lib/scene").then(({ LightStudy, webglAvailable }) => {
       if (disposed) return;
       if (!webglAvailable()) {
         setFallback(true);
-        emitSceneReady();
         return;
       }
       const reduce = prefersReducedMotion();
@@ -38,7 +38,6 @@ export function HeroCanvas() {
         scene = new LightStudy({ canvas, reducedMotion: reduce, lowPower });
       } catch {
         setFallback(true);
-        emitSceneReady();
         return;
       }
 
@@ -75,12 +74,10 @@ export function HeroCanvas() {
       scene.start();
       requestAnimationFrame(() => {
         canvas.style.opacity = "1";
-        emitSceneReady();
       });
-      const offReveal = onReveal(() => scene.playIntro());
+      scene.playIntro();
 
       cleanups.push(() => {
-        offReveal();
         st.kill();
         ro.disconnect();
         io.disconnect();
@@ -90,7 +87,17 @@ export function HeroCanvas() {
       });
     });
 
+    const ric = window.requestIdleCallback ?? ((cb: () => void) => window.setTimeout(cb, 200));
+    let idleId = 0;
+    const schedule = () => {
+      idleId = ric(() => void boot(), { timeout: 1200 });
+    };
+    if (document.readyState === "complete") schedule();
+    else window.addEventListener("load", schedule, { once: true });
+
     return () => {
+      window.removeEventListener("load", schedule);
+      (window.cancelIdleCallback ?? window.clearTimeout)(idleId);
       disposed = true;
       cleanups.forEach((c) => c());
     };

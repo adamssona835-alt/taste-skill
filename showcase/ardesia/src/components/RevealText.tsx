@@ -2,15 +2,12 @@
 
 import { createElement, useEffect, useRef, type ElementType, type ReactNode } from "react";
 import { gsap, SplitText, ScrollTrigger, prefersReducedMotion } from "@/lib/gsap";
-import { onReveal } from "@/lib/intro";
 
 type Props = {
   as?: ElementType;
   children: ReactNode;
   className?: string;
   id?: string;
-  /** "scroll" reveals on entering the viewport; "intro" waits for the entrance curtain. */
-  trigger?: "scroll" | "intro";
   delay?: number;
   stagger?: number;
 };
@@ -19,7 +16,7 @@ type Props = {
  * Lines rise out of a mask. Splits by rendered line, and re-splits on resize
  * so wrapping is always the real wrapping, never a guess.
  */
-export function RevealText({ as = "div", children, className, id, trigger = "scroll", delay = 0, stagger = 0.09 }: Props) {
+export function RevealText({ as = "div", children, className, id, delay = 0, stagger = 0.09 }: Props) {
   const ref = useRef<HTMLElement>(null);
 
   useEffect(() => {
@@ -33,7 +30,6 @@ export function RevealText({ as = "div", children, className, id, trigger = "scr
     let split: SplitText | null = null;
     let st: ScrollTrigger | undefined;
     let played = false;
-    let off = () => {};
 
     const ready = document.fonts?.ready ?? Promise.resolve();
     ready.then(() => {
@@ -56,22 +52,17 @@ export function RevealText({ as = "div", children, className, id, trigger = "scr
               ease: "expo.out",
             });
           };
-          if (trigger === "intro") {
-            off = onReveal(() => play());
-          } else {
-            st?.kill();
-            st = ScrollTrigger.create({ trigger: el, start: "top 88%", once: true, onEnter: () => play() });
-          }
+          st?.kill();
+          st = ScrollTrigger.create({ trigger: el, start: "top 88%", once: true, onEnter: () => play() });
         },
       });
     });
 
     return () => {
-      off();
       st?.kill();
       split?.revert();
     };
-  }, [trigger, delay, stagger]);
+  }, [delay, stagger]);
 
   return createElement(as, { ref, className, id, "data-reveal": "" }, children);
 }

@@ -3,7 +3,6 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { gsap, ScrollTrigger, prefersReducedMotion } from "@/lib/gsap";
-import { onReveal } from "@/lib/intro";
 import { nav, site } from "@/data/site";
 import { getLenis } from "./SmoothScroll";
 import { homeHref, section } from "@/lib/paths";
@@ -54,20 +53,9 @@ export function Nav() {
       );
     }
 
-    const off = onReveal(() => {
-      gsap.to(el.querySelectorAll("[data-intro]"), {
-        opacity: 1,
-        duration: reduce ? 0 : 1.2,
-        delay: reduce ? 0 : 1.5,
-        stagger: 0.06,
-        ease: "power2.out",
-      });
-    });
-
     return () => {
       triggers.forEach((t) => t.kill());
       io?.disconnect();
-      off();
     };
   }, []);
 
@@ -120,7 +108,7 @@ export function Nav() {
         <nav aria-label="Primary" className="frame relative flex h-16 items-center justify-between md:h-[72px]">
           <Link
             href={homeHref}
-            data-intro
+            data-nav-item
             className="font-display text-[1.65rem] leading-none tracking-[-0.02em]"
             aria-label="Ardesia, home"
           >
@@ -129,13 +117,13 @@ export function Nav() {
 
           <ul className="hidden items-center gap-10 text-[0.9375rem] md:flex">
             {nav.map((item) => (
-              <li key={item.href} data-intro>
+              <li key={item.href} data-nav-item>
                 <Link href={item.href} className="link-line">
                   {item.label}
                 </Link>
               </li>
             ))}
-            <li data-intro>
+            <li data-nav-item>
               <Link
                 href={section("contact")}
                 className={`group inline-flex h-10 items-center border px-5 transition-colors duration-500 ${
@@ -153,7 +141,7 @@ export function Nav() {
           <button
             ref={toggle}
             type="button"
-            data-intro
+            data-nav-item
             className="relative -mr-2 px-2 py-3 text-[0.9375rem] md:hidden"
             aria-expanded={open}
             aria-controls="mobile-menu"

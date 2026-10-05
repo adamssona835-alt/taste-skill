@@ -53,7 +53,7 @@ export default async function ProjectPage({ params }: { params: Promise<Params> 
               <span aria-hidden="true"> / </span>
               <span aria-current="page">{p.name}</span>
             </nav>
-            <RevealText as="h1" trigger="scroll" className="t-hero mt-8 max-w-[14ch]">
+            <RevealText as="h1" className="t-hero mt-8 max-w-[14ch]">
               {p.name}
             </RevealText>
             <div className="grid-12 mt-12 gap-y-10 md:mt-16">

@@ -10,7 +10,7 @@ npm run build      # static export to ./out (deploy anywhere)
 npm run images     # rebuild AVIF/WebP derivatives from ./source-images
 ```
 
-**Stack:** Next.js 15 (static export), TypeScript, Tailwind CSS v4, GSAP (ScrollTrigger, SplitText), Lenis and three.js. three.js is code-split, loaded only by the hero, and paused when the hero is off screen.
+**Stack:** Next.js 15 (static export), TypeScript, Tailwind CSS v4, GSAP (ScrollTrigger, SplitText), Lenis and three.js. three.js is code-split and fetched only after the page has loaded and the browser is idle; the entrance is pure CSS, so the hero is readable before any JavaScript runs.
 
 ```
 src/app        routes: /, /work/[slug]/, /credits/, sitemap, robots, 404
