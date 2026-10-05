@@ -5,6 +5,7 @@ import Link from "next/link";
 import { gsap, prefersReducedMotion } from "@/lib/gsap";
 import { nav, site } from "@/data/site";
 import { getLenis } from "@/components/SmoothScroll";
+import { PREVIEW } from "@/lib/paths";
 
 export function Footer() {
   const mark = useRef<HTMLParagraphElement>(null);
@@ -31,7 +32,7 @@ export function Footer() {
     const lenis = getLenis();
     if (lenis) lenis.scrollTo(0, { duration: 2 });
     else window.scrollTo({ top: 0, behavior: prefersReducedMotion() ? "auto" : "smooth" });
-    document.querySelector<HTMLElement>("a[href='/']")?.focus({ preventScroll: true });
+    document.querySelector<HTMLElement>("header a")?.focus({ preventScroll: true });
   };
 
   return (
@@ -66,11 +67,13 @@ export function Footer() {
                 </Link>
               </li>
             ))}
-            <li>
-              <Link href="/credits/" className="link-line">
-                Image credits
-              </Link>
-            </li>
+            {!PREVIEW && (
+              <li>
+                <Link href="/credits/" className="link-line">
+                  Image credits
+                </Link>
+              </li>
+            )}
           </ul>
         </nav>
         <div className="col-span-2 flex flex-col items-start justify-between md:col-span-3 md:items-end">

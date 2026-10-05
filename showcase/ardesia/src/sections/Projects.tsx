@@ -5,6 +5,7 @@ import Link from "next/link";
 import { gsap } from "@/lib/gsap";
 import { projects } from "@/data/site";
 import { Picture } from "@/components/Picture";
+import { caseHref } from "@/lib/paths";
 
 // Each entry has its own proportion and height on the line, like plates in a monograph.
 const layout = [
@@ -91,7 +92,7 @@ export function Projects() {
               key={p.slug}
               className={`w-full shrink-0 ${l.w} ${l.offset} ${i % 2 ? "md:ml-[30%] md:w-[70%] lg:motion-safe:ml-0" : "md:w-[80%]"}`}
             >
-              <Link href={`/work/${p.slug}/`} className="img-hover group block" aria-label={`${p.name}, read the case study`}>
+              <Link href={caseHref(p.slug)} className="img-hover group block" aria-label={`${p.name}, read the case study`}>
                 <div className={`relative overflow-hidden ${l.aspect}`}>
                   <div data-drift className="absolute inset-y-0 -left-[8%] w-[116%]">
                     <Picture
@@ -106,7 +107,7 @@ export function Projects() {
               </Link>
               <div className="mt-6 flex items-baseline justify-between gap-6">
                 <h3 className="t-h3">
-                  <Link href={`/work/${p.slug}/`} className="link-line">
+                  <Link href={caseHref(p.slug)} className="link-line">
                     {p.name}
                   </Link>
                 </h3>

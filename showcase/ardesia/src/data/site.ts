@@ -1,3 +1,5 @@
+import { section } from "@/lib/paths";
+
 // All content lives here, separate from presentation.
 // Ardesia is a fictional studio: names, figures and quotes are sample content.
 
@@ -15,9 +17,9 @@ export const site = {
 };
 
 export const nav = [
-  { label: "Studio", href: "/#studio" },
-  { label: "Services", href: "/#services" },
-  { label: "Work", href: "/#work" },
+  { label: "Studio", href: section("studio") },
+  { label: "Services", href: section("services") },
+  { label: "Work", href: section("work") },
 ];
 
 export type Project = {

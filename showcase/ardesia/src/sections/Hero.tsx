@@ -7,6 +7,7 @@ import { site } from "@/data/site";
 import { HeroCanvas } from "@/components/HeroCanvas";
 import { RevealText } from "@/components/RevealText";
 import { Button } from "@/components/Button";
+import { section } from "@/lib/paths";
 
 export function Hero() {
   const root = useRef<HTMLElement>(null);
@@ -73,7 +74,7 @@ export function Hero() {
               climate and the sun.
             </p>
             <div data-intro className="mt-8">
-              <Button href="/#contact" tone="light">
+              <Button href={section("contact")} tone="light">
                 {site.cta}
               </Button>
             </div>

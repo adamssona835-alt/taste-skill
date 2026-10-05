@@ -6,6 +6,7 @@ import { gsap, ScrollTrigger, prefersReducedMotion } from "@/lib/gsap";
 import { onReveal } from "@/lib/intro";
 import { nav, site } from "@/data/site";
 import { getLenis } from "./SmoothScroll";
+import { homeHref, section } from "@/lib/paths";
 
 export function Nav() {
   const bar = useRef<HTMLElement>(null);
@@ -118,7 +119,7 @@ export function Nav() {
         />
         <nav aria-label="Primary" className="frame relative flex h-16 items-center justify-between md:h-[72px]">
           <Link
-            href="/"
+            href={homeHref}
             data-intro
             className="font-display text-[1.65rem] leading-none tracking-[-0.02em]"
             aria-label="Ardesia, home"
@@ -136,7 +137,7 @@ export function Nav() {
             ))}
             <li data-intro>
               <Link
-                href="/#contact"
+                href={section("contact")}
                 className={`group inline-flex h-10 items-center border px-5 transition-colors duration-500 ${
                   onDark ? "border-night-ink/40 hover:border-night-ink" : "border-ink/30 hover:border-ink"
                 }`}
@@ -172,7 +173,7 @@ export function Nav() {
         inert={!open}
       >
         <ul className="flex flex-col gap-3">
-          {[...nav, { label: site.cta, href: "/#contact" }].map((item) => (
+          {[...nav, { label: site.cta, href: section("contact") }].map((item) => (
             <li key={item.href + item.label} className="overflow-hidden pb-1">
               <Link
                 href={item.href}

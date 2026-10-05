@@ -8,6 +8,7 @@ import { Picture } from "@/components/Picture";
 import { RevealText } from "@/components/RevealText";
 import { RevealImage } from "@/components/RevealImage";
 import { ProjectMeta } from "@/components/ProjectMeta";
+import { caseHref } from "@/lib/paths";
 
 /**
  * One project, given the whole width. The photograph grows from a framed
@@ -72,7 +73,7 @@ export function Featured() {
               {featured.name}
             </RevealText>
             <p className="t-lead mt-8 max-w-[46ch] text-ink-2">{featured.summary}</p>
-            <Link href={`/work/${featured.slug}/`} className="link-line link-line--on mt-10 inline-block">
+            <Link href={caseHref(featured.slug)} className="link-line link-line--on mt-10 inline-block">
               Read the case study
             </Link>
           </div>
