@@ -1,0 +1,591 @@
+<title>Lindqvist Måleri</title>
+<meta name="description" content="Målerifirma i Uppsala. Invändig målning, fasad, tapetsering och snickerier. Fast pris, ROT-avdrag direkt på fakturan.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Figtree:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: ett scroll-styrt rum (canvas, 150 bildrutor) som hero, sedan en asymmetrisk
+   12-kolumners grid där varje sektion är ett "arbetsmoment" i ett målerijobb. */
+:root {
+  --wall: #f1f3f0;        /* nymålad vägg, kall vit */
+  --wall-2: #e4e8e3;      /* skuggad vägg */
+  --ink: #14211b;         /* text, grönsvart */
+  --ink-soft: #4b5a53;
+  --paint: #244a3b;       /* Skogsgrön, kulören i hero-klippet */
+  --paint-ink: #f1f3f0;
+  --accent: #d9542b;      /* rollerskaftet / burketiketten */
+  --line: rgba(20,33,27,.14);
+  --paint-text: #244a3b;
+  --f-display: "Bricolage Grotesque", "Figtree", system-ui, sans-serif;
+  --f-body: "Figtree", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --f-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --gutter: clamp(16px, 4vw, 56px);
+  --max: 1320px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --wall: #0f1613; --wall-2: #18221d; --ink: #e5ebe6; --ink-soft: #9fb0a7;
+    --paint: #2f6550; --paint-ink: #eef3ef; --accent: #ee7a52; --line: rgba(229,235,230,.14); --paint-text: #9fd1b8;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --wall: #0f1613; --wall-2: #18221d; --ink: #e5ebe6; --ink-soft: #9fb0a7;
+  --paint: #2f6550; --paint-ink: #eef3ef; --accent: #ee7a52; --line: rgba(229,235,230,.14); --paint-text: #9fd1b8;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0; background: var(--wall); color: var(--ink);
+  font: 400 17px/1.6 var(--f-body);
+  -webkit-font-smoothing: antialiased;
+}
+h1, h2, h3 { font-family: var(--f-display); font-weight: 700; letter-spacing: -.025em; line-height: 1.02; text-wrap: balance; margin: 0; }
+p { margin: 0; }
+a { color: inherit; }
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; border-radius: 4px; }
+.mono { font-family: var(--f-mono); font-size: 12.5px; letter-spacing: .04em; text-transform: uppercase; }
+.wrap { max-width: var(--max); margin: 0 auto; padding-inline: var(--gutter); }
+
+/* ---------- Nav ---------- */
+.nav {
+  position: fixed; inset: 0 0 auto 0; z-index: 20;
+  padding-top: env(safe-area-inset-top, 0px);
+  transition: background .3s, color .3s, border-color .3s;
+  color: #f1f3f0; border-bottom: 1px solid transparent;
+}
+.nav.solid { background: var(--wall); color: var(--ink); border-color: var(--line); }
+.nav .wrap { display: flex; align-items: center; gap: 28px; height: 68px; }
+.logo { display: flex; align-items: center; gap: 10px; text-decoration: none; font: 700 19px/1 var(--f-display); letter-spacing: -.02em; }
+.logo i { width: 14px; height: 22px; background: var(--paint); border: 2px solid currentColor; border-radius: 3px 3px 7px 7px; }
+.nav ul { display: flex; gap: 24px; list-style: none; margin: 0 0 0 auto; padding: 0; font-weight: 500; font-size: 15px; }
+.nav ul a { text-decoration: none; opacity: .85; }
+.nav ul a:hover { opacity: 1; text-decoration: underline; text-underline-offset: 5px; }
+.btn {
+  display: inline-flex; align-items: center; gap: 10px; border: 0; cursor: pointer;
+  background: var(--accent); color: #fff; font: 600 15px/1 var(--f-body);
+  padding: 14px 20px; border-radius: 999px; text-decoration: none; white-space: nowrap;
+  transition: transform .2s;
+}
+.btn:hover { transform: translateY(-2px); }
+.btn svg { width: 16px; height: 16px; }
+@media (max-width: 860px) { .nav ul { display: none; } .nav .btn { margin-left: auto; padding: 12px 16px; } }
+
+/* ---------- Hero: scroll-styrt rum ---------- */
+.room { position: relative; height: 420vh; background: #101814; }
+.room-stage { position: sticky; top: 0; height: 100vh; height: 100dvh; overflow: hidden; }
+.room canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.room-scrim {
+  position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(90deg, rgba(12,20,16,.78) 0%, rgba(12,20,16,.45) 38%, rgba(12,20,16,0) 62%),
+              linear-gradient(0deg, rgba(12,20,16,.6) 0%, rgba(12,20,16,0) 30%);
+}
+.room-copy { position: absolute; inset: 0; display: grid; align-items: center; color: #f1f3f0; pointer-events: none; }
+.room-copy .wrap { width: 100%; position: relative; min-height: 340px; }
+.beat { position: absolute; left: var(--gutter); right: var(--gutter); top: 50%; transform: translateY(-50%); max-width: 860px; transition: opacity .5s, transform .5s; }
+.beat.off { opacity: 0; transform: translateY(calc(-50% + 24px)); }
+.beat .mono { color: #f4a78c; margin-bottom: 18px; display: block; }
+.beat h1, .beat h2 { font-size: clamp(42px, 6.2vw, 96px); font-weight: 800; font-variation-settings: "opsz" 96; }
+.beat h1 em, .beat h2 em { font-style: normal; color: #9fd1b8; }
+.beat p { margin-top: 22px; max-width: 46ch; font-size: clamp(17px, 1.5vw, 20px); max-width: 46ch; color: rgba(241,243,240,.86); }
+.beat .btn { margin-top: 30px; pointer-events: auto; }
+.meter {
+  position: absolute; left: var(--gutter); right: var(--gutter); bottom: max(28px, env(safe-area-inset-bottom, 0px));
+  display: flex; align-items: center; gap: 18px; color: rgba(241,243,240,.8);
+}
+.meter .bar { flex: 1; height: 2px; background: rgba(241,243,240,.2); position: relative; max-width: 420px; }
+.meter .bar span { position: absolute; inset: 0 auto 0 0; width: 0; background: #9fd1b8; }
+.meter .num { font-variant-numeric: tabular-nums; min-width: 17ch; }
+.loader { position: absolute; right: var(--gutter); top: 88px; color: rgba(241,243,240,.7); }
+@media (max-width: 700px) {
+  .room-scrim { background: linear-gradient(0deg, rgba(12,20,16,.88) 0%, rgba(12,20,16,.55) 55%, rgba(12,20,16,.15) 100%); }
+  .beat { top: auto; bottom: 90px; transform: none; }
+  .beat.off { transform: translateY(24px); }
+  .room-copy { align-items: end; }
+  .room-copy .wrap { min-height: 100%; height: 100%; }
+}
+
+/* ---------- Sektioner ---------- */
+section.block { padding-block: clamp(80px, 11vw, 160px); }
+.head { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 24px; margin-bottom: clamp(40px, 6vw, 80px); align-items: end; }
+.head .mono { grid-column: 1 / span 3; color: var(--accent); }
+.head h2 { grid-column: 4 / span 9; font-size: clamp(36px, 5.2vw, 72px); }
+.head p { grid-column: 4 / span 6; color: var(--ink-soft); max-width: 58ch; }
+@media (max-width: 860px) { .head > * { grid-column: 1 / -1 !important; } }
+
+/* Tjänster: lista med riktpriser */
+.services { border-top: 1px solid var(--line); }
+.svc {
+  display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 5fr) minmax(0, 2fr); gap: 24px;
+  padding-block: 30px; border-bottom: 1px solid var(--line); align-items: baseline;
+  transition: background .25s, padding .25s;
+}
+.svc h3 { font-size: clamp(26px, 3vw, 40px); font-weight: 600; }
+.svc p { color: var(--ink-soft); max-width: 50ch; }
+.svc .price { text-align: right; font-family: var(--f-mono); font-size: 14px; font-variant-numeric: tabular-nums; }
+.svc .price b { display: block; font: 600 22px/1.2 var(--f-display); letter-spacing: -.01em; }
+.svc:hover { background: var(--wall-2); padding-inline: 18px; }
+@media (max-width: 760px) { .svc { grid-template-columns: 1fr; gap: 10px; } .svc .price { text-align: left; } }
+.note { margin-top: 18px; color: var(--ink-soft); font-size: 14px; }
+
+/* Process: grön sektion */
+.process { background: var(--paint); color: var(--paint-ink); }
+.process .head .mono { color: #f4a78c; }
+.process .head p { color: rgba(241,243,240,.75); }
+.steps { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 0; counter-reset: s; }
+.steps li { counter-increment: s; padding: 26px 24px 30px 0; border-top: 2px solid rgba(241,243,240,.25); position: relative; }
+.steps li::before { content: "0" counter(s); font: 500 13px/1 var(--f-mono); letter-spacing: .06em; color: #9fd1b8; display: block; margin-bottom: 40px; }
+.steps li::after { content: ""; position: absolute; left: 0; top: -2px; height: 2px; width: 34%; background: #f4a78c; }
+.steps h3 { font-size: 24px; font-weight: 600; margin-bottom: 10px; }
+.steps p { font-size: 15.5px; color: rgba(241,243,240,.78); }
+.steps .t { margin-top: 16px; display: block; color: rgba(241,243,240,.6); }
+@media (max-width: 1000px) { .steps { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 32px; } }
+@media (max-width: 560px) { .steps { grid-template-columns: 1fr; } .steps li::before { margin-bottom: 18px; } }
+
+/* Kulörer */
+.colors { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: clamp(24px, 4vw, 64px); align-items: stretch; }
+.preview {
+  position: relative; border-radius: 6px; overflow: hidden; min-height: 460px;
+  background: var(--sw, #244a3b); transition: background .6s;
+  display: flex; flex-direction: column; justify-content: space-between; padding: 28px;
+}
+.preview .win {
+  position: absolute; right: 12%; top: 14%; width: 26%; aspect-ratio: 4 / 5; max-width: 100%;
+  background: linear-gradient(#cfe0ea, #f1f3ec); border: 12px solid #f1f0eb; box-shadow: 0 0 0 1px rgba(0,0,0,.08);
+}
+.preview .win::before, .preview .win::after { content: ""; position: absolute; background: #f1f0eb; }
+.preview .win::before { left: 50%; top: 0; bottom: 0; width: 8px; transform: translateX(-50%); }
+.preview .win::after { top: 42%; left: 0; right: 0; height: 8px; }
+.preview .skirt { position: absolute; left: 0; right: 0; bottom: 0; height: 26px; background: #efeee8; border-top: 2px solid rgba(0,0,0,.1); }
+.preview .tag {
+  position: relative; z-index: 1; align-self: flex-start; background: #fff; color: #14211b;
+  padding: 14px 16px; border-radius: 4px; min-width: 210px; box-shadow: 0 12px 30px rgba(0,0,0,.18);
+}
+.preview .tag b { display: block; font: 700 22px/1.1 var(--f-display); }
+.preview .tag span { font-family: var(--f-mono); font-size: 12.5px; color: #4b5a53; }
+.preview .disc { position: relative; z-index: 1; margin-bottom: 30px; font-size: 13px; color: rgba(255,255,255,.85); text-shadow: 0 1px 2px rgba(0,0,0,.4); }
+.swatches { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; align-content: start; }
+.sw {
+  display: grid; grid-template-columns: 44px minmax(0, 1fr); gap: 14px; align-items: center; text-align: left;
+  background: transparent; color: var(--ink); border: 1px solid var(--line); border-radius: 6px; padding: 10px; cursor: pointer;
+  font: inherit; transition: border-color .2s, background .2s;
+}
+.sw i { width: 44px; height: 44px; border-radius: 4px; background: var(--c); box-shadow: inset 0 0 0 1px rgba(0,0,0,.1); }
+.sw b { display: block; font-weight: 600; font-size: 15px; line-height: 1.2; }
+.sw span { font-family: var(--f-mono); font-size: 11.5px; color: var(--ink-soft); }
+.sw:hover { background: var(--wall-2); }
+.sw[aria-pressed="true"] { border-color: var(--ink); background: var(--wall-2); }
+.colors-side p { color: var(--ink-soft); margin-bottom: 22px; }
+@media (max-width: 900px) { .colors { grid-template-columns: 1fr; } .preview { min-height: 340px; } .preview .win { top: 32%; width: 30%; } }
+@media (max-width: 420px) { .swatches { grid-template-columns: 1fr; } }
+
+/* ROT */
+.rot { background: var(--wall-2); }
+.calc { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: clamp(24px, 4vw, 64px); }
+.fields { display: grid; gap: 20px; align-content: start; }
+label { display: grid; gap: 8px; font-weight: 600; font-size: 15px; }
+label small { font-weight: 400; color: var(--ink-soft); }
+input, select, textarea {
+  font: 500 17px/1.3 var(--f-body); color: var(--ink); background: var(--wall);
+  border: 1px solid var(--line); border-radius: 6px; padding: 14px 16px; width: 100%;
+}
+input:focus, select:focus, textarea:focus { outline: 2px solid var(--paint); outline-offset: 0; border-color: transparent; }
+.seg { display: flex; gap: 8px; }
+.seg button { flex: 1; font: 600 15px/1 var(--f-body); padding: 14px; border-radius: 6px; border: 1px solid var(--line); background: var(--wall); color: var(--ink); cursor: pointer; }
+.seg button[aria-pressed="true"] { background: var(--ink); color: var(--wall); border-color: var(--ink); }
+.receipt { background: var(--wall); border-radius: 6px; padding: clamp(22px, 3vw, 40px); border: 1px solid var(--line); }
+.receipt .row { display: flex; justify-content: space-between; gap: 16px; padding-block: 14px; border-bottom: 1px dashed var(--line); font-variant-numeric: tabular-nums; }
+.receipt .row span:last-child { font-family: var(--f-mono); font-size: 15px; }
+.receipt .row.minus span:last-child { color: var(--paint-text); font-weight: 500; }
+.receipt .total { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; padding-top: 24px; flex-wrap: wrap; }
+.receipt .total b { font: 800 clamp(40px, 6vw, 72px)/1 var(--f-display); letter-spacing: -.03em; font-variant-numeric: tabular-nums; }
+.receipt .fine { margin-top: 18px; font-size: 13.5px; color: var(--ink-soft); }
+@media (max-width: 860px) { .calc { grid-template-columns: 1fr; } }
+
+/* Kontakt */
+.contact { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: clamp(24px, 4vw, 64px); }
+.facts { display: grid; gap: 22px; align-content: start; }
+.facts div { border-top: 1px solid var(--line); padding-top: 14px; }
+.facts .mono { color: var(--ink-soft); display: block; margin-bottom: 6px; }
+.facts b { font: 600 22px/1.25 var(--f-display); user-select: all; }
+form { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+form .full { grid-column: 1 / -1; }
+form .btn { justify-self: start; font-size: 16px; padding: 16px 24px; }
+.sent { grid-column: 1 / -1; background: var(--paint); color: var(--paint-ink); padding: 18px 20px; border-radius: 6px; }
+@media (max-width: 860px) { .contact { grid-template-columns: 1fr; } }
+@media (max-width: 520px) { form { grid-template-columns: 1fr; } }
+
+footer { border-top: 1px solid var(--line); padding-block: 36px 48px; color: var(--ink-soft); font-size: 14px; }
+footer .wrap { display: flex; justify-content: space-between; gap: 18px; flex-wrap: wrap; }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .beat, .btn, .svc, .preview { transition: none; }
+}
+</style>
+
+<header class="nav" id="nav">
+  <div class="wrap">
+    <a class="logo" href="#rum"><i aria-hidden="true"></i>Lindqvist Måleri</a>
+    <ul>
+      <li><a href="#tjanster">Tjänster</a></li>
+      <li><a href="#process">Så jobbar vi</a></li>
+      <li><a href="#kulorer">Kulörer</a></li>
+      <li><a href="#rot">ROT-avdrag</a></li>
+    </ul>
+    <a class="btn" href="#kontakt">Begär offert
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
+    </a>
+  </div>
+</header>
+
+<main>
+  <!-- Scroll-styrd bildsekvens: samma teknik som i Nick Saraevs Kling-sajter -->
+  <section class="room" id="rum" aria-label="Ett rum som målas om när du scrollar">
+    <div class="room-stage">
+      <canvas id="room" aria-hidden="true"></canvas>
+      <div class="room-scrim"></div>
+      <div class="room-copy">
+        <div class="wrap">
+          <div class="beat" data-from="0" data-to=".22">
+            <span class="mono">Måleri i Uppsala sedan 2009</span>
+            <h1>Vi målar om <em>rummet</em> du har tröttnat på.</h1>
+            <p>Scrolla, så ser du hur ett jobb går till. Spackel, tejp, två strykningar och en slutbesiktning.</p>
+          </div>
+          <div class="beat off" data-from=".26" data-to=".7">
+            <span class="mono">Strykning 1 av 2</span>
+            <h2>Raka drag. <em>Rena</em> kanter.</h2>
+            <p>Vi rollar våt-i-våt i jämna våder så att väggen torkar utan skarvar. Golv, lister och fönster är skyddade innan första burken öppnas.</p>
+          </div>
+          <div class="beat off" data-from=".76" data-to="1.01">
+            <span class="mono">Klart · tejpen bortplockad</span>
+            <h2>Samma rum. <em>Nytt</em> ljus.</h2>
+            <p>Fast pris, ROT-avdraget dras direkt på fakturan och vi städar efter oss.</p>
+            <a class="btn" href="#kontakt">Boka kostnadsfri besiktning</a>
+          </div>
+        </div>
+      </div>
+      <div class="meter mono" aria-hidden="true">
+        <div class="bar"><span id="bar"></span></div>
+        <span class="num" id="area">Målad yta 0,0 / 18,4 m²</span>
+      </div>
+      <span class="loader mono" id="loader" aria-hidden="true">Laddar bildrutor 0 %</span>
+    </div>
+  </section>
+
+  <section class="block" id="tjanster">
+    <div class="wrap">
+      <div class="head">
+        <span class="mono">Tjänster</span>
+        <h2>Från en hall till hela huset.</h2>
+        <p>Allt arbete utförs av våra egna målare med yrkesbevis. Riktpriserna nedan är inklusive material och före ROT-avdrag. Du får alltid ett fast pris efter besiktning.</p>
+      </div>
+      <div class="services">
+        <div class="svc">
+          <h3>Invändig målning</h3>
+          <p>Väggar och tak i bostadsrum, kök och våtutrymmen. Spackling, slipning och två strykningar ingår.</p>
+          <div class="price">från<b>235 kr/m²</b></div>
+        </div>
+        <div class="svc">
+          <h3>Fasadmålning</h3>
+          <p>Trä, puts och plåt. Tvätt, skrapning, grundning och oljefärg eller akrylat efter vad huset tål.</p>
+          <div class="price">från<b>310 kr/m²</b></div>
+        </div>
+        <div class="svc">
+          <h3>Tapetsering</h3>
+          <p>Mönsterpassning, fondväggar och nedtagning av gammal tapet. Vi hjälper gärna till att välja.</p>
+          <div class="price">från<b>290 kr/m²</b></div>
+        </div>
+        <div class="svc">
+          <h3>Snickerier &amp; lackering</h3>
+          <p>Dörrar, karmar, lister, köksluckor och trappor. Sprutlackering i egen verkstad för släta ytor.</p>
+          <div class="price">från<b>1 450 kr/dörr</b></div>
+        </div>
+        <div class="svc">
+          <h3>Underarbete &amp; skador</h3>
+          <p>Sprickor, fuktfläckar och gamla borrhål. Det som syns efter målning börjar alltid här.</p>
+          <div class="price">timpris<b>545 kr/h</b></div>
+        </div>
+      </div>
+      <p class="note">Priserna är exempel för en demosajt. Byt mot era egna.</p>
+    </div>
+  </section>
+
+  <section class="block process" id="process">
+    <div class="wrap">
+      <div class="head">
+        <span class="mono">Så jobbar vi</span>
+        <h2>Fem steg, samma ordning varje gång.</h2>
+        <p>Ett normalt rum tar två till tre arbetsdagar. Du vet vem som kommer, när och vad det kostar innan vi börjar.</p>
+      </div>
+      <ol class="steps">
+        <li><h3>Besiktning</h3><p>Vi mäter, kollar underlaget och pratar kulör på plats.</p><span class="t mono">Dag 0 · 45 min</span></li>
+        <li><h3>Fast offert</h3><p>Pris, tidplan och ROT-avdrag specificerat på en sida.</p><span class="t mono">Inom 48 h</span></li>
+        <li><h3>Skydd &amp; underarbete</h3><p>Täckpapp, tejp, spackel och slipning. Damm tas om hand.</p><span class="t mono">Dag 1</span></li>
+        <li><h3>Två strykningar</h3><p>Grundning vid behov, sedan två lager med torktid emellan.</p><span class="t mono">Dag 1–2</span></li>
+        <li><h3>Slutbesiktning</h3><p>Vi går igenom rummet med dig, bättrar och städar.</p><span class="t mono">Dag 2–3</span></li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="block" id="kulorer">
+    <div class="wrap">
+      <div class="head">
+        <span class="mono">Kulörer</span>
+        <h2>Prova väggen innan vi målar den.</h2>
+        <p>Klicka på en kulör. NCS-koden är den du tar med till färghandeln, eller som vi beställer åt dig.</p>
+      </div>
+      <div class="colors">
+        <div class="preview" id="preview" style="--sw:#244a3b">
+          <div class="tag"><b id="swName">Skogsgrön</b><span id="swCode">NCS S 6020-G10Y</span></div>
+          <div class="win" aria-hidden="true"></div>
+          <p class="disc">Skärmen visar en ungefärlig återgivning. Vi tar med färgprover vid besiktningen.</p>
+          <div class="skirt" aria-hidden="true"></div>
+        </div>
+        <div class="colors-side">
+          <p>Våra mest beställda väggkulörer det senaste året. Mörka gröna och varma gråtoner har gått om bruten vit i vardagsrum.</p>
+          <div class="swatches" id="swatches">
+            <button class="sw" type="button" aria-pressed="true" style="--c:#244a3b" data-name="Skogsgrön" data-code="NCS S 6020-G10Y"><i></i><span><b>Skogsgrön</b><span>S 6020-G10Y</span></span></button>
+            <button class="sw" type="button" aria-pressed="false" style="--c:#8a9a86" data-name="Lav" data-code="NCS S 3010-G30Y"><i></i><span><b>Lav</b><span>S 3010-G30Y</span></span></button>
+            <button class="sw" type="button" aria-pressed="false" style="--c:#b9b0a2" data-name="Linoljegrå" data-code="NCS S 2005-Y20R"><i></i><span><b>Linoljegrå</b><span>S 2005-Y20R</span></span></button>
+            <button class="sw" type="button" aria-pressed="false" style="--c:#e9e7df" data-name="Kalkvit" data-code="NCS S 0502-Y"><i></i><span><b>Kalkvit</b><span>S 0502-Y</span></span></button>
+            <button class="sw" type="button" aria-pressed="false" style="--c:#2c3b52" data-name="Nattblå" data-code="NCS S 7020-R80B"><i></i><span><b>Nattblå</b><span>S 7020-R80B</span></span></button>
+            <button class="sw" type="button" aria-pressed="false" style="--c:#8e3b2c" data-name="Faluröd" data-code="NCS S 5040-Y80R"><i></i><span><b>Faluröd</b><span>S 5040-Y80R</span></span></button>
+            <button class="sw" type="button" aria-pressed="false" style="--c:#c79a5a" data-name="Ockra" data-code="NCS S 2040-Y20R"><i></i><span><b>Ockra</b><span>S 2040-Y20R</span></span></button>
+            <button class="sw" type="button" aria-pressed="false" style="--c:#5d5f5a" data-name="Grafit" data-code="NCS S 7000-N"><i></i><span><b>Grafit</b><span>S 7000-N</span></span></button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block rot" id="rot">
+    <div class="wrap">
+      <div class="head">
+        <span class="mono">ROT-avdrag</span>
+        <h2>Räkna ut vad du faktiskt betalar.</h2>
+        <p>ROT-avdraget är 30 % av arbetskostnaden, högst 50 000 kr per person och år. Material och resor ger inget avdrag. Vi drar av det direkt på fakturan.</p>
+      </div>
+      <div class="calc">
+        <div class="fields">
+          <label for="labour">Arbetskostnad <small>inkl. moms, i kronor</small>
+            <input id="labour" type="number" inputmode="numeric" min="0" step="500" value="38000">
+          </label>
+          <label for="material">Material <small>färg, spackel, tejp</small>
+            <input id="material" type="number" inputmode="numeric" min="0" step="500" value="7200">
+          </label>
+          <div>
+            <label id="ownersLabel">Antal som delar på avdraget</label>
+            <div class="seg" role="group" aria-labelledby="ownersLabel" style="margin-top:8px">
+              <button type="button" data-owners="1" aria-pressed="true">1 person</button>
+              <button type="button" data-owners="2" aria-pressed="false">2 personer</button>
+            </div>
+          </div>
+        </div>
+        <div class="receipt" aria-live="polite">
+          <div class="row"><span>Arbete</span><span id="rLabour"></span></div>
+          <div class="row"><span>Material</span><span id="rMaterial"></span></div>
+          <div class="row minus"><span>ROT-avdrag (30 %)</span><span id="rRot"></span></div>
+          <div class="total"><span class="mono">Att betala</span><b id="rTotal"></b></div>
+          <p class="fine" id="rFine"></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="kontakt">
+    <div class="wrap">
+      <div class="head">
+        <span class="mono">Kontakt</span>
+        <h2>Berätta vad som ska målas.</h2>
+        <p>Vi svarar inom en arbetsdag och föreslår en tid för besiktning. Besiktningen är kostnadsfri inom Uppsala kommun.</p>
+      </div>
+      <div class="contact">
+        <div class="facts">
+          <div><span class="mono">Telefon</span><b>018-12 34 56</b></div>
+          <div><span class="mono">E-post</span><b>offert@lindqvistmaleri.se</b></div>
+          <div><span class="mono">Verkstad</span><b>Kungsgatan 1, Uppsala</b></div>
+          <div><span class="mono">Öppet</span><b>Mån–fre 07–16</b></div>
+        </div>
+        <form id="quote" novalidate>
+          <label for="qName">Namn<input id="qName" name="name" autocomplete="name" required></label>
+          <label for="qPhone">Telefon<input id="qPhone" name="phone" type="tel" autocomplete="tel" required></label>
+          <label for="qWhat">Vad ska målas?
+            <select id="qWhat" name="what">
+              <option>Invändigt, ett eller flera rum</option>
+              <option>Fasad</option>
+              <option>Tapetsering</option>
+              <option>Snickerier / köksluckor</option>
+              <option>Vet inte än</option>
+            </select>
+          </label>
+          <label for="qArea">Ungefärlig yta <small>m² golv</small><input id="qArea" name="area" type="number" inputmode="numeric" min="1" placeholder="t.ex. 25"></label>
+          <label class="full" for="qMsg">Meddelande<textarea id="qMsg" name="msg" rows="4" placeholder="Adress, önskad tid, kulörer du funderar på…"></textarea></label>
+          <button class="btn" type="submit">Skicka förfrågan</button>
+          <p class="sent" id="sent" hidden></p>
+        </form>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>© 2026 Lindqvist Måleri AB · F-skatt · Ansvarsförsäkrade</span>
+    <span>Demosajt med fiktivt företag och kontaktuppgifter</span>
+  </div>
+</footer>
+
+<script>
+(() => {
+  /* ---------- Scroll-styrd bildsekvens ----------
+     Teknik enligt Nicks workflow: video -> ffmpeg -> WEBP-rutor -> <canvas>.
+     Första rutan laddas först (syns direkt), resten förladdas i ordning.
+     Scroll-position mappas till ruta, med lätt utjämning (lerp) i rAF. */
+  let FRAME_COUNT = 150; // skrivs över av frames/manifest.json från build.sh
+  const src = i => `frames/f_${String(i + 1).padStart(4, '0')}.webp`;
+  const canvas = document.getElementById('room');
+  const ctx = canvas.getContext('2d');
+  const section = document.getElementById('rum');
+  let frames = [];
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let loaded = 0, target = 0, current = 0, lastDrawn = -1;
+
+  function size() {
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    canvas.width = Math.round(canvas.clientWidth * dpr);
+    canvas.height = Math.round(canvas.clientHeight * dpr);
+    lastDrawn = -1;
+  }
+
+  function nearestLoaded(i) {
+    for (let d = 0; d < FRAME_COUNT; d++) {
+      if (frames[i - d] && frames[i - d].complete && frames[i - d].naturalWidth) return frames[i - d];
+      if (frames[i + d] && frames[i + d].complete && frames[i + d].naturalWidth) return frames[i + d];
+    }
+    return null;
+  }
+
+  function draw(i) {
+    const img = nearestLoaded(i);
+    if (!img) return;
+    const cw = canvas.width, ch = canvas.height, iw = img.naturalWidth, ih = img.naturalHeight;
+    const s = Math.max(cw / iw, ch / ih);           // object-fit: cover
+    const w = iw * s, h = ih * s;
+    const fx = cw < ch ? .38 : .5;                  // på mobil: fokus på väggen
+    ctx.drawImage(img, (cw - w) * fx, (ch - h) / 2, w, h);
+    lastDrawn = i;
+  }
+
+  function progress() {
+    const r = section.getBoundingClientRect();
+    const total = section.offsetHeight - innerHeight;
+    return Math.min(1, Math.max(0, -r.top / total));
+  }
+
+  const beats = [...document.querySelectorAll('.beat')];
+  const bar = document.getElementById('bar');
+  const area = document.getElementById('area');
+  const nav = document.getElementById('nav');
+  const fmt = n => n.toLocaleString('sv-SE', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+
+  function onScroll() {
+    const p = progress();
+    target = p * (FRAME_COUNT - 1);
+    beats.forEach(b => b.classList.toggle('off', !(p >= +b.dataset.from && p < +b.dataset.to)));
+    // målad yta följer rollerns faktiska fas i klippet (8–84 %)
+    const painted = Math.min(1, Math.max(0, (p - .08) / .76));
+    bar.style.width = (painted * 100) + '%';
+    area.textContent = `Målad yta ${fmt(painted * 18.4)} / 18,4 m²`;
+    nav.classList.toggle('solid', section.getBoundingClientRect().bottom < 70);
+  }
+
+  function tick() {
+    current += (target - current) * (reduce ? 1 : .18);
+    const i = Math.round(current);
+    if (i !== lastDrawn) draw(i);
+    requestAnimationFrame(tick);
+  }
+
+  function load(i) {
+    return new Promise(res => {
+      const img = new Image();
+      img.decoding = 'async';
+      img.onload = img.onerror = () => {
+        loaded++;
+        loader.textContent = `Laddar bildrutor ${Math.round(loaded / FRAME_COUNT * 100)} %`;
+        if (loaded === FRAME_COUNT) loader.hidden = true;
+        if (Math.abs(i - target) < 2) lastDrawn = -1;
+        res();
+      };
+      img.src = src(i);
+      frames[i] = img;
+    });
+  }
+
+  const loader = document.getElementById('loader');
+  size();
+  addEventListener('resize', () => { size(); onScroll(); });
+  addEventListener('scroll', onScroll, { passive: true });
+  fetch('frames/manifest.json').then(r => r.json()).then(m => { if (m.count > 0) FRAME_COUNT = m.count; })
+    .catch(() => {}).then(() => { frames = new Array(FRAME_COUNT); onScroll(); start(); });
+  const start = () => load(0).then(async () => {
+    lastDrawn = -1; requestAnimationFrame(tick);
+    // förladda resten i små parallella grupper
+    for (let i = 1; i < FRAME_COUNT; i += 6) {
+      await Promise.all(Array.from({ length: 6 }, (_, k) => i + k).filter(k => k < FRAME_COUNT).map(load));
+    }
+  });
+
+  /* ---------- Kulörväljare ---------- */
+  const preview = document.getElementById('preview');
+  document.getElementById('swatches').addEventListener('click', e => {
+    const b = e.target.closest('.sw'); if (!b) return;
+    document.querySelectorAll('.sw').forEach(x => x.setAttribute('aria-pressed', x === b));
+    preview.style.setProperty('--sw', getComputedStyle(b).getPropertyValue('--c'));
+    document.getElementById('swName').textContent = b.dataset.name;
+    document.getElementById('swCode').textContent = b.dataset.code;
+  });
+
+  /* ---------- ROT-kalkylator ---------- */
+  const kr = n => Math.round(n).toLocaleString('sv-SE') + ' kr';
+  let owners = 1;
+  function calc() {
+    const labour = Math.max(0, +document.getElementById('labour').value || 0);
+    const material = Math.max(0, +document.getElementById('material').value || 0);
+    const cap = 50000 * owners;
+    const rot = Math.min(labour * .3, cap);
+    document.getElementById('rLabour').textContent = kr(labour);
+    document.getElementById('rMaterial').textContent = kr(material);
+    document.getElementById('rRot').textContent = '−' + kr(rot);
+    document.getElementById('rTotal').textContent = kr(labour + material - rot);
+    document.getElementById('rFine').textContent = labour * .3 > cap
+      ? `Avdraget är begränsat till taket på ${kr(cap)}. Kontrollera alltid hur mycket av ditt utrymme som återstår hos Skatteverket.`
+      : `Förutsätter att ${owners === 1 ? 'du' : 'ni'} äger bostaden och inte redan använt ROT-utrymmet i år. Kontrollera reglerna hos Skatteverket.`;
+  }
+  ['labour', 'material'].forEach(id => document.getElementById(id).addEventListener('input', calc));
+  document.querySelectorAll('[data-owners]').forEach(b => b.addEventListener('click', () => {
+    owners = +b.dataset.owners;
+    document.querySelectorAll('[data-owners]').forEach(x => x.setAttribute('aria-pressed', x === b));
+    calc();
+  }));
+  calc();
+
+  /* ---------- Offertformulär (demo, skickar inget) ---------- */
+  document.getElementById('quote').addEventListener('submit', e => {
+    e.preventDefault();
+    const f = e.target, sent = document.getElementById('sent');
+    const name = f.elements.name.value.trim(), phone = f.elements.phone.value.trim();
+    if (!name || !phone) {
+      sent.hidden = false;
+      sent.textContent = 'Fyll i namn och telefon så att vi kan ringa upp dig.';
+      (name ? f.elements.phone : f.elements.name).focus();
+      return;
+    }
+    sent.hidden = false;
+    sent.textContent = `Tack ${name.split(' ')[0]}! Det här är en demosajt, så förfrågan skickades inte. I en riktig version ringer vi upp på ${phone} inom en arbetsdag.`;
+  });
+})();
+</script>

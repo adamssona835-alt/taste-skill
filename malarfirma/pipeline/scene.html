@@ -1,0 +1,356 @@
+<!doctype html>
+<!--
+  Ersättare för steg 1–2 i Nick Saraevs workflow (Nano Banana 2 → Kling).
+  Ritar en deterministisk "transition"-scen: ett slitet, spacklat rum som
+  rollas om i skogsgrönt. render-frames.mjs anropar window.renderFrame(t)
+  för t = 0..1 och sparar varje bildruta som PNG, som sedan blir en MP4.
+  Byt mot en riktig Kling-video när du har en – resten av pipelinen är samma.
+-->
+<html>
+<head>
+<meta charset="utf-8">
+<style>html,body{margin:0;background:#000}canvas{display:block}</style>
+</head>
+<body>
+<canvas id="c" width="1920" height="1080"></canvas>
+<script>
+const W = 1920, H = 1080;
+const cv = document.getElementById('c');
+const ctx = cv.getContext('2d');
+
+function rng(seed) {
+  return function () {
+    seed |= 0; seed = seed + 0x6D2B79F5 | 0;
+    let t = Math.imul(seed ^ seed >>> 15, 1 | seed);
+    t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+    return ((t ^ t >>> 14) >>> 0) / 4294967296;
+  };
+}
+const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
+const ease = x => x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2;
+const smooth = (a, b, x) => { const t = clamp((x - a) / (b - a)); return t * t * (3 - 2 * t); };
+function mk(w, h) { const c = document.createElement('canvas'); c.width = w; c.height = h; return c; }
+
+// Geometri (scenkoordinater, före kamerazoom)
+const WALL = { x: 0, y: 0, w: W, h: 800 };
+const WIN = { x: 1270, y: 150, w: 420, h: 520 };
+const SKIRT = 46;
+const STRIPS = 10;
+const PAINT_START = .08, PAINT_END = .84;
+
+// ---------- Texturer ----------
+function oldWallTexture() {
+  const c = mk(W, WALL.h), g = c.getContext('2d'), r = rng(7);
+  g.fillStyle = '#b3aea4'; g.fillRect(0, 0, W, WALL.h);
+  for (let i = 0; i < 900; i++) {
+    const x = r() * W, y = r() * WALL.h, rad = 20 + r() * 160;
+    const grd = g.createRadialGradient(x, y, 0, x, y, rad);
+    const dark = r() < .55;
+    grd.addColorStop(0, dark ? 'rgba(90,82,70,.07)' : 'rgba(230,226,216,.08)');
+    grd.addColorStop(1, 'rgba(0,0,0,0)');
+    g.fillStyle = grd; g.fillRect(x - rad, y - rad, rad * 2, rad * 2);
+  }
+  // fuktfläck
+  for (let i = 0; i < 6; i++) {
+    const grd = g.createRadialGradient(420, 120, 10 + i * 30, 420, 120, 60 + i * 45);
+    grd.addColorStop(0, 'rgba(0,0,0,0)');
+    grd.addColorStop(.9, 'rgba(120,96,60,.06)');
+    grd.addColorStop(1, 'rgba(0,0,0,0)');
+    g.fillStyle = grd; g.fillRect(0, 0, 900, 600);
+  }
+  // spacklade lagningar
+  for (let i = 0; i < 14; i++) {
+    const x = 120 + r() * 1050, y = 120 + r() * 560, rad = 14 + r() * 34;
+    const blobs = 4 + Math.floor(r() * 5);
+    for (let k = 0; k < blobs; k++) {
+      const bx = x + (r() - .5) * rad * 1.6, by = y + (r() - .5) * rad * .8, br = rad * (.4 + r() * .6);
+      const grd = g.createRadialGradient(bx, by, 0, bx, by, br);
+      grd.addColorStop(0, 'rgba(232,229,221,.42)'); grd.addColorStop(.7, 'rgba(232,229,221,.26)'); grd.addColorStop(1, 'rgba(232,229,221,0)');
+      g.fillStyle = grd; g.fillRect(bx - br, by - br, br * 2, br * 2);
+    }
+  }
+  // sprickor
+  g.strokeStyle = 'rgba(60,52,44,.45)'; g.lineWidth = 1.4;
+  for (let k = 0; k < 4; k++) {
+    let x = 200 + r() * 900, y = 60 + r() * 300;
+    g.beginPath(); g.moveTo(x, y);
+    for (let i = 0; i < 16; i++) { x += (r() - .5) * 26; y += 6 + r() * 16; g.lineTo(x, y); }
+    g.stroke();
+  }
+  // brus
+  const id = g.getImageData(0, 0, W, WALL.h), d = id.data;
+  for (let i = 0; i < d.length; i += 4) { const n = (r() - .5) * 14; d[i] += n; d[i + 1] += n; d[i + 2] += n; }
+  g.putImageData(id, 0, 0);
+  return c;
+}
+
+function newPaintTexture() {
+  const c = mk(W, WALL.h), g = c.getContext('2d'), r = rng(19);
+  g.fillStyle = '#244a3b'; g.fillRect(0, 0, W, WALL.h);
+  // rollerstruktur: vertikala, mjuka band
+  for (let i = 0; i < 260; i++) {
+    const x = r() * W, w = 30 + r() * 90;
+    g.fillStyle = r() < .5 ? 'rgba(255,255,255,.008)' : 'rgba(0,0,0,.012)';
+    g.fillRect(x, 0, w, WALL.h);
+  }
+  const id = g.getImageData(0, 0, W, WALL.h), d = id.data;
+  for (let i = 0; i < d.length; i += 4) { const n = (r() - .5) * 9; d[i] += n; d[i + 1] += n; d[i + 2] += n; }
+  g.putImageData(id, 0, 0);
+  return c;
+}
+
+function floorTexture() {
+  const fh = H - WALL.h + 200;
+  const c = mk(W, fh), g = c.getContext('2d'), r = rng(31);
+  const plank = 54;
+  for (let y = 0; y < fh; y += plank) {
+    let x = -r() * 400;
+    while (x < W) {
+      const len = 380 + r() * 520;
+      const l = 58 + r() * 10;
+      g.fillStyle = `hsl(${30 + r() * 6},${32 + r() * 8}%,${l}%)`;
+      g.fillRect(x, y, len, plank);
+      g.strokeStyle = 'rgba(80,55,30,.08)';
+      for (let k = 0; k < 7; k++) {
+        const yy = y + 6 + r() * (plank - 12);
+        g.beginPath(); g.moveTo(x, yy);
+        g.bezierCurveTo(x + len * .3, yy + (r() - .5) * 6, x + len * .7, yy + (r() - .5) * 6, x + len, yy);
+        g.stroke();
+      }
+      g.fillStyle = 'rgba(60,40,20,.35)'; g.fillRect(x + len - 1, y, 2, plank);
+      x += len;
+    }
+    g.fillStyle = 'rgba(60,40,20,.3)'; g.fillRect(0, y + plank - 1, W, 2);
+  }
+  return c;
+}
+
+const OLD = oldWallTexture(), NEW = newPaintTexture(), FLOOR = floorTexture();
+
+// ---------- Målade områden ----------
+function stripPath(g, i, from, to) {
+  const sw = W / STRIPS, x0 = i * sw - 10, x1 = (i + 1) * sw + 10;
+  g.moveTo(x0 + Math.sin(from * .02 + i) * 5, from);
+  for (let y = from; y <= to; y += 20) g.lineTo(x1 + Math.sin(y * .018 + i * 2.1) * 6, y);
+  g.lineTo(x1 + Math.sin(to * .018 + i * 2.1) * 6, to);
+  for (let y = to; y >= from; y -= 20) g.lineTo(x0 + Math.sin(y * .02 + i) * 5, y);
+  g.closePath();
+}
+
+function paintState(t) {
+  const p = clamp((t - PAINT_START) / (PAINT_END - PAINT_START)) * STRIPS;
+  const idx = Math.min(STRIPS - 1, Math.floor(p));
+  const local = p >= STRIPS ? 1 : ease(p - idx);
+  return { p, idx, local };
+}
+
+function drawWall(t) {
+  ctx.drawImage(OLD, WALL.x, WALL.y);
+  const { p, idx, local } = paintState(t);
+  const top = WALL.y - 20, bot = WALL.y + WALL.h - SKIRT + 4, span = bot - top;
+  ctx.save();
+  ctx.beginPath();
+  for (let i = 0; i < STRIPS; i++) {
+    if (i < idx || p >= STRIPS) stripPath(ctx, i, top, bot);
+    else if (i === idx && p > 0) {
+      const down = i % 2 === 0;
+      const edge = top + span * local;
+      if (down) stripPath(ctx, i, top, edge); else stripPath(ctx, i, bot - span * local, bot);
+    }
+  }
+  ctx.clip();
+  ctx.drawImage(NEW, WALL.x, WALL.y);
+  // våt glans på de senaste dragen
+  for (let i = Math.max(0, idx - 2); i <= idx; i++) {
+    const age = p - i;
+    const a = clamp(.16 - age * .05, 0, .16);
+    if (a <= 0) continue;
+    const sw = W / STRIPS;
+    const grd = ctx.createLinearGradient(i * sw, 0, (i + 1) * sw, 0);
+    grd.addColorStop(0, 'rgba(255,255,255,0)');
+    grd.addColorStop(.5, `rgba(220,255,235,${a})`);
+    grd.addColorStop(1, 'rgba(255,255,255,0)');
+    ctx.fillStyle = grd; ctx.fillRect(i * sw - 10, top, sw + 20, span);
+  }
+  ctx.restore();
+  return { idx, local, p, top, span };
+}
+
+function drawWindow(t) {
+  const { x, y, w, h } = WIN;
+  // nisch-skugga
+  ctx.fillStyle = 'rgba(0,0,0,.22)'; ctx.fillRect(x - 8, y - 6, w + 22, h + 22);
+  // himmel
+  const sky = ctx.createLinearGradient(0, y, 0, y + h);
+  sky.addColorStop(0, '#cfe0ea'); sky.addColorStop(.7, '#eef2ee'); sky.addColorStop(1, '#f8f4ea');
+  ctx.fillStyle = sky; ctx.fillRect(x, y, w, h);
+  // träd i fjärran
+  ctx.fillStyle = 'rgba(80,110,90,.35)';
+  ctx.beginPath(); ctx.moveTo(x, y + h * .78);
+  for (let i = 0; i <= 40; i++) ctx.lineTo(x + w * i / 40, y + h * (.72 - (Math.sin(i * .45) * .5 + .5) * .06 - (Math.sin(i * 1.3 + 1) * .5 + .5) * .03));
+  ctx.lineTo(x + w, y + h); ctx.lineTo(x, y + h); ctx.fill();
+  // karm och spröjs
+  ctx.fillStyle = '#f1f0eb';
+  const f = 26;
+  ctx.fillRect(x - f, y - f, w + 2 * f, f);
+  ctx.fillRect(x - f, y + h, w + 2 * f, f + 8);
+  ctx.fillRect(x - f, y - f, f, h + 2 * f);
+  ctx.fillRect(x + w, y - f, f, h + 2 * f);
+  ctx.fillRect(x + w / 2 - 7, y, 14, h);
+  ctx.fillRect(x, y + h * .42 - 7, w, 14);
+  ctx.fillStyle = 'rgba(0,0,0,.08)';
+  ctx.fillRect(x, y, w, 6); ctx.fillRect(x, y, 6, h);
+  // fönsterbänk
+  ctx.fillStyle = '#e9e7e0'; ctx.fillRect(x - f - 18, y + h + f + 8, w + 2 * f + 36, 16);
+  ctx.fillStyle = 'rgba(0,0,0,.18)'; ctx.fillRect(x - f - 18, y + h + f + 24, w + 2 * f + 36, 6);
+  // maskeringstejp
+  const tapeA = 1 - smooth(.88, .95, t);
+  if (tapeA > 0) {
+    ctx.fillStyle = `rgba(222,200,120,${.92 * tapeA})`;
+    ctx.fillRect(x - f - 8, y - f - 8, w + 2 * f + 16, 10);
+    ctx.fillRect(x - f - 8, y - f - 8, 10, h + 2 * f + 16);
+    ctx.fillRect(x + w + f - 2, y - f - 8, 10, h + 2 * f + 16);
+  }
+}
+
+function drawSkirting(t) {
+  const y = WALL.y + WALL.h - SKIRT;
+  ctx.fillStyle = '#efeee8'; ctx.fillRect(0, y, W, SKIRT);
+  ctx.fillStyle = 'rgba(0,0,0,.12)'; ctx.fillRect(0, y, W, 3);
+  ctx.fillStyle = 'rgba(0,0,0,.2)'; ctx.fillRect(0, y + SKIRT - 4, W, 4);
+  const tapeA = 1 - smooth(.88, .95, t);
+  if (tapeA > 0) { ctx.fillStyle = `rgba(222,200,120,${.92 * tapeA})`; ctx.fillRect(0, y - 4, W, 10); }
+}
+
+function drawFloor() {
+  ctx.drawImage(FLOOR, 0, WALL.y + WALL.h);
+  const grd = ctx.createLinearGradient(0, WALL.h, 0, WALL.h + 60);
+  grd.addColorStop(0, 'rgba(0,0,0,.35)'); grd.addColorStop(1, 'rgba(0,0,0,0)');
+  ctx.fillStyle = grd; ctx.fillRect(0, WALL.h, W, 60);
+}
+
+function drawDropCloth(t) {
+  const out = smooth(.9, 1, t);
+  ctx.save();
+  ctx.translate(0, out * 30);
+  ctx.globalAlpha = 1 - out * .0;
+  ctx.fillStyle = '#d9d7d0';
+  ctx.beginPath();
+  ctx.moveTo(-20, 836); ctx.bezierCurveTo(300, 826, 600, 846, 980, 838);
+  ctx.bezierCurveTo(1060, 900, 1020, 1000, 1110, 1100);
+  ctx.lineTo(-20, 1100); ctx.closePath(); ctx.fill();
+  ctx.strokeStyle = 'rgba(0,0,0,.05)'; ctx.lineWidth = 26; ctx.lineCap = 'round';
+  [[560, 850, 520, 1090], [820, 846, 900, 1090]].forEach(([a, b, c, d]) => {
+    ctx.beginPath(); ctx.moveTo(a, b); ctx.bezierCurveTo(a + 30, b + 90, c - 30, d - 90, c, d); ctx.stroke();
+  });
+  ctx.strokeStyle = 'rgba(255,255,255,.25)'; ctx.lineWidth = 8;
+  [[575, 850, 535, 1090], [835, 846, 915, 1090]].forEach(([a, b, c, d]) => {
+    ctx.beginPath(); ctx.moveTo(a, b); ctx.bezierCurveTo(a + 30, b + 90, c - 30, d - 90, c, d); ctx.stroke();
+  });
+  // färgdroppar på duken
+  const { p } = paintState(t);
+  const r = rng(77);
+  for (let i = 0; i < 24; i++) {
+    const x = r() * 950, y = 870 + r() * 200, rr = 2 + r() * 5;
+    if (x / W * STRIPS < p - .5) { ctx.fillStyle = 'rgba(36,74,59,.85)'; ctx.beginPath(); ctx.arc(x, y, rr, 0, 7); ctx.fill(); }
+  }
+  ctx.restore();
+}
+
+function drawBucket(t) {
+  const x = 330, y = 900;
+  ctx.fillStyle = 'rgba(0,0,0,.25)';
+  ctx.beginPath(); ctx.ellipse(x, y + 120, 120, 22, 0, 0, 7); ctx.fill();
+  const body = ctx.createLinearGradient(x - 100, 0, x + 100, 0);
+  body.addColorStop(0, '#c9ccc9'); body.addColorStop(.45, '#f4f5f3'); body.addColorStop(1, '#a9aca9');
+  ctx.fillStyle = body;
+  ctx.beginPath(); ctx.moveTo(x - 100, y); ctx.lineTo(x - 88, y + 118); ctx.lineTo(x + 88, y + 118); ctx.lineTo(x + 100, y); ctx.closePath(); ctx.fill();
+  ctx.fillStyle = '#244a3b'; ctx.beginPath(); ctx.ellipse(x, y, 100, 20, 0, 0, 7); ctx.fill();
+  ctx.strokeStyle = '#8f938f'; ctx.lineWidth = 6; ctx.beginPath(); ctx.ellipse(x, y, 100, 20, 0, 0, 7); ctx.stroke();
+  ctx.fillStyle = '#e4572e'; ctx.fillRect(x - 70, y + 40, 140, 44);
+  ctx.fillStyle = '#fff'; ctx.font = '600 20px sans-serif'; ctx.textAlign = 'center';
+  ctx.fillText('SKOGSGRÖN', x, y + 69);
+}
+
+function drawRoller(state, t) {
+  const { idx, local, p, top, span } = state;
+  let rx, ry, a = 1;
+  const sw = W / STRIPS;
+  if (t < PAINT_START) { // rollern glider in
+    const k = ease(clamp(t / PAINT_START));
+    rx = sw * .5 - 300 * (1 - k); ry = top + 60 + 500 * (1 - k); a = k;
+  } else if (p >= STRIPS) { // ut ur bild
+    const k = ease(clamp((t - PAINT_END) / .06));
+    rx = W - sw * .5 + 500 * k; ry = top + span * (STRIPS % 2 ? 1 : 0) - 80 * k; a = 1 - k;
+  } else {
+    rx = idx * sw + sw * .5;
+    const down = idx % 2 === 0;
+    ry = down ? top + span * local : top + span * (1 - local);
+    ry = clamp(ry, top + 70, top + span - 70);
+  }
+  if (a <= 0) return;
+  ctx.save(); ctx.globalAlpha = a; ctx.translate(rx, ry);
+  ctx.rotate(-.04);
+  // skaft
+  ctx.strokeStyle = '#3a3a38'; ctx.lineWidth = 10; ctx.lineCap = 'round';
+  ctx.beginPath(); ctx.moveTo(0, 50); ctx.lineTo(0, 80); ctx.lineTo(80, 150); ctx.lineTo(260, 820); ctx.stroke();
+  ctx.strokeStyle = '#e4572e'; ctx.lineWidth = 30;
+  ctx.beginPath(); ctx.moveTo(130, 330); ctx.lineTo(260, 820); ctx.stroke();
+  // bygel
+  ctx.strokeStyle = '#9a9c98'; ctx.lineWidth = 8;
+  ctx.beginPath(); ctx.moveTo(-sw * .55, 0); ctx.lineTo(-sw * .55 - 14, 0); ctx.lineTo(-sw * .55 - 14, 50); ctx.lineTo(0, 50); ctx.stroke();
+  // cylinder
+  const rw = sw * 1.1, rh = 64;
+  const grd = ctx.createLinearGradient(0, -rh / 2, 0, rh / 2);
+  grd.addColorStop(0, '#2f5b4a'); grd.addColorStop(.35, '#3f7260'); grd.addColorStop(1, '#16332a');
+  ctx.fillStyle = grd;
+  ctx.beginPath(); ctx.roundRect(-rw / 2, -rh / 2, rw, rh, 26); ctx.fill();
+  ctx.fillStyle = 'rgba(255,255,255,.12)';
+  ctx.fillRect(-rw / 2 + 20, -rh / 2 + 10, rw - 40, 6);
+  ctx.restore();
+}
+
+function lighting(t) {
+  // ljuskägla från fönstret
+  ctx.save();
+  ctx.globalCompositeOperation = 'soft-light';
+  const g = ctx.createLinearGradient(WIN.x + WIN.w, 0, 300, H);
+  g.addColorStop(0, 'rgba(255,240,210,.55)'); g.addColorStop(1, 'rgba(255,240,210,0)');
+  ctx.fillStyle = g;
+  ctx.beginPath(); ctx.moveTo(WIN.x, WIN.y + WIN.h); ctx.lineTo(WIN.x + WIN.w, WIN.y + WIN.h);
+  ctx.lineTo(1100, H); ctx.lineTo(260, H); ctx.closePath(); ctx.fill();
+  ctx.restore();
+  // takskugga
+  const cs = ctx.createLinearGradient(0, 0, 0, 160);
+  cs.addColorStop(0, 'rgba(0,0,0,.35)'); cs.addColorStop(1, 'rgba(0,0,0,0)');
+  ctx.fillStyle = cs; ctx.fillRect(0, 0, W, 160);
+  // varmare slutton
+  const warm = smooth(.86, 1, t);
+  ctx.fillStyle = `rgba(255,214,160,${.06 * warm})`; ctx.fillRect(0, 0, W, H);
+  // vinjett
+  const v = ctx.createRadialGradient(W / 2, H * .45, H * .35, W / 2, H * .5, H * 1.05);
+  v.addColorStop(0, 'rgba(0,0,0,0)'); v.addColorStop(1, 'rgba(0,0,0,.42)');
+  ctx.fillStyle = v; ctx.fillRect(0, 0, W, H);
+}
+
+window.renderFrame = function (t) {
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
+  ctx.fillStyle = '#000'; ctx.fillRect(0, 0, W, H);
+  // kamera: långsam inzoomning mot mitten
+  const z = 1.0 + .07 * ease(t);
+  const cx = W * .5, cy = H * .48;
+  ctx.setTransform(z, 0, 0, z, cx - cx * z, cy - cy * z);
+  const s = drawWall(t);
+  drawWindow(t);
+  drawSkirting(t);
+  drawFloor();
+  drawDropCloth(t);
+  drawBucket(t);
+  drawRoller(s, t);
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
+  lighting(t);
+};
+window.renderFrame(0);
+</script>
+</body>
+</html>
