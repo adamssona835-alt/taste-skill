@@ -1,6 +1,6 @@
 # Next Lesson Plan
 
-Status: replaced
+Status: approved (owner said yes to white-desert.com on 2026-10-08)
 Lesson: 003
 Date: 2026-10-08 (morning run 07:52 Europe/Stockholm)
 Planned: 2026-10-08 00:30, replaced 2026-10-08 00:50
