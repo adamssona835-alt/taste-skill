@@ -6,6 +6,18 @@ The reference for "quality" is [`skills/particle-morph-skill`](../skills/particl
 
 ---
 
+## 0. Evening Plan (23:55, Europe/Stockholm)
+
+The night before each lesson, a separate routine picks tomorrow's site so the owner can veto it.
+
+1. Pick the site exactly as section 1 describes (area rule, recency, reproducible, not already covered). Do a quick capture (`capture-site.mjs`) to prove it renders headless; if it does not, pick another.
+2. Write [`NEXT.md`](NEXT.md): date of the lesson, lesson number, site URL, where it was found (award page link), area, the technique to learn, why it qualifies, the planned demo concept (invented brand), the step-by-step plan for the morning, and a backup site. Set `Status: pending`.
+3. Commit as `Plan for lesson NNN: <site>` and push to the working branch.
+4. Send the owner a push notification in Swedish with the site link, technique and area, and say that silence means approved. End the turn with the full plan in Swedish.
+5. If the owner rejects it before the morning run, pick another site (the backup if it still fits), update `NEXT.md` (`Status: replaced`, reason), push, and notify again. If the owner approves or says nothing, the morning run uses it.
+
+In the morning, section 1 is replaced by `NEXT.md` when its date is today and its status is not `rejected`: use that site and that plan. If `NEXT.md` is missing, stale, or rejected without a replacement, find a site as usual.
+
 ## 1. Find the Source (Autonomous)
 
 1. Read the index in [`README.md`](README.md). Note the **areas** used in the last three lessons; today's area must differ from all three.
@@ -64,7 +76,7 @@ Record the total (out of 40) in the index row.
 
 ## 5. Commit
 
-One commit per day, message `Lesson NNN: <technique> (<area>)`, pushed to the working branch. No pull requests unless the owner asks.
+One lesson commit per day, message `Lesson NNN: <technique> (<area>)`, pushed to the working branch (plus the evening `Plan for lesson NNN` commit). After the lesson ships, set `NEXT.md` to `Status: done` in the same commit. No pull requests unless the owner asks.
 
 ## 6. Improve the Protocol
 
