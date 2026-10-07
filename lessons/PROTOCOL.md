@@ -74,3 +74,4 @@ If today taught something about *how* to run these lessons (a better capture tri
 
 - 2026-10-07: Awwwards resets headless connections; direct site capture works for most studios. Heavy WebGL sites may time out a few screenshots under SwiftShader; the capture script keeps going and logs which ones.
 - 2026-10-07: A section parked mid-morph looked like noise in screenshots. Always check every scroll stop, not only the hero.
+- 2026-10-07: Match `playwright-core` to `/opt/pw-browsers` (chromium-1194 = `@1.56.1`) or capture fails on ffmpeg; Chromium needs `<-loopback>` in the proxy bypass (now in verify-demo); and verify-demo never toggles theme or hovers, so screenshot dark mode and hover states yourself (lesson 002's worst flaw only showed in dark mode).

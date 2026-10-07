@@ -1,0 +1,661 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Halvard · Venture studio for climate hardware</title>
+<link rel="icon" href="data:,">
+<meta name="description" content="Halvard co-founds companies that build heavy, physical climate technology. Oslo and Austin.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,300..700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script>
+  // Theme before first paint: stored choice, else the OS preference.
+  (function () {
+    var t = null;
+    try { t = localStorage.getItem('halvard-theme'); } catch (e) {}
+    if (!t) t = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    document.documentElement.dataset.theme = t;
+  })();
+</script>
+<style>
+  :root {
+    --paper: #F3F2EE;
+    --ink: #151515;
+    --mute: #5C5B57;
+    --tile: #DAD9D4;
+    --flat: #CDCBC4;
+    --accent: #FF5A2B;
+    --on-accent: #151515;
+    --rule: var(--ink);
+    --header: 60px;
+    --pad: clamp(16px, 1.6vw, 24px);
+    --sans: 'Archivo', 'Helvetica Neue', Arial, sans-serif;
+    --mono: 'IBM Plex Mono', ui-monospace, Menlo, monospace;
+    color-scheme: light;
+  }
+  [data-theme="dark"] {
+    --paper: #111110;
+    --ink: #ECEBE6;
+    --mute: #A3A29C;
+    --tile: #1E1E1C;
+    --flat: #2D2C29;
+    --accent: #FF6A3D;
+    --on-accent: #111110;
+    color-scheme: dark;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; scroll-padding-top: var(--header); }
+  body {
+    margin: 0; background: var(--paper); color: var(--ink);
+    font: 400 16px/1.45 var(--sans); font-stretch: 100%;
+    -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility;
+  }
+  a { color: inherit; }
+  img, svg, canvas { display: block; }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+  .skip { position: absolute; left: 8px; top: -60px; z-index: 50; padding: 10px 14px; background: var(--ink); color: var(--paper); font: 500 12px var(--mono); text-transform: uppercase; letter-spacing: .06em; }
+  .skip:focus { top: 8px; }
+
+  /* ---------- Hairline grid: gap on an ink background, never borders ---------- */
+  .g { display: grid; gap: 1px; background: var(--rule); border-bottom: 1px solid var(--rule); }
+  .g > * { background: var(--paper); min-width: 0; }
+  .g .g { border-bottom: 0; }
+
+  .label {
+    font: 500 12px/1.3 var(--mono); letter-spacing: .06em; text-transform: uppercase;
+    display: inline-flex; align-items: center; gap: 10px; margin: 0;
+  }
+  .label::before { content: ''; width: 7px; height: 7px; background: currentColor; flex: none; }
+  .bullets { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+  .bullets li { font: 400 12.5px/1.3 var(--mono); letter-spacing: .05em; text-transform: uppercase; display: flex; gap: 10px; }
+  .bullets li::before { content: ''; width: 7px; height: 7px; margin-top: 3px; background: var(--accent); flex: none; }
+
+  /* ---------- Header ---------- */
+  .top {
+    position: sticky; top: 0; z-index: 20; height: var(--header);
+    grid-template-columns: var(--header) 1fr auto auto minmax(160px, 15vw);
+  }
+  .top > * { display: flex; align-items: center; padding: 0 var(--pad); }
+  .mark { justify-content: center; padding: 0; background: var(--ink) !important; color: var(--paper); }
+  .clocks { gap: 28px; font: 400 14px var(--sans); }
+  .clocks span:first-child { color: var(--mute); margin-right: 6px; font: 500 11px var(--mono); letter-spacing: .06em; }
+  .nav { gap: 22px; }
+  .nav a { text-decoration: none; font-size: 15px; }
+  .nav a:hover { text-decoration: underline; text-underline-offset: 4px; text-decoration-thickness: 1px; }
+  .theme {
+    appearance: none; border: 0; background: var(--paper); color: var(--ink); cursor: pointer;
+    display: flex; align-items: center; gap: 0; padding: 0 var(--pad);
+  }
+  .theme span { width: 12px; height: 12px; border-radius: 50%; border: 1.5px solid currentColor; }
+  .theme span + span { margin-left: -3px; background: currentColor; }
+  .cta-top {
+    justify-content: space-between; text-decoration: none; background: var(--ink) !important; color: var(--paper);
+    font-size: 15px;
+  }
+  .cta-top:hover { background: var(--accent) !important; color: var(--on-accent); }
+
+  /* ---------- Dither tile ---------- */
+  .dither {
+    position: relative; overflow: hidden; isolation: isolate;
+    /* No-JS / no-canvas fallback: a fading CSS halftone in the same colors */
+    background:
+      linear-gradient(to bottom, var(--paper) 0%, transparent 70%),
+      radial-gradient(circle, var(--ink) 0.8px, transparent 1.2px) 0 0 / 3px 3px;
+    background-color: var(--paper);
+    color: var(--ink);
+  }
+  .dither canvas {
+    position: absolute; left: 0; top: 0; z-index: -1;
+    image-rendering: crisp-edges; image-rendering: pixelated; /* Firefox reads the first, Chromium and Safari the second */
+  }
+  .dither .flat { position: absolute; inset: 0; width: 100%; height: 100%; fill: var(--flat); pointer-events: none; }
+  .dither .tag {
+    position: absolute; left: var(--pad); bottom: var(--pad);
+    background: var(--paper); padding: 6px 8px;
+  }
+
+  /* ---------- Hero ---------- */
+  .hero { grid-template-columns: 1fr 1fr; grid-template-rows: minmax(400px, calc(54vh - 30px)) minmax(380px, calc(46vh - 30px)); }
+  .hero__word { display: flex; flex-direction: column; justify-content: space-between; padding: var(--pad); }
+  .wordmark {
+    margin: 0; font-weight: 400; font-stretch: 92%;
+    font-size: clamp(88px, 14.2vw, 224px); line-height: .78; letter-spacing: -.055em;
+    margin-left: -.04em; padding-bottom: .1em;
+  }
+  .hero__split { grid-template-columns: 1fr 1fr; }
+  .cell { padding: var(--pad); display: flex; flex-direction: column; justify-content: space-between; gap: 28px; }
+  .cell--ink { background: var(--ink) !important; color: var(--paper); }
+  .cell--accent { background: var(--accent) !important; color: var(--on-accent); }
+  .cell--tile { background: var(--tile) !important; }
+  .lede { margin: 0; font-size: clamp(19px, 1.65vw, 24px); line-height: 1.18; letter-spacing: -.012em; max-width: 26ch; }
+  .btn {
+    display: flex; align-items: center; justify-content: space-between; gap: 24px;
+    padding: 12px 14px; text-decoration: none; font: 500 12px var(--mono); letter-spacing: .08em; text-transform: uppercase;
+    border: 1px solid currentColor; transition: background-color .16s, color .16s;
+  }
+  .cell--ink .btn:hover { background: var(--paper); color: var(--ink); }
+  .btn--solid { background: var(--ink); color: var(--paper); border-color: var(--ink); align-self: flex-start; }
+  .btn--solid:hover { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
+  .arrow { width: 14px; height: 14px; flex: none; }
+  .origins { margin: 0; padding: 0; list-style: none; font: 500 12px/1.7 var(--mono); letter-spacing: .06em; text-transform: uppercase; }
+
+  /* ---------- Programs ---------- */
+  .programs { grid-template-columns: 1fr 1fr; }
+  .programs__intro { padding: 0; }
+  .programs__sticky { position: sticky; top: var(--header); padding: var(--pad); min-height: calc(100vh - var(--header)); display: flex; flex-direction: column; justify-content: space-between; gap: 40px; }
+  .display {
+    margin: 0; text-transform: uppercase; font-weight: 500; font-stretch: 88%;
+    font-size: clamp(48px, 6.6vw, 104px); line-height: .9; letter-spacing: -.035em;
+  }
+  .display span { display: block; }
+  .display .in { padding-left: 1.1em; }
+  .copy { margin: 0; max-width: 40ch; font-size: 17px; line-height: 1.42; }
+  .programs__list { background: var(--ink) !important; color: var(--paper); margin: 0; padding: 0; list-style: none; }
+  .program {
+    display: grid; grid-template-columns: 40px 1fr 1fr; gap: 0 24px; padding: 28px var(--pad) 32px;
+    border-bottom: 1px solid color-mix(in srgb, var(--paper) 22%, transparent);
+  }
+  .program:last-child { border-bottom: 0; }
+  .program__n { font: 400 13px var(--mono); opacity: .6; padding-top: 6px; }
+  .program h3 { margin: 0 0 22px; font-weight: 400; font-size: clamp(26px, 2.6vw, 38px); line-height: 1.02; letter-spacing: -.02em; }
+  .program .dither { width: min(100%, 220px); aspect-ratio: 1; background-color: var(--ink); color: var(--paper);
+    background-image: linear-gradient(to bottom, var(--ink) 0%, transparent 70%), radial-gradient(circle, var(--paper) 0.8px, transparent 1.2px); }
+  .program p { margin: 0 0 28px; font-size: 16px; line-height: 1.4; color: color-mix(in srgb, var(--paper) 86%, transparent); }
+
+  /* ---------- Numbers ---------- */
+  .stats { grid-template-columns: repeat(4, 1fr); }
+  .stat { padding: var(--pad); min-height: 220px; display: flex; flex-direction: column; justify-content: space-between; gap: 32px; }
+  .stat b { font-weight: 400; font-size: clamp(48px, 5.4vw, 84px); line-height: .9; letter-spacing: -.045em; font-stretch: 94%; }
+  .stat small { font: 400 12px/1.35 var(--mono); letter-spacing: .05em; text-transform: uppercase; color: var(--mute); max-width: 22ch; }
+  .stat.cell--ink small { color: color-mix(in srgb, var(--paper) 70%, transparent); }
+  .stat.cell--accent small { color: var(--on-accent); }
+  .band { height: clamp(200px, 26vw, 360px); }
+
+  /* ---------- Portfolio ---------- */
+  .work { grid-template-columns: 1fr 1fr; }
+  .work__left { display: grid; grid-template-rows: auto 1fr; gap: 1px; background: var(--rule) !important; }
+  .work__left > * { background: var(--paper); }
+  .work__head { padding: var(--pad); display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; min-height: 260px; }
+  .work__head h2 { margin: 0; font-weight: 400; font-size: clamp(64px, 8.6vw, 136px); line-height: .8; letter-spacing: -.05em; font-stretch: 92%; }
+  .work__preview { min-height: 340px; }
+  .rows { list-style: none; margin: 0; padding: 0; display: grid; align-content: start; }
+  .rows li { border-bottom: 1px solid var(--rule); }
+  .rows li:last-child { border-bottom: 0; }
+  .row {
+    display: grid; grid-template-columns: 1fr auto 52px; align-items: center; gap: 16px;
+    padding: 22px var(--pad); min-height: 88px; text-decoration: none;
+    transition: background-color .16s, color .16s;
+  }
+  .row strong { font-weight: 400; font-size: clamp(22px, 2.1vw, 32px); letter-spacing: -.02em; line-height: 1; }
+  .row span { font: 400 12px var(--mono); letter-spacing: .06em; text-transform: uppercase; color: var(--mute); }
+  .row em { font: 400 12px var(--mono); font-style: normal; text-align: right; color: var(--mute); }
+  .row:hover, .row:focus-visible, .row[aria-current="true"] { background: var(--ink); color: var(--paper); outline-offset: -3px; }
+  .row:hover span, .row:hover em, .row:focus-visible span, .row:focus-visible em,
+  .row[aria-current="true"] span, .row[aria-current="true"] em { color: color-mix(in srgb, var(--paper) 72%, transparent); }
+  .rows__note { padding: var(--pad); }
+  .rows__note p { margin: 0; max-width: 46ch; color: var(--mute); font-size: 15px; }
+
+  /* ---------- Contact ---------- */
+  .contact { grid-template-columns: 1fr 1fr; }
+  .contact .cell { min-height: 560px; }
+  .contact h2 { margin: 0; font-weight: 400; font-size: clamp(40px, 4.8vw, 76px); line-height: .96; letter-spacing: -.035em; max-width: 13ch; }
+  .mail { font-size: clamp(22px, 2.2vw, 32px); letter-spacing: -.02em; text-decoration: none; border-bottom: 1.5px solid currentColor; justify-self: start; padding-bottom: 2px; }
+  .mail:hover { border-bottom-width: 3px; }
+  .cell--accent :focus-visible { outline-color: var(--on-accent); }
+  .foot { grid-template-columns: 1fr 1fr 1fr; }
+  .foot > * { padding: 18px var(--pad); font: 400 12px var(--mono); letter-spacing: .06em; text-transform: uppercase; }
+  .foot > :last-child { text-align: right; }
+  .foot a { text-decoration: none; }
+  .foot a:hover { text-decoration: underline; }
+
+  /* ---------- Responsive ---------- */
+  @media (max-width: 1080px) {
+    .program { grid-template-columns: 32px 1fr; }
+    .program > div:last-child { grid-column: 2; padding-top: 24px; }
+    .stats { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 820px) {
+    :root { --header: 56px; }
+    .top { grid-template-columns: var(--header) 1fr auto auto; }
+    .nav, .clocks .clock2 { display: none !important; }
+    .cta-top { padding: 0 16px; gap: 12px; }
+    .hero { grid-template-columns: 1fr; grid-template-rows: auto; }
+    .hero__word { min-height: 52svh; }
+    .wordmark { font-size: 29vw; }
+    .hero__orb, .hero__ridge { aspect-ratio: 5 / 4; }
+    .hero__split { grid-template-columns: 1fr; }
+    .hero__split .cell { min-height: 300px; }
+    .programs, .work, .contact { grid-template-columns: 1fr; }
+    .programs__sticky { position: static; min-height: 0; padding-bottom: 32px; }
+    .program { padding: 24px 16px 28px; }
+    .program .dither { width: min(100%, 260px); }
+    .stat { min-height: 160px; }
+    .work__head { min-height: 180px; }
+    .work__preview { min-height: 0; aspect-ratio: 4 / 3; }
+    .row { grid-template-columns: 1fr 44px; min-height: 76px; }
+    .row span { grid-column: 1; grid-row: 2; margin-top: -6px; }
+    .row em { grid-column: 2; grid-row: 1 / 3; }
+    .contact .cell { min-height: 420px; }
+    .contact .dither { aspect-ratio: 1; }
+    .foot { grid-template-columns: 1fr 1fr; }
+    .foot > :nth-child(2) { display: none; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; scroll-behavior: auto !important; }
+  }
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="g top">
+  <a class="mark" href="#top" aria-label="Halvard, home">
+    <svg width="26" height="26" viewBox="0 0 26 26" aria-hidden="true"><path d="M5 23 L11 3 H14 L8 23Z M13 23 L19 3 H22 L16 23Z M6.5 14 H19.5 V16.5 H6.5Z" fill="currentColor"/></svg>
+  </a>
+  <div class="clocks" aria-label="Studio local times">
+    <p class="clock1" style="margin:0"><span>OSL</span><time data-tz="Europe/Oslo">--:--</time></p>
+    <p class="clock2" style="margin:0"><span>AUS</span><time data-tz="America/Chicago">--:--</time></p>
+  </div>
+  <nav class="nav" aria-label="Primary">
+    <a href="#programs">Programs</a><a href="#numbers">Numbers</a><a href="#portfolio">Portfolio</a><a href="#contact">Contact</a>
+  </nav>
+  <button class="theme" type="button" aria-label="Dark theme" aria-pressed="false"><span></span><span></span></button>
+  <a class="cta-top" href="#contact">Pitch us <svg class="arrow" viewBox="0 0 14 14" aria-hidden="true"><path d="M1 7h11M7.5 2.5 12 7l-4.5 4.5" fill="none" stroke="currentColor" stroke-width="1.4"/></svg></a>
+</header>
+
+<main id="main">
+  <section class="g hero" id="top" aria-label="Introduction">
+    <div class="hero__word">
+      <p class="label">Venture studio for climate hardware</p>
+      <h1 class="wordmark">Halvard</h1>
+    </div>
+    <div class="dither hero__orb" data-field="orb">
+      <svg class="flat" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><path d="M8 0 H22 C30 30 34 62 31 100 H19 C21 64 17 30 8 0Z"/></svg>
+    </div>
+    <div class="dither hero__ridge" data-field="ridge"></div>
+    <div class="g hero__split">
+      <div class="cell cell--ink">
+        <p class="lede">We co-found companies that build heavy, physical climate technology: grid storage, low-carbon steel, ocean sensing.</p>
+        <a class="btn" href="#contact">Bring a hard problem <svg class="arrow" viewBox="0 0 14 14" aria-hidden="true"><path d="M1 7h11M7.5 2.5 12 7l-4.5 4.5" fill="none" stroke="currentColor" stroke-width="1.4"/></svg></a>
+      </div>
+      <div class="cell cell--accent">
+        <p class="lede">Most climate startups die in the factory, not the lab. So that is where we start.</p>
+        <div>
+          <p class="label" style="margin-bottom:12px">Our founders came from</p>
+          <ul class="origins"><li>Nordic grid operators</li><li>Tier-one automotive</li><li>National labs</li><li>Shipyards</li></ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="g programs" id="programs" aria-labelledby="programs-title">
+    <div class="programs__intro cell--tile">
+      <div class="programs__sticky">
+        <p class="label">Programs</p>
+        <h2 class="display" id="programs-title"><span>Built to</span><span class="in">survive</span><span>winter</span></h2>
+        <div style="display:grid;gap:28px">
+          <p class="copy">Three programs, each run by an operator who has shipped the thing before. We put in the first engineers, the first factory floor and the first customer, then step back once the company can carry its own weight.</p>
+          <a class="btn btn--solid" href="#portfolio">See what shipped <svg class="arrow" viewBox="0 0 14 14" aria-hidden="true"><path d="M1 7h11M7.5 2.5 12 7l-4.5 4.5" fill="none" stroke="currentColor" stroke-width="1.4"/></svg></a>
+        </div>
+      </div>
+    </div>
+    <ol class="programs__list">
+      <li class="program">
+        <span class="program__n">01</span>
+        <div><h3>Grid &amp; Storage</h3><div class="dither" data-field="contours"></div></div>
+        <div><p>Long-duration batteries, transformer monitoring and the software that lets a regional grid trust both. We hire from utilities, not from apps.</p>
+          <ul class="bullets"><li>Iron-air and sodium cells</li><li>Substation sensing</li><li>Dispatch software</li></ul></div>
+      </li>
+      <li class="program">
+        <span class="program__n">02</span>
+        <div><h3>Industrial Heat</h3><div class="dither" data-field="orb"></div></div>
+        <div><p>Heat is half of industrial energy use and almost none of the funding. We build heat pumps and thermal stores sized for paper mills and breweries.</p>
+          <ul class="bullets"><li>High-temperature heat pumps</li><li>Thermal brick storage</li><li>Retrofit engineering</li></ul></div>
+      </li>
+      <li class="program">
+        <span class="program__n">03</span>
+        <div><h3>Ocean Sensing</h3><div class="dither" data-field="swell"></div></div>
+        <div><p>Buoys and seabed nodes that measure what offshore wind and aquaculture change. Built to sit in the North Sea for five years without a visit.</p>
+          <ul class="bullets"><li>Low-power acoustic nodes</li><li>Moored buoy platforms</li><li>Open data contracts</li></ul></div>
+      </li>
+    </ol>
+  </section>
+
+  <section class="g stats" id="numbers" aria-label="Numbers">
+    <div class="stat"><b>41</b><small>Companies co-founded since 2014</small></div>
+    <div class="stat"><b>€380M</b><small>Follow-on raised by the portfolio</small></div>
+    <div class="stat cell--ink"><b>11 GWh</b><small>Storage deployed on live grids</small></div>
+    <div class="stat cell--accent"><b>0</b><small>Pitch decks needed to apply</small></div>
+  </section>
+  <div class="g"><div class="dither band" data-field="swell"></div></div>
+
+  <section class="g work" id="portfolio" aria-labelledby="work-title">
+    <div class="work__left">
+      <div class="work__head"><h2 id="work-title">Portfolio</h2><p class="label">Selected</p></div>
+      <div class="dither work__preview" data-field="orb" data-preview>
+        <p class="label tag" data-preview-tag>Vestra Cells · 2019</p>
+      </div>
+    </div>
+    <ul class="rows">
+      <li><a class="row" href="#contact" data-field="orb" aria-current="true"><strong>Vestra Cells</strong><span>Iron-air storage</span><em>2019</em></a></li>
+      <li><a class="row" href="#contact" data-field="contours"><strong>Kolm Steel</strong><span>Hydrogen reduction</span><em>2020</em></a></li>
+      <li><a class="row" href="#contact" data-field="swell"><strong>Brine &amp; Bell</strong><span>Ocean sensing</span><em>2021</em></a></li>
+      <li><a class="row" href="#contact" data-field="dawn"><strong>Skarv Thermal</strong><span>Industrial heat pumps</span><em>2023</em></a></li>
+      <li><a class="row" href="#contact" data-field="ridge"><strong>Tørn Grid</strong><span>Transformer monitoring</span><em>2024</em></a></li>
+      <li class="rows__note"><p>Every company here started as a problem an operator could not stop thinking about. Hover a name to see its working image.</p></li>
+    </ul>
+  </section>
+
+  <section class="g contact" id="contact" aria-labelledby="contact-title">
+    <div class="cell cell--accent">
+      <p class="label">Contact</p>
+      <h2 id="contact-title">Bring us the part that has to work in January.</h2>
+      <div style="display:grid;gap:18px">
+        <a class="mail" href="mailto:build@halvard.example">build@halvard.example</a>
+        <p class="label" style="font-weight:400">Replies within two working days</p>
+      </div>
+    </div>
+    <div class="dither" data-field="dawn">
+      <svg class="flat" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><path d="M74 100 H88 C84 70 86 40 96 0 H84 C74 38 72 70 74 100Z"/></svg>
+    </div>
+  </section>
+
+  <footer class="g foot">
+    <p style="margin:0">Halvard AS · Oslo / Austin</p>
+    <p style="margin:0">Org. 931 204 118</p>
+    <p style="margin:0"><a href="#top">Back to top ↑</a></p>
+  </footer>
+</main>
+
+<script type="module">
+// ===== Dither engine (identical to SKILL.md section 5) =====
+const BAYER = [
+   0, 32,  8, 40,  2, 34, 10, 42,
+  48, 16, 56, 24, 50, 18, 58, 26,
+  12, 44,  4, 36, 14, 46,  6, 38,
+  60, 28, 52, 20, 62, 30, 54, 22,
+   3, 35, 11, 43,  1, 33,  9, 41,
+  51, 19, 59, 27, 49, 17, 57, 25,
+  15, 47,  7, 39, 13, 45,  5, 37,
+  63, 31, 55, 23, 61, 29, 53, 21,
+].map((v) => (v + 0.5) / 64);
+
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const rgb = (s) => s.match(/[\d.]+/g).slice(0, 3).map(Number);
+const pack = ([r, g, b]) => ((255 << 24) | (b << 16) | (g << 8) | r) >>> 0; // ImageData is RGBA bytes, little-endian u32
+const luma = ([r, g, b]) => (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255;
+
+// Snap the dot so dot * devicePixelRatio is a whole number of device pixels.
+const dotSize = (css = 3) => Math.max(1, Math.round(css * devicePixelRatio)) / devicePixelRatio;
+
+export class DitherTile {
+  constructor(el, field, { dot = 3, drift = true, contrast = 1.15, trueTone = false } = {}) {
+    this.el = el; this.field = field; this.dotCss = dot; this.drift = drift && !reduce; this.contrast = contrast; this.trueTone = trueTone;
+    this.canvas = document.createElement('canvas');
+    this.canvas.setAttribute('aria-hidden', 'true');
+    this.ctx = this.canvas.getContext('2d', { alpha: false });
+    if (!this.ctx) throw new Error('2d context unavailable');
+    el.prepend(this.canvas);
+    this.reveal = reduce ? 1 : 0; this.revealing = false;
+    this.pointer = { x: 0, y: 0, k: 0, target: 0 };
+    this.visible = false; this.dirty = true; this.t = 0;
+    this.readColors(); this.resize();
+
+    el.addEventListener('pointermove', (e) => {
+      const r = el.getBoundingClientRect();
+      this.pointer.x = (e.clientX - r.left) / this.dot;
+      this.pointer.y = (e.clientY - r.top) / this.dot;
+      this.pointer.target = 1; this.dirty = true;
+    }, { passive: true });
+    el.addEventListener('pointerleave', () => { this.pointer.target = 0; });
+  }
+
+  // Dots take the element's own `color`, the paper takes its `background-color`.
+  // Default: dot coverage = image darkness on every surface, so a tile keeps the same
+  // ink density in both themes (on a dark surface it reads as a print negative).
+  // `trueTone` flips the mapping on dark surfaces so light stays light: use it for photos of people.
+  readColors() {
+    const cs = getComputedStyle(this.el);
+    const ink = rgb(cs.color), paper = rgb(cs.backgroundColor);
+    this.ink = pack(ink); this.paper = pack(paper);
+    this.invert = this.trueTone && luma(paper) < 0.5;
+    this.dirty = true;
+  }
+
+  resize() {
+    this.dot = dotSize(this.dotCss);
+    const r = this.el.getBoundingClientRect();
+    const w = Math.max(1, Math.ceil(r.width / this.dot));
+    const h = Math.max(1, Math.ceil(r.height / this.dot));
+    if (w === this.w && h === this.h) return;
+    this.w = w; this.h = h;
+    this.canvas.width = w; this.canvas.height = h;
+    // Exact multiple of the dot: no uneven columns from fractional scaling. The overflow is clipped.
+    this.canvas.style.width = `${w * this.dot}px`;
+    this.canvas.style.height = `${h * this.dot}px`;
+    this.img = this.ctx.createImageData(w, h);
+    this.px = new Uint32Array(this.img.data.buffer);
+    this.dirty = true;
+  }
+
+  setField(field) {
+    this.field = field;
+    if (!reduce) { this.reveal = 0; this.revealing = this.visible; }
+    this.dirty = true;
+  }
+
+  show() {
+    this.visible = true;
+    if (this.reveal < 1) this.revealing = true;
+  }
+
+  step(dt) {
+    if (!this.visible) return;
+    const p = this.pointer;
+    let needs = this.dirty;
+    if (this.revealing) {
+      this.reveal = Math.min(1, this.reveal + dt / 0.9);
+      if (this.reveal === 1) this.revealing = false;
+      needs = true;
+    }
+    if (this.drift) { this.t += dt; needs = true; }
+    const dk = p.target - p.k;
+    if (Math.abs(dk) > 0.002) { p.k += dk * Math.min(1, dt * 6); needs = true; }
+    if (needs) { this.render(); this.dirty = false; }
+  }
+
+  render() {
+    const { w, h, px, field, ink, paper, invert, contrast, reveal, t } = this;
+    const aspect = w / h, p = this.pointer, k = p.k;
+    const lr2 = Math.pow(0.24 * Math.min(w, h), 2);
+    let i = 0;
+    for (let y = 0; y < h; y++) {
+      const v = y / h, row = (y & 7) << 3;
+      // Reveal: Bayer order decides which dots may appear, sweeping top to bottom.
+      const gate = Math.min(1, Math.max(0, reveal * 1.6 - v * 0.6));
+      for (let x = 0; x < w; x++, i++) {
+        const b = BAYER[row | (x & 7)];
+        if (b >= gate) { px[i] = paper; continue; }
+        let lum = field(x / w, v, t, aspect);
+        if (k > 0.002) {
+          const dx = x - p.x, dy = y - p.y;
+          lum += 0.5 * k * Math.exp(-(dx * dx + dy * dy) / lr2);
+        }
+        lum = (lum - 0.5) * contrast + 0.5;
+        px[i] = (invert ? lum : 1 - lum) > b ? ink : paper;
+      }
+    }
+    this.ctx.putImageData(this.img, 0, 0);
+  }
+}
+
+// One loop for every tile, capped at 30fps: a 3px dot pattern gains nothing from 60.
+const tiles = new Set();
+let last = performance.now();
+function loop(now) {
+  requestAnimationFrame(loop);
+  if (document.hidden || now - last < 33) return;
+  const dt = Math.min((now - last) / 1000, 0.1);
+  last = now;
+  for (const tile of tiles) tile.step(dt);
+}
+requestAnimationFrame(loop);
+
+const io = new IntersectionObserver((entries) => {
+  for (const e of entries) {
+    const tile = e.target.__dither;
+    if (!tile) continue;
+    if (e.isIntersecting) tile.show(); else tile.visible = false;
+  }
+}, { threshold: 0.2 });
+const ro = new ResizeObserver((entries) => entries.forEach((e) => e.target.__dither?.resize()));
+
+export function mountDither(el, field, opts) {
+  try {
+    const tile = new DitherTile(el, field, opts);
+    el.__dither = tile; tiles.add(tile); io.observe(el); ro.observe(el);
+    return tile;
+  } catch (err) {
+    return null; // the CSS halftone fallback stays in place
+  }
+}
+
+export function refreshDitherColors() { tiles.forEach((t) => t.readColors()); }
+
+// Any image becomes a field. Cover-fit, nearest sample, luminance cached once.
+// Cross-origin images need CORS headers or getImageData throws.
+export function fromImage(img, size = 360) {
+  const ar = img.naturalWidth / img.naturalHeight;
+  const W = size, H = Math.max(1, Math.round(size / ar));
+  const c = document.createElement('canvas');
+  c.width = W; c.height = H;
+  const ctx = c.getContext('2d', { willReadFrequently: true });
+  ctx.drawImage(img, 0, 0, W, H);
+  const d = ctx.getImageData(0, 0, W, H).data;
+  const lum = new Float32Array(W * H);
+  for (let i = 0; i < lum.length; i++) lum[i] = (0.2126 * d[i * 4] + 0.7152 * d[i * 4 + 1] + 0.0722 * d[i * 4 + 2]) / 255;
+  return (u, v, t, aspect) => {
+    let su = u, sv = v;
+    if (aspect > ar) sv = 0.5 + (v - 0.5) * (ar / aspect);
+    else su = 0.5 + (u - 0.5) * (aspect / ar);
+    const x = Math.min(W - 1, (su * W) | 0), y = Math.min(H - 1, (sv * H) | 0);
+    return lum[y * W + x];
+  };
+}
+
+// ===== Fields: (u, v in 0..1, t seconds, aspect = w/h) -> luminance 0..1 =====
+const fields = {
+  orb(u, v, t, aspect) {
+    const x = (u - 0.56) * aspect, y = v - 0.48, r = 0.33;
+    const d2 = x * x + y * y;
+    if (d2 < r * r) {
+      const nx = x / r, ny = y / r, nz = Math.sqrt(Math.max(0, 1 - nx * nx - ny * ny));
+      const a = -2.3 + Math.sin(t * 0.18) * 0.45; // the light swings, the form never moves
+      const lam = Math.max(0, nx * Math.cos(a) * 0.62 + ny * Math.sin(a) * 0.62 + nz * 0.48);
+      const rim = Math.pow(1 - nz, 3) * 0.32; // bounce light keeps the dark side from going solid
+      return 0.1 + 0.9 * Math.pow(lam / 0.96, 1.5) + rim;
+    }
+    const sx = (x - 0.06) / 0.5, sy = (y - 0.36) / 0.1;
+    return 0.94 - v * 0.3 - Math.exp(-(sx * sx + sy * sy) * 2) * 0.32;
+  },
+  swell(u, v, t, aspect) {
+    // Long ocean swell: a few slow bands, mostly paper, darker toward the bottom edge.
+    const x = u * aspect;
+    const y = v * 7 + Math.sin(x * 2.1 + t * 0.35) * 0.5 + Math.sin(x * 5.3 - t * 0.5) * 0.12;
+    const crest = Math.pow(0.5 + 0.5 * Math.sin(y * Math.PI), 6);
+    return 0.86 - crest * 0.62 - v * 0.18;
+  },
+  contours(u, v, t, aspect) {
+    const x = u * aspect * 2.2, y = v * 2.2;
+    const h = Math.sin(x * 1.3 + t * 0.06) * 0.5 + Math.sin(y * 1.7 - x * 0.6) * 0.35 + Math.sin((x + y) * 2.6 + 1.3) * 0.15;
+    const f = h * 6 - Math.floor(h * 6);
+    return Math.abs(f - 0.5) > 0.44 ? 0.04 : 0.62 + h * 0.3;
+  },
+  dawn(u, v, t, aspect) {
+    const x = (u - 0.42) * aspect, hz = 0.7;
+    if (v < hz) {
+      if (Math.hypot(x, v - hz + 0.02) < 0.17) return 1;
+      return 0.97 - (hz - v) * 1.05;
+    }
+    const depth = v - hz;
+    const width = 0.17 * (1 - depth * 1.8) * (0.75 + 0.25 * Math.sin(v * 61 + t));
+    const broken = Math.sin(v * 140 - t * 2 + Math.sin(x * 23) * 1.5) > -0.2;
+    return Math.abs(x) < width && broken ? 0.9 - depth * 0.8 : 0.42 - depth * 0.55;
+  },
+};
+
+// An original illustration as an SVG data URL, dithered through fromImage().
+const ridgeSVG = `<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600" viewBox="0 0 800 600">
+<defs>
+<linearGradient id="s" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#bdbdbd"/><stop offset=".6" stop-color="#f6f6f6"/></linearGradient>
+<linearGradient id="a" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#a8a8a8"/><stop offset="1" stop-color="#7a7a7a"/></linearGradient>
+<linearGradient id="b" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2a2a2a"/><stop offset="1" stop-color="#0a0a0a"/></linearGradient>
+<radialGradient id="g" cx=".5" cy=".5" r=".5"><stop offset=".35" stop-color="#fff"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>
+</defs>
+<rect width="800" height="600" fill="url(#s)"/>
+<circle cx="560" cy="330" r="190" fill="url(#g)"/>
+<path d="M0 380 L140 300 L250 350 L380 250 L520 345 L640 300 L800 370 V600 H0Z" fill="url(#a)"/>
+<path d="M0 480 C120 430 220 440 330 470 C450 500 560 420 800 450 V600 H0Z" fill="url(#b)"/>
+<g fill="#151515"><path d="M226 470 L232 228 L238 228 L244 470Z"/><circle cx="235" cy="226" r="7"/>
+<path d="M235 226 L227 92 L241 94Z"/><path d="M235 226 L349 292 L341 302Z"/><path d="M235 226 L122 292 L116 280Z"/></g>
+</svg>`;
+
+function loadImage(src) {
+  return new Promise((res, rej) => { const i = new Image(); i.onload = () => res(i); i.onerror = rej; i.src = src; });
+}
+
+// ===== Page wiring =====
+const fallbackRidge = (u, v) => 0.85 - v * 0.6;
+const tilesByEl = new Map();
+for (const el of document.querySelectorAll('.dither[data-field]')) {
+  const name = el.dataset.field;
+  const t = mountDither(el, name === 'ridge' ? fallbackRidge : fields[name], { trueTone: 'trueTone' in el.dataset });
+  if (t) tilesByEl.set(el, t);
+}
+loadImage('data:image/svg+xml;charset=utf-8,' + encodeURIComponent(ridgeSVG)).then((img) => {
+  fields.ridge = fromImage(img);
+  for (const [el, t] of tilesByEl) if (el.dataset.field === 'ridge') t.setField(fields.ridge);
+}).catch(() => {});
+
+// Portfolio: rows swap the preview's field and replay the dither-in.
+const preview = document.querySelector('[data-preview]');
+const tag = document.querySelector('[data-preview-tag]');
+const rows = [...document.querySelectorAll('.row')];
+const pick = (row) => {
+  if (row.getAttribute('aria-current') === 'true') return;
+  rows.forEach((r) => r.removeAttribute('aria-current'));
+  row.setAttribute('aria-current', 'true');
+  const tile = tilesByEl.get(preview);
+  const f = fields[row.dataset.field] || fallbackRidge;
+  if (tile) tile.setField(f);
+  tag.textContent = `${row.querySelector('strong').textContent} · ${row.querySelector('em').textContent}`;
+};
+rows.forEach((r) => { r.addEventListener('pointerenter', () => pick(r)); r.addEventListener('focus', () => pick(r)); });
+
+// Theme toggle: tokens change, tiles re-read their colors.
+const themeBtn = document.querySelector('.theme');
+const syncThemeBtn = () => {
+  const dark = document.documentElement.dataset.theme === 'dark';
+  themeBtn.setAttribute('aria-pressed', String(dark));
+};
+syncThemeBtn();
+themeBtn.addEventListener('click', () => {
+  const next = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
+  document.documentElement.dataset.theme = next;
+  try { localStorage.setItem('halvard-theme', next); } catch (e) {}
+  syncThemeBtn();
+  refreshDitherColors();
+});
+
+// Clocks: minutes only, refreshed every 15s.
+const clocks = [...document.querySelectorAll('time[data-tz]')].map((el) => ({
+  el, fmt: new Intl.DateTimeFormat('en-GB', { hour: '2-digit', minute: '2-digit', timeZone: el.dataset.tz }),
+}));
+const tickClocks = () => clocks.forEach(({ el, fmt }) => { el.textContent = fmt.format(new Date()); });
+tickClocks(); setInterval(tickClocks, 15000);
+</script>
+</body>
+</html>

@@ -11,6 +11,8 @@ All notable changes to taste-skill live here. The repo follows SemVer-ish discip
 - `taste-skill` (install name `design-taste-frontend`) is now **v2 (experimental)**. The previous v1 is preserved as `taste-skill-v1` (install name `design-taste-frontend-v1`).
 - New `CHANGELOG.md` (this file).
 - New `particle-morph-skill` (install name `particle-morph-hero`): scroll-driven Three.js particle morph hero.
+- New `dither-tile-skill` (install name `dither-tile-grid`): ordered-dither imagery in a hairline Swiss tile grid (lesson 002).
+- `scripts/verify-demo.mjs`: proxy bypass now includes `<-loopback>`, so Chromium stops sending localhost through the egress proxy (it answered 405).
 - New `lessons/` folder: one web design lesson per day, found and studied autonomously, each shipped as a verified skill with a working demo. Rules and quality gate in `lessons/PROTOCOL.md`.
 - New `scripts/capture-site.mjs` (live site capture: scroll video, screenshots, design fingerprint) and `scripts/verify-demo.mjs` (headless render check on desktop, mobile, and reduced motion).
 

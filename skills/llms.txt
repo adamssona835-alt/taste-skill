@@ -12,3 +12,4 @@ minimalist-skill: Enforces clean, editorial-style interfaces (Notion/Linear styl
 brutalist-skill: Raw mechanical interfaces, Swiss typography, extreme scale contrast. (Beta)
 stitch-skill: Google Stitch-compatible semantic design rules for premium AI UI generation.
 particle-morph-skill: Dark-canvas Three.js hero where one particle cloud morphs between shapes on scroll, with pointer response, device tiers, and reduced-motion fallback.
+dither-tile-skill: Ordered-dither (Bayer) imagery in a hairline Swiss tile grid: any image or procedural field becomes a 1-bit halftone that takes its colors from CSS, dithers in on scroll, reacts to the pointer, and survives dark mode. Canvas 2D, 30fps cap, CSS halftone fallback.
