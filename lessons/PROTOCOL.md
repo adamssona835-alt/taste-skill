@@ -10,7 +10,7 @@ The reference for "quality" is [`skills/particle-morph-skill`](../skills/particl
 
 The night before each lesson, a separate routine picks tomorrow's site so the owner can veto it.
 
-1. Pick the site exactly as section 1 describes (area rule, recency, reproducible, not already covered). Do a quick capture (`capture-site.mjs`) to prove it renders headless; if it does not, pick another.
+1. Pick the site exactly as section 1 describes (area rule, recency, reproducible, not already covered). Do a quick capture (`capture-site.mjs`) and look at the screenshots to prove it renders headless (a finished capture can still be all preloader); if it does not, pick another. The backup must pass the same check.
 2. Write [`NEXT.md`](NEXT.md): date of the lesson, lesson number, site URL, where it was found (award page link), area, the technique to learn, why it qualifies, the planned demo concept (invented brand), the step-by-step plan for the morning, and a backup site. Set `Status: pending`.
 3. Commit as `Plan for lesson NNN: <site>` and push to the working branch.
 4. Send the owner a push notification in Swedish with the site link, technique and area, and say that silence means approved. End the turn with the full plan in Swedish.
