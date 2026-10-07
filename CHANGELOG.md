@@ -10,6 +10,8 @@ All notable changes to taste-skill live here. The repo follows SemVer-ish discip
 
 - `taste-skill` (install name `design-taste-frontend`) is now **v2 (experimental)**. The previous v1 is preserved as `taste-skill-v1` (install name `design-taste-frontend-v1`).
 - New `CHANGELOG.md` (this file).
+- New `particle-morph-skill` (install name `particle-morph-hero`): scroll-driven Three.js particle morph hero.
+- New `lessons/` folder: one short web design lesson per day.
 
 ---
 
