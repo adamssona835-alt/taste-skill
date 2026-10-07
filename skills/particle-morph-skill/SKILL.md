@@ -122,7 +122,30 @@ export function fromMesh(mesh, count, size = 2.4) {
   }
   return out;
 }
+// A word or logo: draw it on a 2D canvas and sample the filled pixels.
+// The brand becomes the final shape, no 3D model needed.
+export function textPoints(count, word, { width = 4.2, depth = 0.25, font = '300 220px Geist, system-ui, sans-serif' } = {}) {
+  const c = document.createElement('canvas');
+  c.width = 1400; c.height = 360;
+  const ctx = c.getContext('2d');
+  ctx.fillStyle = '#fff'; ctx.font = font; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.fillText(word, c.width / 2, c.height / 2);
+  const data = ctx.getImageData(0, 0, c.width, c.height).data;
+  const filled = [];
+  for (let y = 0; y < c.height; y += 2) for (let x = 0; x < c.width; x += 2) if (data[(y * c.width + x) * 4 + 3] > 128) filled.push(x, y);
+  const out = new Float32Array(count * 3);
+  const scale = width / c.width, n = filled.length / 2;
+  for (let i = 0; i < count; i++) {
+    const k = (Math.random() * n | 0) * 2;
+    out[i * 3]     = (filled[k] - c.width / 2 + Math.random() * 2) * scale;
+    out[i * 3 + 1] = -(filled[k + 1] - c.height / 2 + Math.random() * 2) * scale;
+    out[i * 3 + 2] = (Math.random() - 0.5) * depth;
+  }
+  return out;
+}
 ```
+
+Wait for `document.fonts.ready` before sampling text, or the fallback font gets baked into the shape.
 
 Model sourcing: use a CC0 or properly licensed GLB (check Sketchfab / Poly Haven licenses), decimated to under 50k triangles; the sampler only needs the surface. Bake targets once and cache them (`Float32Array` to a `.bin` file) if sampling shows up in the startup profile.
 
@@ -380,7 +403,24 @@ Camera moves are optional and small: dolly from `z = 7` to `z = 5.5` across the 
 
 ---
 
-## 11. Pre-Flight
+## 11. Working Demo
+
+[`demo/index.html`](demo/index.html) is a complete, single-file page built from this skill: orb hero, galaxy "how it works" and stats, a light editorial break, and the brand wordmark as the final shape behind "Let's talk." It uses the CDN build of three, no build step.
+
+Verified with `node scripts/verify-demo.mjs skills/particle-morph-skill/demo` (desktop, mobile, and reduced motion, no console errors, no horizontal overflow).
+
+![Demo preview](demo/preview.webp)
+
+Lessons learned while building it (already folded into the rules above):
+
+- A half-morphed cloud is chaos. Never park a section *between* shapes; hold an integer shape where text needs to be read.
+- Text over particles needs a scrim. A bottom gradient under the stats row fixed readability without hiding the galaxy.
+- The final wordmark must center and lift above the contact copy, or the letters collide with the headline.
+- Wrap `rotation.y` before easing it back to zero, or the form unwinds several full turns when settling.
+
+---
+
+## 12. Pre-Flight
 
 Before shipping, answer yes to all:
 

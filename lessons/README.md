@@ -1,6 +1,8 @@
 # Daily Web Design Lessons
 
-One technique a day, studied from real premium sites, written down so agents (and people) can reuse it.
+One technique a day, found and studied by the agent itself from live premium sites, shipped as a verified skill with a working demo.
+
+How every lesson is made, and the quality bar it must clear: [`PROTOCOL.md`](PROTOCOL.md). Each day must score at least as high as the best day before it.
 
 Each lesson is short and practical:
 
@@ -10,10 +12,10 @@ Each lesson is short and practical:
 - **Taste rules**: what keeps it premium.
 - **Slop version**: how it usually goes wrong.
 
-When a lesson proves itself across several projects, it graduates into a full skill under `skills/`.
+The full, reusable version of each lesson lives in `skills/<slug>-skill/` with a demo verified in headless Chromium.
 
 ## Index
 
-| # | Date | Lesson | Area | Graduated to |
-| --- | --- | --- | --- | --- |
-| 001 | 2026-10-07 | [Particle morph hero](2026-10-07-particle-morph-hero.md) | WebGL / motion | [`particle-morph-skill`](../skills/particle-morph-skill/SKILL.md) |
+| # | Date | Lesson | Area | Source | Skill | Score |
+| --- | --- | --- | --- | --- | --- | --- |
+| 001 | 2026-10-07 | [Particle morph hero](2026-10-07-particle-morph-hero.md) | WebGL and 3D | getlayers.ai "Vesper" template | [`particle-morph-skill`](../skills/particle-morph-skill/SKILL.md) | 34/40 |

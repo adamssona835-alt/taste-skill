@@ -1,0 +1,391 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Halcyon · particle morph demo</title>
+<link rel="icon" href="data:," />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500&family=Geist+Mono:wght@400&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg: #06070b;
+    --ink: #eef1f6;
+    --muted: rgba(238, 241, 246, 0.56);
+    --line: rgba(255, 255, 255, 0.08);
+    --paper: #f3f2ee;
+    --paper-ink: #121317;
+    --mint: #5ef2c2;
+    --violet: #6b5cff;
+  }
+  * { box-sizing: border-box; margin: 0; }
+  html { background: var(--bg); color: var(--ink); font-family: 'Geist', system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+  body { overflow-x: hidden; }
+
+  #gl { position: fixed; inset: 0; width: 100vw; height: 100vh; display: block; pointer-events: none; }
+  .fallback { position: fixed; inset: 0; background: radial-gradient(40% 40% at 60% 50%, rgba(107, 92, 255, 0.35), transparent 70%), radial-gradient(30% 30% at 55% 45%, rgba(94, 242, 194, 0.25), transparent 70%); display: none; }
+  .no-webgl .fallback { display: block; }
+
+  .frame { position: fixed; inset: 12px; border: 1px solid var(--line); border-radius: 24px; pointer-events: none; z-index: 2; }
+  .glow { position: fixed; inset: 0; pointer-events: none; background: radial-gradient(60% 50% at 70% 30%, rgba(94, 242, 194, 0.08), transparent 70%); }
+
+  nav { position: fixed; top: 28px; left: 50%; transform: translateX(-50%); z-index: 5; display: flex; align-items: center; gap: 28px; padding: 8px 8px 8px 18px; border: 1px solid var(--line); border-radius: 999px; background: rgba(10, 11, 16, 0.55); backdrop-filter: blur(14px); font-size: 13px; white-space: nowrap; }
+  nav .brand { display: flex; align-items: center; gap: 8px; font-weight: 500; }
+  nav .brand svg { width: 14px; height: 14px; }
+  nav .links { display: flex; gap: 22px; color: var(--muted); }
+  nav a { color: inherit; text-decoration: none; }
+  nav a:hover { color: var(--ink); }
+  nav .cta { padding: 7px 14px; border-radius: 999px; border: 1px solid rgba(255, 255, 255, 0.18); color: var(--ink); }
+
+  main { position: relative; z-index: 3; }
+  .meta { font-family: 'Geist Mono', ui-monospace, monospace; font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); line-height: 1.55; max-width: 30ch; }
+
+  .scene { position: relative; min-height: 100vh; padding: 140px clamp(28px, 5vw, 72px) 56px; display: grid; grid-template-rows: auto 1fr auto; }
+  h1, h2 { font-weight: 300; letter-spacing: -0.035em; line-height: 1.0; }
+  h1 { font-size: clamp(44px, 6.4vw, 96px); max-width: 9ch; }
+  h2 { font-size: clamp(36px, 4.8vw, 72px); }
+  .scene .foot { display: flex; justify-content: space-between; align-items: end; gap: 24px; }
+  .scene .right { text-align: right; justify-self: end; align-self: end; }
+  .scene.center { text-align: center; place-items: center; grid-template-rows: auto 1fr auto; }
+  .scene.center h2 { max-width: 14ch; }
+  .scene.center > div:nth-child(2) { align-self: end; margin-bottom: 8vh; }
+
+  [data-statement] { opacity: 0; transform: translateY(24px); filter: blur(8px); transition: opacity 0.9s ease, transform 0.9s cubic-bezier(0.2, 0.7, 0.1, 1), filter 0.9s ease; }
+  [data-statement].in { opacity: 1; transform: none; filter: none; }
+
+  .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; border-top: 1px solid var(--line); width: 100%; position: relative; }
+  .stats::before { content: ''; position: absolute; inset: -40px 0 -56px; z-index: -1; background: linear-gradient(to top, rgba(6, 7, 11, 0.92) 40%, transparent); pointer-events: none; }
+  .stats div { padding: 18px 0 0; }
+  .stats div + div { padding-left: 20px; border-left: 1px solid var(--line); }
+  .stats b { display: block; font-weight: 300; font-size: clamp(26px, 3vw, 40px); letter-spacing: -0.03em; }
+
+  .paper { position: relative; z-index: 4; background: var(--paper); color: var(--paper-ink); border-radius: 24px; margin: 0 12px; padding: clamp(56px, 8vw, 120px) clamp(28px, 5vw, 72px); display: grid; grid-template-columns: 1.3fr 1fr; gap: clamp(32px, 5vw, 80px); align-items: end; }
+  .paper h2 { max-width: 11ch; margin-bottom: 64px; }
+  .paper .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; font-size: 14px; line-height: 1.6; color: #4a4c55; }
+  .paper .cols span { display: block; font-family: 'Geist Mono', monospace; font-size: 11px; color: var(--paper-ink); margin-bottom: 10px; }
+  .portrait { aspect-ratio: 4 / 5; border-radius: 16px; background: radial-gradient(70% 60% at 40% 35%, #7fd9e8 0%, #2a8fb0 45%, #0d2e44 100%); position: relative; overflow: hidden; }
+  .portrait::after { content: ''; position: absolute; left: 22%; right: 18%; bottom: -6%; height: 78%; border-radius: 48% 48% 0 0 / 38% 38% 0 0; background: linear-gradient(180deg, #0b1620, #05090d); }
+
+  form { display: flex; gap: 10px; margin-top: 36px; justify-content: center; flex-wrap: wrap; }
+  input { background: rgba(255, 255, 255, 0.04); border: 1px solid var(--line); border-radius: 999px; padding: 13px 18px; color: var(--ink); font: inherit; font-size: 14px; width: min(320px, 80vw); }
+  button { background: var(--ink); color: var(--bg); border: 0; border-radius: 999px; padding: 13px 22px; font: inherit; font-size: 14px; font-weight: 500; cursor: pointer; }
+  input:focus-visible, button:focus-visible, a:focus-visible { outline: 2px solid var(--mint); outline-offset: 3px; }
+
+  @media (max-width: 720px) {
+    nav .links { display: none; }
+    .scene .foot { flex-direction: column; align-items: start; }
+    .scene .foot .meta { text-align: left !important; }
+    .stats { grid-template-columns: 1fr 1fr; row-gap: 20px; }
+    .stats div:nth-child(3) { padding-left: 0; border-left: 0; }
+    .paper { grid-template-columns: 1fr; }
+    .paper .cols { grid-template-columns: 1fr; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    [data-statement] { opacity: 1; transform: none; filter: none; transition: none; }
+  }
+</style>
+</head>
+<body>
+<div class="fallback" aria-hidden="true"></div>
+<canvas id="gl" aria-hidden="true"></canvas>
+<div class="glow" aria-hidden="true"></div>
+<div class="frame" aria-hidden="true"></div>
+
+<nav aria-label="Primary">
+  <span class="brand"><svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M7 0v14M0 7h14M2 2l10 10M12 2 2 12" /></svg>Halcyon</span>
+  <span class="links"><a href="#how">How it works</a><a href="#scale">Scale</a><a href="#studio">Studio</a></span>
+  <a class="cta" href="#contact">Contact</a>
+</nav>
+
+<main>
+  <section class="scene" id="top" data-shape="0">
+    <h1>Motion instead of chrome</h1>
+    <div></div>
+    <div class="foot">
+      <p class="meta">Point counts, pixel ratio and noise step down by device, never by frame rate.</p>
+      <p class="meta" style="text-align:right">Reduced motion honored across the page.</p>
+    </div>
+  </section>
+
+  <section class="scene" id="how" data-shape="1">
+    <div></div><div></div>
+    <div class="right">
+      <h2 data-statement>Reads presence,<br />in motion</h2>
+      <p class="meta" style="margin:20px 0 0 auto">It reads pointer, scroll and dwell, and answers with drawn motion.</p>
+    </div>
+  </section>
+
+  <section class="scene" id="scale" data-shape="1">
+    <h2 data-statement style="max-width:12ch">Every point is a reply</h2>
+    <div></div>
+    <div class="stats">
+      <div><b>80k</b><span class="meta">Points, desktop tier</span></div>
+      <div><b>1</b><span class="meta">Draw call</span></div>
+      <div><b>4</b><span class="meta">Uniforms per frame</span></div>
+      <div><b>0</b><span class="meta">Video files</span></div>
+    </div>
+  </section>
+
+  <section class="paper" id="studio">
+    <div>
+      <h2>A living interface for quiet products</h2>
+      <div class="cols">
+        <p><span>[01]</span>Halcyon is a rendering layer that turns presence into motion: pointer, scroll and dwell, read live.</p>
+        <p><span>[02]</span>One particle system, shaped per section. Nothing swaps, nothing loads twice, everything flows.</p>
+      </div>
+    </div>
+    <div class="portrait" role="img" aria-label="Abstract portrait in teal light"></div>
+  </section>
+
+  <section class="scene center" id="contact" data-shape="2">
+    <div></div>
+    <div>
+      <h2 data-statement>Let's talk.</h2>
+      <form onsubmit="event.preventDefault()">
+        <label class="meta" for="email" style="position:absolute;left:-9999px">Email</label>
+        <input id="email" type="email" placeholder="you@studio.com" autocomplete="email" />
+        <button type="submit">Start a project</button>
+      </form>
+    </div>
+    <p class="meta">Halcyon, Stockholm</p>
+  </section>
+</main>
+
+<script type="importmap">
+{ "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js" } }
+</script>
+<script type="module">
+import * as THREE from 'three';
+
+// ---------- device tier ----------
+function deviceTier() {
+  const cores = navigator.hardwareConcurrency || 4;
+  const mem = navigator.deviceMemory || 4;
+  const small = Math.min(screen.width, screen.height) < 700;
+  if (small || cores <= 4 || mem <= 2) return { count: 18000, maxDpr: 1.5, pointSize: 22 };
+  if (cores <= 8) return { count: 45000, maxDpr: 1.75, pointSize: 20 };
+  return { count: 80000, maxDpr: 2, pointSize: 18 };
+}
+
+// ---------- shape targets ----------
+function orb(count, radius = 1.2) {
+  const out = new Float32Array(count * 3);
+  const golden = Math.PI * (3 - Math.sqrt(5));
+  for (let i = 0; i < count; i++) {
+    const y = 1 - (i / (count - 1)) * 2;
+    const r = Math.sqrt(1 - y * y);
+    const theta = golden * i;
+    const shell = radius * (0.92 + Math.random() * 0.16);
+    out[i * 3] = Math.cos(theta) * r * shell;
+    out[i * 3 + 1] = y * shell;
+    out[i * 3 + 2] = Math.sin(theta) * r * shell;
+  }
+  return out;
+}
+
+function galaxy(count, { arms = 3, radius = 2.4, twist = 2.2, tilt = 0.32 } = {}) {
+  const out = new Float32Array(count * 3);
+  const cos = Math.cos(tilt), sin = Math.sin(tilt);
+  for (let i = 0; i < count; i++) {
+    const t = Math.pow(Math.random(), 1.6);
+    const r = t * radius;
+    const angle = (i % arms) / arms * Math.PI * 2 + r * twist;
+    const spread = 0.35 * (1 - t * 0.6);
+    const y = (Math.random() - 0.5) * 0.12 * (1 - t);
+    const z = Math.sin(angle) * r + (Math.random() - 0.5) * spread * r;
+    out[i * 3] = Math.cos(angle) * r + (Math.random() - 0.5) * spread * r;
+    out[i * 3 + 1] = y * cos - z * sin;
+    out[i * 3 + 2] = y * sin + z * cos;
+  }
+  return out;
+}
+
+// Sample a word from a 2D canvas: the brand becomes the last shape.
+function textPoints(count, word, { width = 4.2, depth = 0.25, font = '300 220px Geist, system-ui, sans-serif' } = {}) {
+  const c = document.createElement('canvas');
+  c.width = 1400; c.height = 360;
+  const ctx = c.getContext('2d');
+  ctx.fillStyle = '#fff'; ctx.font = font; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.fillText(word, c.width / 2, c.height / 2);
+  const data = ctx.getImageData(0, 0, c.width, c.height).data;
+  const filled = [];
+  for (let y = 0; y < c.height; y += 2) for (let x = 0; x < c.width; x += 2) if (data[(y * c.width + x) * 4 + 3] > 128) filled.push(x, y);
+  const out = new Float32Array(count * 3);
+  const scale = width / c.width;
+  const n = filled.length / 2;
+  for (let i = 0; i < count; i++) {
+    const k = (Math.random() * n | 0) * 2;
+    out[i * 3] = (filled[k] - c.width / 2 + Math.random() * 2) * scale;
+    out[i * 3 + 1] = -(filled[k + 1] - c.height / 2 + Math.random() * 2) * scale;
+    out[i * 3 + 2] = (Math.random() - 0.5) * depth;
+  }
+  return out;
+}
+
+// ---------- shaders ----------
+const vertexShader = /* glsl */ `
+  uniform float uTime;
+  uniform float uProgress;
+  uniform float uSize;
+  uniform float uPixelRatio;
+  uniform vec3  uPointer;
+  uniform float uPointerForce;
+  attribute vec3 aShape1;
+  attribute vec3 aShape2;
+  attribute float aRandom;
+  varying float vMix;
+  varying float vGlow;
+
+  vec3 hash3(vec3 p) {
+    p = vec3(dot(p, vec3(127.1, 311.7, 74.7)), dot(p, vec3(269.5, 183.3, 246.1)), dot(p, vec3(113.5, 271.9, 124.6)));
+    return fract(sin(p) * 43758.5453) * 2.0 - 1.0;
+  }
+  float stagger(float local) {
+    float d = aRandom * 0.4;
+    return smoothstep(d, d + 0.6, local);
+  }
+  void main() {
+    vec3 pos = mix(position, aShape1, stagger(clamp(uProgress, 0.0, 1.0)));
+    pos = mix(pos, aShape2, stagger(clamp(uProgress - 1.0, 0.0, 1.0)));
+
+    float tt = uTime * 0.25 + aRandom * 4.0;
+    vec3 n = mix(hash3(pos * 1.7 + floor(tt)), hash3(pos * 1.7 + floor(tt) + 1.0), fract(tt));
+    pos += n * 0.025;
+
+    vec3 toP = pos - uPointer;
+    float push = (1.0 - smoothstep(0.0, 0.9, length(toP.xy))) * uPointerForce;
+    pos.xy += normalize(toP.xy + 1e-4) * push * 0.35;
+
+    vec4 mv = modelViewMatrix * vec4(pos, 1.0);
+    gl_Position = projectionMatrix * mv;
+    gl_PointSize = uSize * uPixelRatio * (0.6 + aRandom * 0.8) / -mv.z;
+    vMix = clamp(0.3 + pos.y * 0.3 + length(pos.xz) * 0.2, 0.0, 1.0);
+    vGlow = step(0.975, aRandom);
+  }
+`;
+const fragmentShader = /* glsl */ `
+  uniform vec3 uColorA;
+  uniform vec3 uColorB;
+  varying float vMix;
+  varying float vGlow;
+  void main() {
+    float d = length(gl_PointCoord - 0.5);
+    if (d > 0.5) discard;
+    float alpha = smoothstep(0.5, 0.0, d);
+    vec3 col = mix(uColorB, uColorA, vMix);
+    col = mix(col, vec3(0.92, 0.98, 1.0), vGlow * 0.8);
+    gl_FragColor = vec4(col, alpha * (0.55 + vGlow * 0.45));
+  }
+`;
+
+// ---------- boot ----------
+function hasWebGL() {
+  try { const c = document.createElement('canvas'); return !!(c.getContext('webgl2') || c.getContext('webgl')); } catch { return false; }
+}
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const statements = document.querySelectorAll('[data-statement]');
+const io = new IntersectionObserver((es) => es.forEach((e) => e.isIntersecting && e.target.classList.add('in')), { rootMargin: '0px 0px -20% 0px' });
+statements.forEach((el) => io.observe(el));
+
+if (!hasWebGL() || navigator.connection?.saveData) {
+  document.documentElement.classList.add('no-webgl');
+} else {
+  await document.fonts.ready;
+  const tier = deviceTier();
+  const canvas = document.getElementById('gl');
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias: false, alpha: true, powerPreference: 'high-performance' });
+  const dpr = Math.min(devicePixelRatio, tier.maxDpr);
+  renderer.setPixelRatio(dpr);
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(35, 1, 0.1, 100);
+  camera.position.set(0, 0, 7);
+
+  const count = tier.count;
+  const geo = new THREE.BufferGeometry();
+  geo.setAttribute('position', new THREE.BufferAttribute(orb(count), 3));
+  geo.setAttribute('aShape1', new THREE.BufferAttribute(galaxy(count), 3));
+  geo.setAttribute('aShape2', new THREE.BufferAttribute(textPoints(count, 'halcyon'), 3));
+  const rnd = new Float32Array(count);
+  for (let i = 0; i < count; i++) rnd[i] = Math.random();
+  geo.setAttribute('aRandom', new THREE.BufferAttribute(rnd, 1));
+  geo.boundingSphere = new THREE.Sphere(new THREE.Vector3(), 4);
+
+  const material = new THREE.ShaderMaterial({
+    vertexShader, fragmentShader, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending,
+    uniforms: {
+      uTime: { value: 0 }, uProgress: { value: 0 }, uSize: { value: tier.pointSize }, uPixelRatio: { value: dpr },
+      uPointer: { value: new THREE.Vector3(99, 99, 0) }, uPointerForce: { value: 0 },
+      uColorA: { value: new THREE.Color('#5EF2C2') }, uColorB: { value: new THREE.Color('#6B5CFF') },
+    },
+  });
+  const points = new THREE.Points(geo, material);
+  scene.add(points);
+
+  // keep the form in the open space beside the headline on wide screens, centered on narrow ones
+  let wideX = 0;
+  const layout = () => {
+    const w = innerWidth, h = innerHeight;
+    renderer.setSize(w, h, false);
+    camera.aspect = w / h;
+    camera.updateProjectionMatrix();
+    wideX = w / h > 1.1 ? 0.9 : 0;
+    points.scale.setScalar(w / h > 1.1 ? 1 : Math.min(1, (w / h) * 1.1));
+  };
+  addEventListener('resize', layout);
+  layout();
+
+  const ray = new THREE.Raycaster(), ndc = new THREE.Vector2(), plane = new THREE.Plane(new THREE.Vector3(0, 0, 1), 0);
+  let pointerTarget = 0;
+  addEventListener('pointermove', (e) => {
+    ndc.set((e.clientX / innerWidth) * 2 - 1, -(e.clientY / innerHeight) * 2 + 1);
+    ray.setFromCamera(ndc, camera);
+    ray.ray.intersectPlane(plane, material.uniforms.uPointer.value);
+    material.uniforms.uPointer.value.sub(points.position);
+    pointerTarget = reduce ? 0 : 1;
+  }, { passive: true });
+  document.addEventListener('pointerleave', () => { pointerTarget = 0; });
+
+  // scroll → progress: interpolate between each section's data-shape at its center
+  const sections = [...document.querySelectorAll('[data-shape]')];
+  const targetProgress = () => {
+    const mid = scrollY + innerHeight / 2;
+    const anchors = sections.map((s) => ({ y: s.offsetTop + s.offsetHeight / 2, v: parseFloat(s.dataset.shape) }));
+    if (mid <= anchors[0].y) return anchors[0].v;
+    for (let i = 1; i < anchors.length; i++) {
+      if (mid <= anchors[i].y) {
+        const t = (mid - anchors[i - 1].y) / (anchors[i].y - anchors[i - 1].y);
+        return reduce ? (t < 0.5 ? anchors[i - 1].v : anchors[i].v) : anchors[i - 1].v + (anchors[i].v - anchors[i - 1].v) * t;
+      }
+    }
+    return anchors[anchors.length - 1].v;
+  };
+
+  const clock = new THREE.Clock();
+  const tick = () => {
+    requestAnimationFrame(tick);
+    if (document.hidden) return;
+    const dt = Math.min(clock.getDelta(), 0.05);
+    const u = material.uniforms;
+    const goal = targetProgress();
+    u.uProgress.value = reduce ? goal : u.uProgress.value + (goal - u.uProgress.value) * Math.min(dt * 3, 1);
+    if (!reduce) {
+      u.uTime.value += dt;
+      // spin slowly as orb and galaxy, settle face-on for the wordmark
+      const settle = THREE.MathUtils.smoothstep(u.uProgress.value, 1.5, 2.0);
+      let ry = points.rotation.y + dt * 0.04 * (1 - settle);
+      ry = Math.atan2(Math.sin(ry), Math.cos(ry)); // wrap so settling never unwinds full turns
+      points.rotation.y = ry * (1 - settle * Math.min(dt * 3, 1));
+    }
+    // the wordmark centers and lifts above the contact copy
+    const settled = THREE.MathUtils.smoothstep(u.uProgress.value, 1.5, 2.0);
+    points.position.x = THREE.MathUtils.lerp(wideX, 0, settled);
+    points.position.y = THREE.MathUtils.lerp(0, 0.75, settled);
+    u.uPointerForce.value += (pointerTarget - u.uPointerForce.value) * Math.min(dt * 4, 1);
+    renderer.render(scene, camera);
+  };
+  tick();
+}
+</script>
+</body>
+</html>
