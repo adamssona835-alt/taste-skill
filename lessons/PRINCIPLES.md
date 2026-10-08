@@ -20,5 +20,6 @@ Rules distilled from every lesson so far. Each one has shown up more than once, 
 ## Build
 
 10. **Same values in the skill and the demo.** The SKILL.md code is the code the demo runs. Splice code blocks from the demo file rather than retyping them; retyped code drifts (001 had a different scroll driver in the skill than in the demo).
-11. **Bleeding layers need a fence.** Scrims and glows with negative insets go inside a container with `position: relative` and `overflow-x: clip` (not `hidden`, which breaks sticky). A media query that resets `position` on that container silently moves the layer to the next positioned ancestor. (001 and Mörkerdal: zoomed-out phone layout, 1,900px of dead scroll)
-12. **Original brand, original copy, learned pattern.** Never lift code, text, assets, or prompts from the source site.
+11. **Style the body, not only the root.** Text color and type go on `body` as well as `html`: embeds and artifact viewers style `body` first, and everything that inherits turns dark on dark. verify-demo's host check fails on it. (Mörkerdal, 001)
+12. **Bleeding layers need a fence.** Scrims and glows with negative insets go inside a container with `position: relative` and `overflow-x: clip` (not `hidden`, which breaks sticky). A media query that resets `position` on that container silently moves the layer to the next positioned ancestor. (001 and Mörkerdal: zoomed-out phone layout, 1,900px of dead scroll)
+13. **Original brand, original copy, learned pattern.** Never lift code, text, assets, or prompts from the source site.

@@ -82,13 +82,23 @@ Use this skill when the brief says: "editorial", "Swiss", "technical", "engineer
 /* ---------- Dither tile ---------- */
 .dither {
   position: relative; overflow: hidden; isolation: isolate;
-  /* No-JS / no-canvas fallback: a fading CSS halftone in the same colors */
-  background:
-    linear-gradient(to bottom, var(--paper) 0%, transparent 70%),
-    radial-gradient(circle, var(--ink) 0.8px, transparent 1.2px) 0 0 / 3px 3px;
+  /* No-JS / no-canvas fallback, part 1: a sparse halftone in the tile's own two colors */
+  background: radial-gradient(circle, currentColor 0.55px, transparent 0.85px) 0 0 / 3px 3px;
   background-color: var(--paper);
   color: var(--ink);
 }
+/* Fallback, part 2: dense dots masked to the tile's subject, so the shape survives without canvas.
+   The canvas (z-index -1, opaque) covers all of this as soon as the engine runs. */
+.dither::before {
+  content: ''; position: absolute; inset: 0; z-index: -2;
+  background: radial-gradient(circle, currentColor 1.15px, transparent 1.4px) 0 0 / 3px 3px;
+  -webkit-mask: var(--shape, none); mask: var(--shape, none);
+}
+.dither[data-field="orb"] { --shape: radial-gradient(circle closest-side at 58% 50%, #000 0 50%, rgba(0,0,0,.55) 60%, transparent 66%); }
+.dither[data-field="swell"] { --shape: repeating-linear-gradient(176deg, transparent 0 22px, #000 28px 34px, transparent 40px 52px); }
+.dither[data-field="contours"] { --shape: repeating-radial-gradient(circle at 46% 52%, transparent 0 9px, #000 11px 13px, transparent 15px 20px); }
+.dither[data-field="ridge"] { --shape: linear-gradient(to bottom, transparent 0 58%, rgba(0,0,0,.6) 66%, #000 82%); }
+.dither[data-field="dawn"] { --shape: radial-gradient(circle at 42% 66%, transparent 0 13%, rgba(0,0,0,.35) 14%, transparent 40%), linear-gradient(to bottom, transparent 0 69%, #000 71%); }
 .dither canvas {
   position: absolute; left: 0; top: 0; z-index: -1;
   image-rendering: crisp-edges; image-rendering: pixelated; /* Firefox reads the first, Chromium and Safari the second */
@@ -96,13 +106,12 @@ Use this skill when the brief says: "editorial", "Swiss", "technical", "engineer
 .dither .flat { position: absolute; inset: 0; width: 100%; height: 100%; fill: var(--flat); pointer-events: none; }
 ```
 
-The fallback background is a fading CSS halftone in the same two colors. If JavaScript or the 2D context fails, the tile still looks intentional.
+Without JavaScript or a 2D context the tile still shows its subject: a sparse halftone everywhere, and dense dots masked to the field's shape (`--shape`, one line per field). A flat gray gradient would say "something failed"; a halftone sphere still says "sphere". Give every new field a `--shape` line when you add it, and look at the page once with `getContext` forced to `null`.
 
 Tiles inside dark cells set their own colors; the engine reads them, nothing else changes:
 
 ```css
-.program .dither { width: min(100%, 220px); aspect-ratio: 1; background-color: var(--ink); color: var(--paper);
-  background-image: linear-gradient(to bottom, var(--ink) 0%, transparent 70%), radial-gradient(circle, var(--paper) 0.8px, transparent 1.2px); }
+.program .dither { width: min(100%, 220px); aspect-ratio: 1; background-color: var(--ink); color: var(--paper); }
 ```
 
 ---
@@ -348,7 +357,7 @@ const ridgeSVG = `<svg xmlns="http://www.w3.org/2000/svg" width="800" height="60
 <defs>
 <linearGradient id="s" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#bdbdbd"/><stop offset=".6" stop-color="#f6f6f6"/></linearGradient>
 <linearGradient id="a" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#a8a8a8"/><stop offset="1" stop-color="#7a7a7a"/></linearGradient>
-<linearGradient id="b" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2a2a2a"/><stop offset="1" stop-color="#0a0a0a"/></linearGradient>
+<linearGradient id="b" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4a4a4a"/><stop offset="1" stop-color="#303030"/></linearGradient>
 <radialGradient id="g" cx=".5" cy=".5" r=".5"><stop offset=".35" stop-color="#fff"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>
 </defs>
 <rect width="800" height="600" fill="url(#s)"/>
@@ -468,7 +477,7 @@ Row hover and keyboard focus both call `pick()`. `aria-current` marks the row wh
 
 [`demo/index.html`](demo/index.html) is a complete single-file page for an invented climate-hardware venture studio, Halvard: hero with wordmark, lit-sphere dither with a flat blade shape, an SVG landscape dithered through `fromImage`, ink and accent cells, a sticky program column with dither plates on ink, stats, a full-width swell band, a portfolio list whose rows swap the preview, and an accent contact cell. Light and dark theme, two live clocks.
 
-Verified with `node scripts/verify-demo.mjs skills/dither-tile-skill/demo` (desktop, mobile and reduced motion, no console errors, no failed requests, no horizontal overflow), plus a dark-theme and hover pass.
+Verified with `node scripts/verify-demo.mjs skills/dither-tile-skill/demo --stops 12` (desktop, phones at 360/390/430, reduced motion at every stop, forced fallback, keyboard focus, phone layout viewport, dead scroll, and a host page that styles `<body>`), plus a dark-theme, hover and no-canvas pass by hand.
 
 ![Demo preview](demo/preview.webp)
 
@@ -480,6 +489,8 @@ Lessons learned while building it (already folded into the rules above):
 - A `gap`-ruled list stretched by the grid showed a block of rule color under the last row. Lists inside a stretched cell use row borders, not gap.
 - An email link inside a grid ignored `align-self` and underlined the whole column; it needs `justify-self: start`.
 - Thin turbine blades vanished at 3px; anything that must survive the dither needs to be at least two dots thick in source pixels.
+- The ridge foreground was graded to 0.04 to 0.16 luminance and printed as a solid black band with a few holes. Lifted to 0.19 to 0.29 it reads as dark ground and keeps its texture. Check the darkest 10 percent of every source against rule 5, not only the midtones.
+- With canvas unavailable every tile used to be the same flat gray fade, which reads as broken. A `--shape` mask per field puts dense dots on the subject, so the fallback still shows a sphere, rings or a swell.
 
 ---
 
@@ -493,4 +504,5 @@ Before shipping, answer yes to all:
 4. Are the hairlines a 1px grid gap, with no doubled lines anywhere?
 5. Is there exactly one accent color, and no text sitting on dots?
 6. With reduced motion, does nothing move unless the user moves the pointer or picks a row?
-7. With JavaScript off, do the tiles still show a halftone in the right colors?
+7. With JavaScript off (or `getContext` forced to `null`), does each tile still show its subject as a halftone in the right colors?
+8. Is text color and type set on `body`, so the page looks the same inside a host that styles `body` (verify-demo's host check)?

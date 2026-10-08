@@ -4,7 +4,8 @@
 // would hit: page or console errors, failed requests, horizontal overflow,
 // keyboard focus that leaves no visible mark, and phone layouts that silently
 // widen the layout viewport (the page then renders zoomed out), and pages that
-// scroll past the end of their content.
+// scroll past the end of their content, and text that changes look when a host page
+// (an embed, an artifact viewer) styles <body> itself.
 //
 // Passes (each one a set of screenshots in outDir):
 //   desktop, mobile            normal motion, evenly spaced scroll stops
@@ -117,6 +118,37 @@ for (const pass of passes) {
     if (iw > vp.width + 1) problems.push(`[${tag}] layout viewport widened to ${iw}px on a ${vp.width}px phone: something bleeds sideways and the page zooms out (try overflow-x: clip on the bleeding section)`);
   }
   await ctx.close();
+}
+
+// Host page: an embed or artifact viewer often styles <body> itself (dark text, a small system font,
+// a light color-scheme). Text that inherits from body instead of setting its own color then changes
+// look inside the host. Load the page twice, plain and under such a reset, and compare every text box.
+{
+  const hostReset = () => {
+    const add = () => {
+      if (document.getElementById('__host')) return;
+      const st = document.createElement('style');
+      st.id = '__host';
+      st.textContent = ':root{color-scheme:light}body{margin:0;font:14px system-ui;background:#faf9f7;color:#1f1e1c}';
+      document.head.prepend(st); // first in the cascade, like the host's own skeleton
+    };
+    if (document.head) add(); else document.addEventListener('DOMContentLoaded', add);
+  };
+  const looks = async (withHost) => {
+    const ctx = await browser.newContext({ viewport: desktop, reducedMotion: 'reduce' });
+    if (withHost) await ctx.addInitScript(hostReset);
+    const page = await ctx.newPage();
+    await page.goto(`http://localhost:${port}/`, { waitUntil: 'load', timeout: 45000 });
+    await page.waitForTimeout(800);
+    const out = await page.evaluate(() => [...document.body.querySelectorAll('*')]
+      .filter((el) => [...el.childNodes].some((n) => n.nodeType === 3 && n.textContent.trim()) && el.getClientRects().length)
+      .map((el) => { const s = getComputedStyle(el); return [el.tagName.toLowerCase() + ' "' + el.textContent.trim().slice(0, 28) + '"', `${s.color} ${s.fontSize} ${s.fontFamily.split(',')[0]}`]; }));
+    await ctx.close();
+    return out;
+  };
+  const plain = await looks(false), hosted = await looks(true);
+  const changed = plain.filter(([, look], i) => hosted[i] && hosted[i][1] !== look).map(([id], i) => id);
+  if (changed.length) problems.push(`[host] ${changed.length} text element(s) change color or size when a host page styles <body> (set color and font on body yourself), e.g. ${changed.slice(0, 3).join(', ')}`);
 }
 
 // Keyboard focus: every element Tab reaches must look different when focused.

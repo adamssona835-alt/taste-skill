@@ -99,13 +99,23 @@
   /* ---------- Dither tile ---------- */
   .dither {
     position: relative; overflow: hidden; isolation: isolate;
-    /* No-JS / no-canvas fallback: a fading CSS halftone in the same colors */
-    background:
-      linear-gradient(to bottom, var(--paper) 0%, transparent 70%),
-      radial-gradient(circle, var(--ink) 0.8px, transparent 1.2px) 0 0 / 3px 3px;
+    /* No-JS / no-canvas fallback, part 1: a sparse halftone in the tile's own two colors */
+    background: radial-gradient(circle, currentColor 0.55px, transparent 0.85px) 0 0 / 3px 3px;
     background-color: var(--paper);
     color: var(--ink);
   }
+  /* Fallback, part 2: dense dots masked to the tile's subject, so the shape survives without canvas.
+     The canvas (z-index -1, opaque) covers all of this as soon as the engine runs. */
+  .dither::before {
+    content: ''; position: absolute; inset: 0; z-index: -2;
+    background: radial-gradient(circle, currentColor 1.15px, transparent 1.4px) 0 0 / 3px 3px;
+    -webkit-mask: var(--shape, none); mask: var(--shape, none);
+  }
+  .dither[data-field="orb"] { --shape: radial-gradient(circle closest-side at 58% 50%, #000 0 50%, rgba(0,0,0,.55) 60%, transparent 66%); }
+  .dither[data-field="swell"] { --shape: repeating-linear-gradient(176deg, transparent 0 22px, #000 28px 34px, transparent 40px 52px); }
+  .dither[data-field="contours"] { --shape: repeating-radial-gradient(circle at 46% 52%, transparent 0 9px, #000 11px 13px, transparent 15px 20px); }
+  .dither[data-field="ridge"] { --shape: linear-gradient(to bottom, transparent 0 58%, rgba(0,0,0,.6) 66%, #000 82%); }
+  .dither[data-field="dawn"] { --shape: radial-gradient(circle at 42% 66%, transparent 0 13%, rgba(0,0,0,.35) 14%, transparent 40%), linear-gradient(to bottom, transparent 0 69%, #000 71%); }
   .dither canvas {
     position: absolute; left: 0; top: 0; z-index: -1;
     image-rendering: crisp-edges; image-rendering: pixelated; /* Firefox reads the first, Chromium and Safari the second */
@@ -160,8 +170,7 @@
   .program:last-child { border-bottom: 0; }
   .program__n { font: 400 13px var(--mono); opacity: .6; padding-top: 6px; }
   .program h3 { margin: 0 0 22px; font-weight: 400; font-size: clamp(26px, 2.6vw, 38px); line-height: 1.02; letter-spacing: -.02em; }
-  .program .dither { width: min(100%, 220px); aspect-ratio: 1; background-color: var(--ink); color: var(--paper);
-    background-image: linear-gradient(to bottom, var(--ink) 0%, transparent 70%), radial-gradient(circle, var(--paper) 0.8px, transparent 1.2px); }
+  .program .dither { width: min(100%, 220px); aspect-ratio: 1; background-color: var(--ink); color: var(--paper); }
   .program p { margin: 0 0 28px; font-size: 16px; line-height: 1.4; color: color-mix(in srgb, var(--paper) 86%, transparent); }
 
   /* ---------- Numbers ---------- */
@@ -592,7 +601,7 @@ const ridgeSVG = `<svg xmlns="http://www.w3.org/2000/svg" width="800" height="60
 <defs>
 <linearGradient id="s" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#bdbdbd"/><stop offset=".6" stop-color="#f6f6f6"/></linearGradient>
 <linearGradient id="a" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#a8a8a8"/><stop offset="1" stop-color="#7a7a7a"/></linearGradient>
-<linearGradient id="b" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2a2a2a"/><stop offset="1" stop-color="#0a0a0a"/></linearGradient>
+<linearGradient id="b" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4a4a4a"/><stop offset="1" stop-color="#303030"/></linearGradient>
 <radialGradient id="g" cx=".5" cy=".5" r=".5"><stop offset=".35" stop-color="#fff"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>
 </defs>
 <rect width="800" height="600" fill="url(#s)"/>

@@ -24,7 +24,7 @@ The full, reusable version of each lesson lives in `skills/<slug>-skill/` with a
 | # | Date | Lesson | Area | Source | Skill | Score |
 | --- | --- | --- | --- | --- | --- | --- |
 | 001 | 2026-10-07 | [Particle morph hero](2026-10-07-particle-morph-hero.md) | WebGL and 3D | getlayers.ai "Vesper" template | [`particle-morph-skill`](../skills/particle-morph-skill/SKILL.md) | 34 → 38/40 |
-| 002 | 2026-10-07 | [Dither tile grid](2026-10-07-dither-tile-grid.md) | Imagery and art direction | aspensearch.com (Awwwards SOTD, 15 Sep 2026) | [`dither-tile-skill`](../skills/dither-tile-skill/SKILL.md) | 36/40 |
+| 002 | 2026-10-07 | [Dither tile grid](2026-10-07-dither-tile-grid.md) | Imagery and art direction | aspensearch.com (Awwwards SOTD, 15 Sep 2026) | [`dither-tile-skill`](../skills/dither-tile-skill/SKILL.md) | 36 → 38/40 |
 | 003 | 2026-10-08 | [Scroll scrub story](2026-10-08-scroll-scrub-story.md) | Scroll motion | white-desert.com (Awwwards SOTD, 11 Sep 2026) | [`scroll-scrub-story-skill`](../skills/scroll-scrub-story-skill/SKILL.md) | 37/40 |
 
 ## Improvement log
@@ -32,3 +32,4 @@ The full, reusable version of each lesson lives in `skills/<slug>-skill/` with a
 | Date | Skill | Score | Biggest fix | Machine improvement |
 | --- | --- | --- | --- | --- |
 | 2026-10-08 | particle-morph-skill | 34 → 38/40 | Shapes now hold at every reading stop, with one statement per screen behind a scrim (before: two headlines over a bare, half-formed galaxy); plus a light nav over the paper section, a 2D-canvas orb still for the plate and the no-WebGL fallback, per-shape fit so the galaxy never clips at 360px, and a device-true stat | verify-demo learned reduced motion at every stop, a forced-fallback pass (no WebGL, `CSS.supports` false), 360/430 widths, overflow at every stop, a keyboard focus-visibility check, `--stops N` and contact sheets; three new principles (fixed chrome flips with sections, one statement per screen, device-true copy) and code spliced from the demo |
+| 2026-10-08 | dither-tile-skill | 36 → 38/40 | Without canvas every tile was the same gray fade; a `--shape` mask per field now prints the subject (sphere, rings, swell, ridge, dawn) as a CSS halftone. Also lifted the ridge foreground out of solid ink | verify-demo learned a host check: the page is loaded under a stand-in for a viewer's `<body>` reset and every text box is compared; it found and fixed the same dark-text bug in the lesson 001 demo. New principle: style the body, not only the root |
