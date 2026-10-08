@@ -1,0 +1,610 @@
+<!doctype html>
+<html lang="sv">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="color-scheme" content="dark" />
+<title>Mörkerdal · ett observatorium för långsamma nätter</title>
+<meta name="description" content="Fyra kupoler, tolv gäster och fyra mil till närmaste gatlykta. Ett observatorium i Norrbotten, öppet november till mars." />
+<link rel="icon" href="data:," />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Manrope:wght@400;500&family=IBM+Plex+Mono:wght@400&display=swap" rel="stylesheet" />
+<script>document.documentElement.classList.add('js');</script>
+<style>
+  :root {
+    --night: #05070d;
+    --ink: #ece7dc;
+    --muted: rgba(236, 231, 220, 0.62);
+    --line: rgba(236, 231, 220, 0.12);
+    --ember: #f0b071;
+    --aurora: #8ff0c0;
+    --paper: #eee9df;
+    --paper-ink: #15161b;
+    --paper-muted: #55565e;
+    --serif: 'Instrument Serif', 'Times New Roman', serif;
+    --sans: 'Manrope', system-ui, sans-serif;
+    --mono: 'IBM Plex Mono', ui-monospace, monospace;
+  }
+  * { box-sizing: border-box; margin: 0; }
+  html { background: var(--night); color: var(--ink); font-family: var(--sans); font-size: 16px; -webkit-font-smoothing: antialiased; }
+  body { overflow-x: hidden; background: linear-gradient(#0b1328, #05070d 60%, #0d1222); }
+  .js body { background: var(--night); }
+  a { color: inherit; }
+  ::selection { background: var(--ember); color: var(--night); }
+
+  /* ---------- the sky ---------- */
+  #sky { position: fixed; inset: 0; width: 100vw; height: 100vh; display: block; pointer-events: none; }
+  html:not(.js) #sky { display: none; }
+  .horizon { position: fixed; left: 0; right: 0; bottom: 0; height: 26vh; min-height: 150px; pointer-events: none; }
+  .horizon svg { width: 100%; height: 100%; display: block; }
+  #pole { position: fixed; left: 0; top: 0; pointer-events: none; opacity: 0; transition: opacity 0.8s ease; font-family: var(--mono); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); white-space: nowrap; }
+  #pole::before { content: ''; position: absolute; left: -9px; top: -9px; width: 18px; height: 18px; border: 1px solid rgba(240, 176, 113, 0.7); border-radius: 50%; }
+  #pole span { position: absolute; left: 16px; top: -6px; }
+  #pole.on { opacity: 1; }
+
+  /* ---------- chrome ---------- */
+  nav { position: fixed; top: 20px; left: 20px; right: 20px; z-index: 10; display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 10px 10px 10px 20px; border: 1px solid var(--line); border-radius: 999px; background: rgba(6, 8, 15, 0.5); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); font-size: 14px; transition: background-color 0.4s ease, color 0.4s ease, border-color 0.4s ease; }
+  nav .brand { font-family: var(--serif); font-size: 22px; line-height: 1; text-decoration: none; letter-spacing: -0.01em; }
+  nav .links { display: flex; gap: 26px; color: var(--muted); }
+  nav .links a { text-decoration: none; transition: color 0.2s ease; }
+  nav .links a:hover { color: var(--ink); }
+  nav .right { display: flex; align-items: center; gap: 16px; }
+  .clock { font-family: var(--mono); font-size: 12px; letter-spacing: 0.06em; color: var(--muted); display: flex; align-items: center; gap: 8px; white-space: nowrap; }
+  .clock::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--ember); box-shadow: 0 0 10px var(--ember); }
+  .clock b { font-weight: 400; color: var(--ink); font-variant-numeric: tabular-nums; }
+  .btn { display: inline-flex; align-items: center; gap: 10px; padding: 12px 20px; border-radius: 999px; background: var(--ember); color: #1a1006; font: 500 14px/1 var(--sans); text-decoration: none; border: 0; cursor: pointer; transition: background-color 0.25s ease, transform 0.25s ease; }
+  .btn:hover { background: #f7c896; }
+  .btn:active { transform: scale(0.98); }
+  nav .btn { padding: 10px 16px; }
+  nav.on-paper { background: rgba(238, 233, 223, 0.9); border-color: rgba(21, 22, 27, 0.1); color: var(--paper-ink); }
+  nav.on-paper .links, nav.on-paper .clock { color: var(--paper-muted); }
+  nav.on-paper .links a:hover, nav.on-paper .clock b { color: var(--paper-ink); }
+  a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px solid var(--ember); outline-offset: 3px; }
+  nav.on-paper a:focus-visible { outline-color: var(--paper-ink); }
+
+  /* clip, not hidden: scrims bleed sideways, and on phones any bleed widens the layout viewport and zooms the page out. clip keeps sticky working */
+  main { position: relative; z-index: 2; overflow-x: clip; }
+  .meta { font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); line-height: 1.6; }
+  .pad { padding-inline: clamp(20px, 5vw, 80px); }
+  h1, h2, .big { font-family: var(--serif); font-weight: 400; letter-spacing: -0.02em; line-height: 0.92; }
+  h2 { font-size: clamp(44px, 6.6vw, 104px); }
+  h2 em, h1 em, .big em { font-style: italic; }
+  .lede { font-size: clamp(16px, 1.25vw, 19px); line-height: 1.55; color: var(--muted); max-width: 34ch; }
+  .scrim { position: relative; }
+  .scrim::before { content: ''; position: absolute; inset: -22% -16%; z-index: -1; pointer-events: none; background: radial-gradient(closest-side, rgba(5, 7, 13, 0.9), rgba(5, 7, 13, 0.62) 55%, transparent); }
+  .dawn .scrim::before { inset: -30% -40%; background: radial-gradient(closest-side, rgba(12, 16, 34, 0.5), rgba(12, 16, 34, 0.25) 60%, transparent); }
+
+  .rise { opacity: 0; transform: translateY(28px); transition: opacity 1s ease, transform 1.1s cubic-bezier(0.16, 1, 0.3, 1); }
+  .rise.in { opacity: 1; transform: none; }
+  html:not(.js) .rise { opacity: 1; transform: none; }
+
+  /* ---------- 1. dusk ---------- */
+  .hero { min-height: 100svh; display: grid; grid-template-columns: 1.4fr 1fr; grid-template-rows: auto 1fr auto auto; column-gap: 40px; padding-top: 120px; padding-bottom: calc(26vh + 8px); }
+  .hero .kicker { grid-column: 1 / -1; }
+  .hero h1 { grid-column: 1; grid-row: 3; font-size: clamp(76px, 15.5vw, 250px); line-height: 0.8; margin-left: -0.04em; }
+  .hero .intro { grid-column: 2; grid-row: 3; align-self: end; justify-self: end; padding-bottom: 1.2vw; }
+  .hero .intro .lede { color: var(--ink); opacity: 0.86; }
+  .cta { display: flex; align-items: center; gap: 22px; margin-top: 26px; flex-wrap: wrap; }
+  .textlink { font-size: 14px; color: var(--muted); text-decoration: none; border-bottom: 1px solid var(--line); padding-bottom: 3px; transition: color 0.2s ease, border-color 0.2s ease; }
+  .textlink:hover { color: var(--ink); border-color: var(--ink); }
+  .hero .foot { grid-column: 1 / -1; grid-row: 4; display: flex; justify-content: space-between; gap: 24px; margin-top: 36px; }
+
+  /* ---------- 2. exposure (pinned) ---------- */
+  .expo { height: 340vh; position: relative; }
+  .expo .stage { position: sticky; top: 0; height: 100svh; display: grid; grid-template-columns: 1fr auto; align-items: end; gap: 40px; padding-top: 120px; padding-bottom: calc(26vh + 12px); }
+  .steps { position: relative; align-self: center; min-height: 14em; }
+  .js .step { position: absolute; left: 0; top: 50%; transform: translateY(calc(-50% + 22px)); opacity: 0; transition: opacity 0.7s ease, transform 0.9s cubic-bezier(0.16, 1, 0.3, 1); }
+  .js .step.on { opacity: 1; transform: translateY(-50%); }
+  html:not(.js) .step + .step { margin-top: 48px; }
+  .step .big { font-size: clamp(42px, 5.8vw, 92px); max-width: 12ch; }
+  .step p { margin-top: 18px; }
+  .step .lede { color: var(--ink); opacity: 0.88; }
+  .meter { min-width: 230px; padding: 18px 0 0; border-top: 1px solid var(--line); }
+  .meter .row { display: flex; justify-content: space-between; align-items: baseline; gap: 24px; }
+  .meter .row + .row { margin-top: 10px; }
+  .meter b { font-family: var(--mono); font-weight: 400; font-size: clamp(28px, 2.6vw, 40px); font-variant-numeric: tabular-nums; letter-spacing: -0.02em; }
+  .meter .bar { height: 1px; background: var(--line); margin-top: 18px; position: relative; }
+  .meter .bar i { position: absolute; inset: 0 auto 0 0; width: calc(var(--p, 0) * 100%); background: var(--ember); box-shadow: 0 0 8px var(--ember); }
+
+  /* ---------- 3. paper ---------- */
+  .paper { position: relative; z-index: 4; background: var(--paper); color: var(--paper-ink); border-radius: 28px; margin: 0 12px; padding-block: clamp(80px, 12vh, 150px) clamp(56px, 8vh, 100px); }
+  .paper .grid { display: grid; grid-template-columns: 1.15fr 1fr; gap: clamp(40px, 6vw, 110px); align-items: start; }
+  .paper h2 { max-width: 9ch; }
+  .paper .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; margin-top: clamp(48px, 7vh, 88px); font-size: 15px; line-height: 1.6; color: var(--paper-muted); }
+  .paper .cols span { display: block; font-family: var(--mono); font-size: 11px; color: var(--paper-ink); margin-bottom: 12px; }
+  .plate { margin: 0; }
+  .plate .art { aspect-ratio: 4 / 5; border-radius: 18px; overflow: hidden; background: #070a14; }
+  .plate canvas { width: 100%; height: 100%; display: block; }
+  .plate figcaption { display: flex; justify-content: space-between; gap: 16px; margin-top: 14px; font-family: var(--mono); font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--paper-muted); }
+  .stats { display: grid; grid-template-columns: repeat(4, 1fr); margin-top: clamp(64px, 10vh, 120px); border-top: 1px solid rgba(21, 22, 27, 0.14); }
+  .stats div { padding: 22px 20px 0 0; }
+  .stats div + div { padding-left: 20px; border-left: 1px solid rgba(21, 22, 27, 0.14); }
+  .stats b { display: block; font-family: var(--serif); font-weight: 400; font-size: clamp(48px, 5vw, 80px); line-height: 1; letter-spacing: -0.02em; }
+  .stats .meta { color: var(--paper-muted); margin-top: 10px; display: block; }
+
+  /* ---------- 4. aurora ---------- */
+  .aurora { min-height: 125vh; display: grid; grid-template-columns: 1fr 1fr; align-items: end; padding-bottom: calc(26vh + 24px); }
+  .aurora .copy { grid-column: 1; }
+  .aurora h2 { max-width: 11ch; }
+  .aurora p { margin-top: 22px; }
+
+  /* ---------- 5. the night ---------- */
+  .night { padding-block: 18vh 14vh; display: grid; grid-template-columns: 0.8fr 1.2fr; gap: clamp(40px, 6vw, 110px); }
+  .night .head { position: sticky; top: 140px; align-self: start; }
+  .night h2 { max-width: 7ch; }
+  .night .head p { margin-top: 22px; }
+  .program { list-style: none; padding: 0; position: relative; --p: 0; }
+  .program::before, .program::after { content: ''; position: absolute; left: 0; top: 8px; bottom: 8px; width: 1px; background: var(--line); }
+  .program::after { background: var(--ember); bottom: auto; height: calc(var(--p) * (100% - 16px)); box-shadow: 0 0 8px var(--ember); }
+  .program li { position: relative; display: grid; grid-template-columns: 96px 1fr; gap: 20px; padding: 0 0 clamp(36px, 6vh, 64px) 32px; opacity: 0.38; transition: opacity 0.6s ease; }
+  .program li::before { content: ''; position: absolute; left: -4px; top: 9px; width: 9px; height: 9px; border-radius: 50%; background: var(--night); border: 1px solid var(--muted); transition: background-color 0.4s ease, border-color 0.4s ease; }
+  .program li.lit { opacity: 1; }
+  .program li.lit::before { background: var(--ember); border-color: var(--ember); }
+  html:not(.js) .program li { opacity: 1; }
+  .program time { font-family: var(--mono); font-size: 13px; padding-top: 6px; color: var(--ember); }
+  .program h3 { font-family: var(--serif); font-weight: 400; font-size: clamp(30px, 2.8vw, 44px); line-height: 1; letter-spacing: -0.01em; }
+  .program p { margin-top: 10px; color: var(--muted); line-height: 1.6; max-width: 44ch; }
+
+  /* ---------- 6. dawn ---------- */
+  .dawn { min-height: 100svh; display: flex; flex-direction: column; justify-content: center; padding-top: 140px; padding-bottom: calc(26vh + 24px); }
+  .dawn .inner { max-width: 760px; }
+  .dawn h2 { font-size: clamp(56px, 9vw, 150px); }
+  .dawn .lede { margin-top: 22px; color: var(--ink); opacity: 0.86; max-width: 46ch; }
+  form { display: grid; grid-template-columns: 1fr 1fr 1.4fr auto; gap: 10px; margin-top: 40px; }
+  label { display: block; }
+  label .meta { display: block; margin-bottom: 8px; }
+  input, select { width: 100%; height: 48px; background: rgba(5, 7, 13, 0.55); border: 1px solid rgba(236, 231, 220, 0.2); border-radius: 12px; padding: 0 14px; color: var(--ink); font: 400 15px var(--sans); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); transition: border-color 0.2s ease; }
+  input:hover, select:hover { border-color: rgba(236, 231, 220, 0.4); }
+  input::placeholder { color: rgba(236, 231, 220, 0.45); }
+  form .btn { height: 48px; align-self: end; padding-inline: 24px; }
+  .sent { margin-top: 16px; min-height: 1.6em; }
+  footer { position: relative; z-index: 2; display: flex; justify-content: space-between; gap: 20px; flex-wrap: wrap; padding-block: 20px 24px; border-top: 1px solid var(--line); background: #020306; }
+
+  @media (max-width: 860px) {
+    nav { top: 12px; left: 12px; right: 12px; padding-left: 16px; }
+    nav .links { display: none; }
+    nav .right { gap: 10px; }
+    .hero { grid-template-columns: 1fr; grid-template-rows: auto 1fr auto auto auto; padding-top: 104px; }
+    .hero h1 { grid-row: 3; }
+    .hero .intro { grid-column: 1; grid-row: 4; justify-self: start; margin-top: 22px; }
+    .hero .foot { grid-row: 5; flex-direction: column; gap: 8px; }
+    .expo .stage { grid-template-columns: 1fr; align-items: start; padding-top: 104px; grid-template-rows: 1fr auto; }
+    .steps { align-self: start; min-height: 0; height: 100%; }
+    .js .step { top: 0; transform: translateY(22px); }
+    .js .step.on { transform: none; }
+    .meter { min-width: 0; }
+    .paper { margin: 0 8px; border-radius: 22px; }
+    .paper .grid, .paper .cols { grid-template-columns: 1fr; }
+    .stats { grid-template-columns: 1fr 1fr; row-gap: 28px; }
+    .stats div:nth-child(3) { padding-left: 0; border-left: 0; }
+    .aurora { grid-template-columns: 1fr; min-height: 130vh; }
+    .night { grid-template-columns: 1fr; }
+    .night .head { position: relative; top: auto; }
+    .program li { grid-template-columns: 1fr; gap: 6px; padding-left: 26px; }
+    .program time { padding-top: 0; }
+    form { grid-template-columns: 1fr 1fr; }
+    form label:nth-of-type(3), form .btn { grid-column: 1 / -1; }
+  }
+  @media (max-width: 400px) {
+    .clock span { display: none; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .rise { opacity: 1; transform: none; transition: none; }
+    .js .step { transition: opacity 0.2s linear; transform: translateY(-50%); }
+    .program li, #pole { transition: none; }
+  }
+</style>
+</head>
+<body>
+<canvas id="sky" aria-hidden="true"></canvas>
+<div class="horizon" aria-hidden="true">
+  <svg viewBox="0 0 1440 260" preserveAspectRatio="xMidYMax slice">
+    <defs>
+      <linearGradient id="ridgeFade" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#0a0e18" />
+        <stop offset="1" stop-color="#020306" />
+      </linearGradient>
+    </defs>
+    <path fill="#070a12" d="M0 150 L120 118 L210 132 L330 84 L420 104 L520 70 L610 98 L700 90 L790 118 L900 76 L1010 108 L1120 92 L1230 120 L1330 98 L1440 112 L1440 260 L0 260 Z" />
+    <path fill="url(#ridgeFade)" d="M0 196 L160 172 L300 186 L470 160 L640 178 L820 166 L980 184 L1150 168 L1300 182 L1440 172 L1440 260 L0 260 Z" />
+    <g id="trees" fill="#020306"></g>
+    <g fill="#020306">
+      <rect x="1004" y="168" width="40" height="22" />
+      <path d="M1000 170 A28 28 0 0 1 1048 170 Z" />
+      <rect x="1088" y="164" width="52" height="26" />
+      <path d="M1082 166 A33 33 0 0 1 1146 166 Z" />
+      <rect x="1180" y="172" width="34" height="18" />
+      <path d="M1176 174 A21 21 0 0 1 1218 174 Z" />
+    </g>
+    <rect x="1112" y="146" width="3" height="20" fill="#f0b071" opacity="0.75" />
+    <rect x="1022" y="178" width="5" height="4" fill="#f0b071" opacity="0.8" />
+    <rect x="1121" y="176" width="6" height="5" fill="#f0b071" opacity="0.6" />
+  </svg>
+</div>
+<div id="pole" aria-hidden="true"><span>Polstjärnan</span></div>
+
+<nav aria-label="Huvudmeny">
+  <a class="brand" href="#top">Mörkerdal</a>
+  <span class="links"><a href="#exponering">Himlen</a><a href="#platsen">Platsen</a><a href="#natten">Natten</a></span>
+  <span class="right">
+    <span class="clock" aria-label="Klockan i Mörkerdal"><span>Klockan här</span> <b id="clock">18:40</b></span>
+    <a class="btn" href="#boka">Boka</a>
+  </span>
+</nav>
+
+<main>
+  <section class="hero pad" id="top">
+    <p class="meta kicker">Observatorium · Norrbotten · November till mars</p>
+    <h1>Mörker<em>dal</em></h1>
+    <div class="intro">
+      <p class="lede">Ett observatorium för långsamma nätter. Fyra kupoler, tolv gäster och fyra mil till närmaste gatlykta.</p>
+      <div class="cta"><a class="btn" href="#boka">Boka en natt</a><a class="textlink" href="#exponering">Se natten gå</a></div>
+    </div>
+    <div class="foot">
+      <p class="meta">Scrolla. Natten går i din takt.</p>
+      <p class="meta">Klockan följer sidan, från skymning till gryning.</p>
+    </div>
+  </section>
+
+  <section class="expo" id="exponering" aria-label="Exponering">
+    <div class="stage pad">
+      <div class="steps">
+        <div class="step scrim" data-step="0">
+          <p class="big">Stjärnorna står <em>inte</em> still.</p>
+          <p class="lede">Jorden vrider sig femton grader i timmen. Med lång slutartid syns det.</p>
+        </div>
+        <div class="step scrim" data-step="1">
+          <p class="big">Bara Polstjärnan <em>stannar.</em></p>
+          <p class="lede">Allt annat på himlen ritar cirklar runt den, hela natten, varje natt.</p>
+        </div>
+        <div class="step scrim" data-step="2">
+          <p class="big">Låt slutaren stå i fyra timmar, så <em>ritar himlen sig själv.</em></p>
+          <p class="lede">Det är den natten du kommer hit för. Stativen står redan framme.</p>
+        </div>
+      </div>
+      <div class="meter scrim" aria-hidden="true">
+        <div class="row"><span class="meta">Exponering</span><b id="expoTime">0:00</b></div>
+        <div class="row"><span class="meta">Himlen har vridit sig</span><b id="expoDeg">0°</b></div>
+        <div class="bar"><i id="expoBar"></i></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="paper pad" id="platsen">
+    <div class="grid">
+      <div>
+        <h2 class="rise">Mörkret är själva <em>utrustningen.</em></h2>
+        <div class="cols">
+          <p class="rise"><span>[01]</span>Närmaste gatlykta står fyra mil bort. Himlen här når Bortle 1, den mörkaste klassen på skalan. Vintergatan kastar skugga.</p>
+          <p class="rise"><span>[02]</span>Vi byggde fyra små kupoler i stället för en stor. Tolv gäster per natt, aldrig fler, så att ingen behöver köa till okularet.</p>
+        </div>
+      </div>
+      <figure class="plate rise">
+        <div class="art"><canvas id="plate" aria-hidden="true"></canvas></div>
+        <figcaption><span>Fig. 01 / Kupol två, 14 februari</span><span>6 h 12 min</span></figcaption>
+      </figure>
+    </div>
+    <div class="stats">
+      <div><b>4</b><span class="meta">Kupoler med eget teleskop</span></div>
+      <div><b>12</b><span class="meta">Gäster per natt</span></div>
+      <div><b>40</b><span class="meta">Km till närmaste gatlykta</span></div>
+      <div><b>20</b><span class="meta">Dygn utan soluppgång i december</span></div>
+    </div>
+  </section>
+
+  <section class="aurora pad" id="norrsken">
+    <div class="copy scrim">
+      <h2 class="rise">Klockan 23:40 brukar himlen <em>börja röra sig.</em></h2>
+      <p class="lede rise">Någon av oss är vaken hela natten och håller vakt. Rör sig himlen knackar vi på din dörr. Det är hela tjänsten, och den är viktigare än den låter.</p>
+    </div>
+  </section>
+
+  <section class="night pad" id="natten">
+    <div class="head scrim">
+      <h2 class="rise">En natt, <em>timme för timme.</em></h2>
+      <p class="lede rise">Ingen agenda att passa. Det här är bara vad som brukar hända, och ungefär när.</p>
+    </div>
+    <ol class="program" id="program">
+      <li><time>18:30</time><div><h3>Middag i köket</h3><p>Röding, rotselleri och lingon. Tidigt, så att ögonen hinner vänja sig innan det blir mörkt på riktigt.</p></div></li>
+      <li><time>20:00</time><div><h3>Kupolerna öppnar</h3><p>Fyra teleskop, ett i varje kupol. En astronom på tre gäster, aldrig fler.</p></div></li>
+      <li><time>21:30</time><div><h3>Mörkeranpassning</h3><p>Röda lampor, inga skärmar. Efter tjugo minuter ser du dammet i Vintergatan.</p></div></li>
+      <li><time>23:40</time><div><h3>Norrskensvakt</h3><p>Vakten går ronden med termos. Du sover tills det är värt att vakna.</p></div></li>
+      <li><time>03:00</time><div><h3>Bastu i mörker</h3><p>Vedeldad, nere vid sjön. Isvak om det är kallt nog, och det är det.</p></div></li>
+      <li><time>06:10</time><div><h3>Gryning</h3><p>Kokkaffe vid kupol ett. Natten är slut, men du har sett hela.</p></div></li>
+    </ol>
+  </section>
+
+  <section class="dawn pad" id="boka">
+    <div class="inner scrim">
+      <h2 class="rise">Boka en <em>natt.</em></h2>
+      <p class="lede rise">Från 4 800 kr per person. Middag, bastu, frukost och astronom ingår. Molnen ingår inte: blir det mulet hela vistelsen bjuder vi på en natt till.</p>
+      <form class="rise" id="book">
+        <label><span class="meta">Månad</span>
+          <select name="month"><option>November</option><option>December</option><option selected>Januari</option><option>Februari</option><option>Mars</option></select>
+        </label>
+        <label><span class="meta">Gäster</span>
+          <select name="guests"><option>1</option><option selected>2</option><option>3</option><option>4</option></select>
+        </label>
+        <label><span class="meta">E-post</span>
+          <input type="email" name="email" required placeholder="du@exempel.se" autocomplete="email" />
+        </label>
+        <button class="btn" type="submit">Skicka förfrågan</button>
+      </form>
+      <p class="meta sent" id="sent" role="status" aria-live="polite"></p>
+    </div>
+  </section>
+</main>
+
+<footer class="pad">
+  <p class="meta">Mörkerdal observatorium · 67° 54′ N, 19° 02′ E</p>
+  <p class="meta">Säsong november till mars</p>
+  <p class="meta"><a href="mailto:hej@morkerdal.se">hej@morkerdal.se</a></p>
+</footer>
+
+<script>
+(() => {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const $ = (s) => document.querySelector(s);
+  const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
+  const smooth = (a, b, v) => { const t = clamp((v - a) / (b - a)); return t * t * (3 - 2 * t); };
+  const mix = (a, b, t) => a + (b - a) * t;
+
+  // deterministic randomness: the same sky on every visit
+  function rng(seed) {
+    return () => {
+      seed |= 0; seed = (seed + 0x6d2b79f5) | 0;
+      let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+
+  // ---------- treeline ----------
+  {
+    const r = rng(7), g = $('#trees');
+    let svg = '';
+    for (let x = -10; x < 1450; x += 6 + r() * 10) {
+      if (x > 980 && x < 1230) continue; // clearing for the domes
+      const h = 10 + r() * 26, w = h * 0.34, y = 196 - Math.sin(x * 0.01) * 6;
+      svg += `<path d="M${x.toFixed(1)} ${(y - h).toFixed(1)} L${(x + w).toFixed(1)} ${y.toFixed(1)} L${(x - w).toFixed(1)} ${y.toFixed(1)} Z"/>`;
+    }
+    g.innerHTML = svg;
+  }
+
+  // ---------- sky keyframes, by minutes after 18:00 ----------
+  const hex = (h) => [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16));
+  const SKY = [
+    [0, '#1a2546', '#3d3552', '#d08a5c'],
+    [40, '#111b37', '#2b2947', '#b8775a'],
+    [130, '#070b18', '#0c1326', '#25213a'],
+    [330, '#04060d', '#070c18', '#0d1424'],
+    [400, '#030a10', '#05201a', '#0a2a24'],
+    [540, '#04060d', '#070b16', '#0c1121'],
+    [660, '#0e1630', '#262b4c', '#5b4a63'],
+    [730, '#25355e', '#76708e', '#eab48a'],
+  ].map(([t, ...c]) => [t, ...c.map(hex)]);
+  function skyAt(t) {
+    let i = 1;
+    while (i < SKY.length - 1 && t > SKY[i][0]) i++;
+    const a = SKY[i - 1], b = SKY[i], k = clamp((t - a[0]) / (b[0] - a[0]));
+    return [1, 2, 3].map((j) => `rgb(${a[j].map((v, n) => Math.round(mix(v, b[j][n], k))).join(',')})`);
+  }
+  const fmt = (min) => {
+    const m = ((Math.round(min) % 1440) + 1440) % 1440;
+    return `${String(Math.floor(m / 60)).padStart(2, '0')}:${String(m % 60).padStart(2, '0')}`;
+  };
+
+  // ---------- stars ----------
+  const COLORS = ['255,248,236', '255,214,170', '186,208,255'];
+  const WIDTHS = [0.7, 1.1, 1.7], ALPHAS = [0.3, 0.58, 0.95];
+  function makeStars(n, seed) {
+    const r = rng(seed), out = [];
+    for (let i = 0; i < n; i++) {
+      const c = r() < 0.62 ? 0 : r() < 0.5 ? 1 : 2;
+      const p = r(), b = p < 0.7 ? 0 : p < 0.94 ? 1 : 2;
+      out.push({ d: Math.sqrt(r()), a: r() * Math.PI * 2, bucket: c * 3 + b, b });
+    }
+    return out;
+  }
+  // Star trails around a pole: rot = sky rotation so far, len = trail length, both in radians.
+  function drawStars(ctx, stars, { px, py, R, rot, len, vis = 1 }) {
+    const paths = Array.from({ length: 9 }, () => new Path2D());
+    for (const s of stars) {
+      const r = s.d * R;
+      if (r < 2) continue;
+      const a = s.a - rot;
+      const l = Math.max(len, 1.4 / r); // never shorter than a dot
+      const p = paths[s.bucket];
+      p.moveTo(px + Math.cos(a) * r, py + Math.sin(a) * r);
+      p.arc(px, py, r, a, a + l);
+    }
+    ctx.lineCap = 'round';
+    for (let k = 0; k < 9; k++) {
+      const b = k % 3;
+      ctx.strokeStyle = `rgba(${COLORS[(k / 3) | 0]},${(ALPHAS[b] * Math.pow(vis, 2 - b)).toFixed(3)})`;
+      ctx.lineWidth = WIDTHS[b];
+      ctx.stroke(paths[k]);
+    }
+  }
+
+  // ---------- the plate: a whole night on one frame ----------
+  const plate = $('#plate');
+  const plateStars = makeStars(1700, 21);
+  function drawPlate() {
+    const dpr = Math.min(devicePixelRatio || 1, 2), w = plate.clientWidth, h = plate.clientHeight;
+    if (!w) return;
+    plate.width = w * dpr; plate.height = h * dpr;
+    const ctx = plate.getContext('2d');
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    const g = ctx.createLinearGradient(0, 0, 0, h);
+    g.addColorStop(0, '#05070f'); g.addColorStop(0.75, '#0a0f1f'); g.addColorStop(1, '#1d1a2c');
+    ctx.fillStyle = g; ctx.fillRect(0, 0, w, h);
+    drawStars(ctx, plateStars, { px: w * 0.42, py: h * 0.3, R: Math.hypot(w, h) * 0.95, rot: 0.6, len: 93 * Math.PI / 180 });
+    // the dome in silhouette, lit from inside
+    ctx.fillStyle = '#020306';
+    ctx.fillRect(0, h * 0.86, w, h * 0.14);
+    ctx.beginPath(); ctx.arc(w * 0.64, h * 0.86, w * 0.12, Math.PI, 0); ctx.fill();
+    ctx.fillStyle = 'rgba(240,176,113,0.8)';
+    ctx.fillRect(w * 0.64 - 1.5, h * 0.86 - w * 0.12 + 2, 3, w * 0.09);
+  }
+  if (plate) new ResizeObserver(drawPlate).observe(plate);
+
+  // ---------- the live sky ----------
+  const canvas = $('#sky'), ctx = canvas.getContext('2d');
+  const small = Math.min(screen.width, screen.height) < 700;
+  const stars = makeStars(small ? 900 : 1800, 3);
+  const aur = document.createElement('canvas'), actx = aur.getContext('2d');
+  let W = 0, H = 0, pole = { x: 0, y: 0 }, R = 0;
+
+  const expo = $('#exponering'), paper = $('#platsen'), auroraSec = $('#norrsken');
+  const nightSec = $('#natten'), dawnSec = $('#boka'), hero = $('#top');
+  const nav = $('nav'), clock = $('#clock'), poleEl = $('#pole');
+  const steps = [...document.querySelectorAll('.step')];
+  const program = $('#program'), rows = [...program.children];
+  const expoTime = $('#expoTime'), expoDeg = $('#expoDeg'), expoBar = $('#expoBar');
+
+  // scroll position → minutes after 18:00. The pinned section runs 19:30 to 23:30,
+  // so its four hours of scroll are four hours of sky: 60 degrees of trail.
+  let anchors = [];
+  function measure() {
+    const vh = innerHeight, center = (el) => el.offsetTop + el.offsetHeight / 2 - vh / 2;
+    const top = (el) => el.getBoundingClientRect().top + scrollY;
+    const eTop = top(expo), eEnd = eTop + expo.offsetHeight - vh;
+    anchors = [
+      [0, 40],
+      [eTop, 90],
+      [eEnd, 330],
+      [top(paper) + paper.offsetHeight - vh * 0.4, 345],
+      [top(auroraSec) + auroraSec.offsetHeight / 2 - vh / 2, 420],
+      [top(nightSec) + nightSec.offsetHeight / 2 - vh / 2, 540],
+      [Math.min(top(dawnSec) + dawnSec.offsetHeight / 2 - vh / 2, document.documentElement.scrollHeight - vh - 1), 730],
+    ];
+    W = innerWidth; H = innerHeight;
+    const dpr = Math.min(devicePixelRatio || 1, small ? 1.5 : 2);
+    canvas.width = W * dpr; canvas.height = H * dpr;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    aur.width = Math.ceil(W / 6); aur.height = Math.ceil(H / 6);
+    pole = W > 860 ? { x: W * 0.7, y: H * 0.24 } : { x: W * 0.62, y: H * 0.2 };
+    R = Math.hypot(Math.max(pole.x, W - pole.x), Math.max(pole.y, H - pole.y)) * 1.02;
+    poleEl.style.transform = `translate(${pole.x}px, ${pole.y}px)`;
+  }
+  function minutesAt(y) {
+    if (y <= anchors[0][0]) return anchors[0][1];
+    for (let i = 1; i < anchors.length; i++) {
+      const [y0, t0] = anchors[i - 1], [y1, t1] = anchors[i];
+      if (y <= y1) {
+        const k = clamp((y - y0) / Math.max(1, y1 - y0));
+        // reduced motion: the sky jumps between the moments, never scrubs
+        return reduce && i !== 2 ? (k < 0.5 ? t0 : t1) : mix(t0, t1, k);
+      }
+    }
+    return anchors[anchors.length - 1][1];
+  }
+
+  let phase = 0;
+  function drawAurora(strength) {
+    const w = aur.width, h = aur.height;
+    actx.clearRect(0, 0, w, h);
+    const g = actx.createLinearGradient(0, h * 0.06, 0, h * 0.62);
+    g.addColorStop(0, 'rgba(120,90,255,0)');
+    g.addColorStop(0.35, 'rgba(120,110,255,0.22)');
+    g.addColorStop(0.72, 'rgba(90,240,170,0.5)');
+    g.addColorStop(0.9, 'rgba(175,255,215,0.9)');
+    g.addColorStop(1, 'rgba(90,240,170,0)');
+    actx.strokeStyle = g; actx.lineWidth = 1.4;
+    for (let curtain = 0; curtain < 2; curtain++) {
+      const off = curtain * 2.1, lift = curtain * h * 0.07;
+      for (let x = 0; x < w; x += 1) {
+        const base = h * 0.5 - lift + Math.sin(x * 0.018 + phase + off) * h * 0.07 + Math.sin(x * 0.047 + phase * 1.7 + off) * h * 0.025;
+        const tall = h * (0.16 + 0.14 * (0.5 + 0.5 * Math.sin(x * 0.09 + phase * 2.3 + off)));
+        const k = 0.5 + 0.5 * Math.sin(x * 0.21 + phase * 3.1 + off);
+        const gap = 0.5 + 0.5 * Math.sin(x * 0.031 + phase * 0.9 + off * 1.3);
+        actx.globalAlpha = strength * 0.78 * (0.12 + 0.88 * k * k) * (0.15 + 0.85 * gap * gap) * (curtain ? 0.5 : 1);
+        actx.beginPath(); actx.moveTo(x, base - tall); actx.lineTo(x, base); actx.stroke();
+      }
+    }
+    actx.globalAlpha = 1;
+  }
+
+  let lastT = -1, lastY = -1, auroraOn = 0;
+  function render(force) {
+    const y = scrollY;
+    if (!force && y === lastY && !(auroraOn > 0.01 && !reduce)) return;
+    lastY = y;
+    const t = minutesAt(y);
+    lastT = t;
+
+    // sky
+    const [c0, c1, c2] = skyAt(t);
+    const g = ctx.createLinearGradient(0, 0, 0, H);
+    g.addColorStop(0, c0); g.addColorStop(0.62, c1); g.addColorStop(1, c2);
+    ctx.globalCompositeOperation = 'source-over';
+    ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+
+    // aurora after midnight-ish, gone well before dawn
+    auroraOn = smooth(350, 405, t) * (1 - smooth(470, 560, t));
+    ctx.globalCompositeOperation = 'lighter';
+    if (auroraOn > 0.01) {
+      drawAurora(auroraOn);
+      ctx.drawImage(aur, 0, 0, W, H);
+    }
+
+    // stars: rotate 15 degrees an hour; trails only while the shutter is open (until the paper covers the sky)
+    const rot = (t * Math.PI) / 720;
+    const shutter = y < paper.getBoundingClientRect().top + y ? clamp(t - 90, 0, 240) : 0;
+    const vis = (0.32 + 0.68 * smooth(20, 130, t)) * (1 - 0.82 * smooth(600, 730, t));
+    drawStars(ctx, stars, { px: pole.x, py: pole.y, R, rot, len: (shutter * Math.PI) / 720, vis });
+    ctx.globalCompositeOperation = 'source-over';
+
+    // chrome
+    clock.textContent = fmt(18 * 60 + t);
+    const eRect = expo.getBoundingClientRect();
+    const p = clamp(-eRect.top / (expo.offsetHeight - innerHeight));
+    const inExpo = eRect.top <= 1 && eRect.bottom >= innerHeight - 1;
+    // each statement owns a third of the pinned scroll; the first holds until 30 percent
+    const step = eRect.top > innerHeight * 0.12 ? -1 : p < 0.3 ? 0 : p < 0.64 ? 1 : 2;
+    steps.forEach((s, i) => s.classList.toggle('on', i === step));
+    poleEl.classList.toggle('on', inExpo && step >= 1);
+    const mins = Math.round(clamp(t - 90, 0, 240));
+    expoTime.textContent = `${Math.floor(mins / 60)}:${String(mins % 60).padStart(2, '0')}`;
+    expoDeg.textContent = `${Math.round(mins / 4)}°`;
+    expoBar.parentElement.style.setProperty('--p', (mins / 240).toFixed(3));
+
+    const pr = paper.getBoundingClientRect(), nr = nav.getBoundingClientRect();
+    nav.classList.toggle('on-paper', pr.top < nr.bottom && pr.bottom > nr.top);
+
+    const r = program.getBoundingClientRect();
+    const pp = clamp((innerHeight * 0.62 - r.top) / r.height);
+    program.style.setProperty('--p', pp.toFixed(3));
+    rows.forEach((li) => li.classList.toggle('lit', li.offsetTop / program.offsetHeight <= pp + 0.001));
+  }
+
+  let last = performance.now();
+  function frame(now) {
+    const dt = Math.min((now - last) / 1000, 0.05);
+    last = now;
+    if (auroraOn > 0.01 && !reduce && !document.hidden) phase += dt * 0.12; // the only idle motion on the page
+    render(false);
+    requestAnimationFrame(frame);
+  }
+
+  const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }), { rootMargin: '0px 0px -12% 0px' });
+  document.querySelectorAll('.rise').forEach((el) => io.observe(el));
+
+  $('#book').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const f = new FormData(e.target);
+    $('#sent').textContent = `Tack. Vi hör av oss om ${f.get('month').toLowerCase()}, ${f.get('guests')} gäster.`;
+  });
+
+  const relayout = () => { measure(); render(true); };
+  addEventListener('resize', relayout);
+  document.fonts?.ready.then(relayout);
+  addEventListener('load', relayout);
+  relayout();
+  requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>

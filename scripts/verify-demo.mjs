@@ -2,7 +2,9 @@
 // Serve a demo folder, load it in headless Chromium (WebGL via SwiftShader),
 // screenshot it at several scroll positions, and fail on anything a visitor
 // would hit: page or console errors, failed requests, horizontal overflow,
-// keyboard focus that leaves no visible mark.
+// keyboard focus that leaves no visible mark, and phone layouts that silently
+// widen the layout viewport (the page then renders zoomed out), and pages that
+// scroll past the end of their content.
 //
 // Passes (each one a set of screenshots in outDir):
 //   desktop, mobile            normal motion, evenly spaced scroll stops
@@ -104,6 +106,16 @@ for (const pass of passes) {
     if (overflowAt === null && await page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth + 1)) overflowAt = i;
   }
   if (overflowAt !== null) problems.push(`[${tag}] horizontal overflow (first seen at stop ${overflowAt})`);
+  // On a phone, content that bleeds sideways (even under overflow-x: hidden on body) widens the
+  // layout viewport and the whole page renders zoomed out. scrollWidth cannot see it, innerWidth can.
+  // Scrolling past the end: an absolutely positioned layer (a scrim, a glow) whose containing block is
+  // further up than intended stretches the page below the footer into empty screens.
+  const dead = await page.evaluate(() => document.documentElement.scrollHeight - Math.max(document.body.offsetHeight, document.body.getBoundingClientRect().bottom + scrollY));
+  if (dead > 2) problems.push(`[${tag}] page scrolls ${Math.round(dead)}px past the end of its content (an absolute layer is positioned against the wrong ancestor)`);
+  if (vp.isMobile) {
+    const iw = await page.evaluate(() => window.innerWidth);
+    if (iw > vp.width + 1) problems.push(`[${tag}] layout viewport widened to ${iw}px on a ${vp.width}px phone: something bleeds sideways and the page zooms out (try overflow-x: clip on the bleeding section)`);
+  }
   await ctx.close();
 }
 

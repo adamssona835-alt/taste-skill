@@ -517,6 +517,7 @@ Lessons learned while building and improving it (already folded into the rules a
 - The dark nav over the light section and the stat that lied on phones only showed in screenshots past the hero.
 - The forced no-WebGL pass showed a gradient blob, then the still sitting behind "Let's talk.": both fixed only because someone looked.
 - Wrap `rotation.y` before easing it back to zero, or the form unwinds several full turns when settling.
+- Scrims bleed sideways (negative inset). On a phone that widened the layout viewport to 397px and zoomed the page out, invisible to a scrollWidth check. `main { overflow-x: clip; }` fixes it without breaking sticky; verify-demo now checks `innerWidth` on phones.
 
 ---
 
