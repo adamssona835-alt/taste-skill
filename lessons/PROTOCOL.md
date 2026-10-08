@@ -51,9 +51,9 @@ In the morning, section 1 is replaced by `NEXT.md` when its date is today and it
 node scripts/verify-demo.mjs skills/<slug>-skill/demo /tmp/verify
 ```
 
-It must print `OK`. It checks desktop, mobile, and reduced motion for page errors, console errors, failed requests, and horizontal overflow.
+It must print `OK`. It runs desktop, phones at 360/390/430, reduced motion at every scroll stop, and a forced-fallback pass (WebGL unavailable, `CSS.supports()` false), and fails on page errors, console errors, failed requests, horizontal overflow at any stop, and any element Tab reaches without a visible focus change. For pinned or scrubbed sections add `--stops 30`. With ImageMagick installed it writes `sheet-<pass>.jpg` contact sheets, one row per pass.
 
-Then **look at every screenshot** and write down at least three visual flaws (overlaps, unreadable text over busy backgrounds, awkward wraps, dead space, mobile cramping, motion parked mid-transition). Fix them and verify again. Repeat until a fresh look finds nothing worth fixing. Fold what you learned into the skill's "Working Demo" notes so the next agent does not repeat it.
+Then **look at every contact sheet, including the fallback and reduced ones** and write down at least three visual flaws (overlaps, unreadable text over busy backgrounds, awkward wraps, dead space, mobile cramping, motion parked mid-transition). Fix them and verify again. Repeat until a fresh look finds nothing worth fixing. Fold what you learned into the skill's "Working Demo" notes so the next agent does not repeat it.
 
 Every code block in `SKILL.md` must match what the demo actually runs.
 
@@ -89,4 +89,5 @@ If today taught something about *how* to run these lessons (a better capture tri
 - 2026-10-07: Awwwards resets headless connections; direct site capture works for most studios. Heavy WebGL sites may time out a few screenshots under SwiftShader; the capture script keeps going and logs which ones.
 - 2026-10-07: A section parked mid-morph looked like noise in screenshots. Always check every scroll stop, not only the hero.
 - 2026-10-07: Match `playwright-core` to `/opt/pw-browsers` (chromium-1194 = `@1.56.1`) or capture fails on ffmpeg; Chromium needs `<-loopback>` in the proxy bypass (now in verify-demo); and verify-demo never toggles theme or hovers, so screenshot dark mode and hover states yourself (lesson 002's worst flaw only showed in dark mode).
-- 2026-10-08: verify-demo's 5 stops miss what happens inside a pinned section; sweep it at 30+ stops, rerun with `CSS.supports` forced false to test the JS fallback, and sweep reduced motion through the middle of the page, not only top and bottom. Generated imagery needs its own render-and-look loop before it goes into the page.
+- 2026-10-08: Generated imagery needs its own render-and-look loop before it goes into the page. (The pinned-section sweep, forced `CSS.supports` fallback and mid-page reduced motion from this note are now built into verify-demo: `--stops 30`, the `fallback-*` and `*-reduced` passes.)
+- 2026-10-08 (improve): A dense sweep catches transit frames, but the bugs a visitor remembers sat at reading stops past the hero: two statements on one screen, a dark nav over a light section, a stat that was false on phones. Read every contact sheet end to end, not only the first frames. A dense sweep's 500ms wait can catch reveal animations mid-blur; judge those at the default stops.

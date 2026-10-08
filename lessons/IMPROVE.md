@@ -17,8 +17,8 @@ Run it fully autonomously. Nobody hands you a target.
 
 ## 2. Audit It Like a Jury
 
-1. Run `node scripts/verify-demo.mjs skills/<slug>/demo /tmp/verify`. It must print OK.
-2. Then go beyond it, using every check the notes have added since the skill shipped: dark mode, hover and focus states, dense sweeps through pinned or scrubbed sections, forced fallbacks (`CSS.supports` false, no WebGL), reduced motion through the middle of the page, real mobile widths (360, 390, 430).
+1. Run `node scripts/verify-demo.mjs skills/<slug>/demo /tmp/verify`. It must print OK. Note that the script itself may have learned checks since the skill shipped (fallback, reduced motion at every stop, 360/430, focus): an old OK is not a current OK.
+2. Then go beyond it: rerun with `--stops 12` (30 for pinned or scrubbed sections) and read every `sheet-*.jpg`, then do what the script still cannot: dark mode, hover states, contrast of text over moving imagery mid-scroll.
 3. Look at every screenshot. List every flaw, then rank them by how much a visitor would notice.
 4. Re-read the SKILL.md as an agent seeing it for the first time. Where would you guess, get stuck, or ship slop? Missing values, vague rules, code that drifted from the demo.
 
