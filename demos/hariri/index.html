@@ -1,0 +1,461 @@
+<!doctype html>
+<html lang="sv">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Dina Hariri · Advokat</title>
+<meta name="description" content="Advokat Dina Hariri. Juridik på svenska, inte på juridiska." />
+<link rel="icon" href="data:," />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;1,6..72,300;1,6..72,400&family=Hanken+Grotesk:wght@400;500&family=JetBrains+Mono:wght@400&family=Mrs+Saint+Delafield&display=swap" rel="stylesheet" />
+<script>document.documentElement.classList.add('js');</script>
+<style>
+  /* Layout: a legal document. A blue margin rule runs down the page, sections are paragraphs (§) */
+  :root {
+    color-scheme: light;
+    --paper: #edeeea;
+    --paper-2: #e3e5e0;
+    --ink: #111418;
+    --ink-2: #3e434a;
+    --rule: rgba(17, 20, 24, 0.14);
+    --pen: #2340d8;
+    --night: #0e1115;
+    --night-ink: #e9eae5;
+    --night-2: rgba(233, 234, 229, 0.78);
+    --night-rule: rgba(233, 234, 229, 0.16);
+    --serif: 'Newsreader', 'Times New Roman', serif;
+    --sans: 'Hanken Grotesk', system-ui, sans-serif;
+    --mono: 'JetBrains Mono', ui-monospace, monospace;
+    --hand: 'Mrs Saint Delafield', 'Brush Script MT', cursive;
+    --gutter: clamp(20px, 5vw, 88px);
+    --margin: clamp(20px, 9vw, 150px);
+  }
+  * { box-sizing: border-box; }
+  html { background: var(--paper); color: var(--ink); -webkit-font-smoothing: antialiased; }
+  /* color and type on body too, so a host page that styles body cannot darken or shrink the text */
+  body { margin: 0; overflow-x: hidden; background: var(--paper); color: var(--ink); font: 400 17px/1.6 var(--sans); }
+  h1, h2, h3, p, ol, ul, figure { margin: 0; }
+  a { color: inherit; }
+  ::selection { background: var(--pen); color: #fff; }
+  a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible { outline: 2px solid var(--pen); outline-offset: 3px; }
+  .dark a:focus-visible, .dark button:focus-visible, .dark input:focus-visible, .dark select:focus-visible, .dark textarea:focus-visible { outline-color: #8fa0ff; }
+
+  .mono { font-family: var(--mono); font-size: 12.5px; letter-spacing: 0.04em; text-transform: uppercase; }
+  .serif { font-family: var(--serif); font-weight: 300; letter-spacing: -0.02em; line-height: 0.98; }
+  .lede { font-size: clamp(18px, 1.45vw, 21px); line-height: 1.55; color: var(--ink-2); max-width: 40ch; }
+  .dark .lede { color: var(--night-2); }
+
+  /* ---------- chrome ---------- */
+  nav { position: fixed; top: 18px; left: 18px; right: 18px; z-index: 20; display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 10px 10px 10px 20px; border-radius: 14px; border: 1px solid var(--rule); background: rgba(237, 238, 234, 0.82); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); color: var(--ink); transition: background-color 0.4s ease, color 0.4s ease, border-color 0.4s ease; }
+  nav .who { text-decoration: none; display: flex; align-items: baseline; gap: 10px; }
+  nav .who b { font: 400 22px/1 var(--serif); letter-spacing: -0.01em; }
+  nav .who span { color: var(--ink-2); }
+  nav .links { display: flex; gap: 26px; font-size: 15px; }
+  nav .links a { text-decoration: none; color: var(--ink-2); transition: color 0.2s ease; }
+  nav .links a:hover { color: var(--pen); }
+  .btn { display: inline-flex; align-items: center; gap: 10px; padding: 13px 20px; border-radius: 10px; border: 0; background: var(--pen); color: #fff; font: 500 15px/1 var(--sans); text-decoration: none; cursor: pointer; transition: background-color 0.2s ease, transform 0.2s ease; }
+  .btn:hover { background: #1a32b4; }
+  .btn:active { transform: scale(0.98); }
+  .btn svg { width: 14px; height: 14px; }
+  nav .btn { padding: 11px 16px; }
+  nav.on-dark { background: rgba(14, 17, 21, 0.78); border-color: var(--night-rule); color: var(--night-ink); }
+  nav.on-dark .who span, nav.on-dark .links a { color: var(--night-2); }
+  nav.on-dark .links a:hover { color: #fff; }
+
+  /* the margin: a blue rule with the paragraph index, like a statute */
+  .margin { position: fixed; top: 0; bottom: 0; left: var(--margin); width: 1px; background: rgba(35, 64, 216, 0.35); z-index: 1; pointer-events: none; transition: background-color 0.4s ease; }
+  .rail { position: fixed; left: 0; width: var(--margin); top: 50%; transform: translateY(-50%); z-index: 15; display: flex; flex-direction: column; align-items: flex-end; gap: 12px; padding-right: 16px; }
+  .rail a { font-family: var(--mono); font-size: 12px; letter-spacing: 0.04em; text-decoration: none; color: var(--ink-2); opacity: 0.55; transition: opacity 0.3s ease, color 0.3s ease; white-space: nowrap; }
+  .rail a:hover { opacity: 1; color: var(--pen); }
+  .rail a.on { opacity: 1; color: var(--pen); }
+  .rail.on-dark a { color: var(--night-2); }
+  .rail.on-dark a.on, .rail.on-dark a:hover { color: #9fb0ff; }
+  body.dark-zone .margin { background: rgba(143, 160, 255, 0.3); }
+
+  main { position: relative; z-index: 2; overflow-x: clip; }
+  section { position: relative; padding-left: calc(var(--margin) + var(--gutter)); padding-right: var(--gutter); }
+  .dark { background: var(--night); color: var(--night-ink); }
+  /* desktop: the margin index carries the § numbers; phones: each section shows its own */
+  .para { display: none; color: var(--pen); }
+  .dark .para { color: #9fb0ff; }
+
+  /* ---------- § 1 hero ---------- */
+  .hero { min-height: 100svh; display: grid; grid-template-rows: 1fr auto auto; padding-top: 140px; padding-bottom: 64px; background-image: repeating-linear-gradient(to bottom, transparent 0 39px, rgba(17, 20, 24, 0.06) 39px 40px); }
+  .hero .top { align-self: end; }
+  .hero .top .mono { color: var(--ink-2); }
+  .hero h1 { font-size: clamp(72px, 13.5vw, 228px); margin: 18px 0 0 -0.04em; }
+  .hero h1 em { font-style: italic; }
+  .hero .row { display: grid; grid-template-columns: 1.1fr 1fr; gap: clamp(32px, 6vw, 100px); align-items: end; margin-top: clamp(32px, 5vh, 56px); padding-top: 28px; border-top: 1px solid var(--rule); }
+  .hero .claim { font-size: clamp(34px, 3.6vw, 58px); }
+  .hero .claim em { font-style: italic; color: var(--pen); }
+  .cta { display: flex; align-items: center; gap: 22px; flex-wrap: wrap; margin-top: 26px; }
+  .textlink { color: var(--ink); text-decoration: none; border-bottom: 1px solid var(--ink); padding-bottom: 2px; font-size: 15px; transition: color 0.2s ease, border-color 0.2s ease; }
+  .textlink:hover { color: var(--pen); border-color: var(--pen); }
+
+  /* ---------- § 2 clarity (pinned) ---------- */
+  .clarity { height: 420vh; padding-left: 0; padding-right: 0; }
+  .clarity .stage { position: sticky; top: 0; height: 100svh; display: grid; grid-template-columns: 0.85fr 1.15fr; gap: clamp(28px, 5vw, 90px); align-items: center; padding: 110px var(--gutter) 48px calc(var(--margin) + var(--gutter)); }
+  .clarity .para { top: 132px; }
+  .steps { position: relative; min-height: 15em; }
+  .js .step { position: absolute; left: 0; right: 0; top: 50%; transform: translateY(calc(-50% + 20px)); opacity: 0; transition: opacity 0.6s ease, transform 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
+  .js .step.on { opacity: 1; transform: translateY(-50%); }
+  html:not(.js) .step + .step { margin-top: 40px; }
+  .step .mono { color: #9fb0ff; }
+  .step h2 { font-size: clamp(40px, 4.4vw, 70px); margin: 14px 0 18px; max-width: 12ch; }
+  .step h2 em { font-style: italic; }
+  .doc { position: relative; background: var(--paper); color: var(--ink); border-radius: 6px; padding: clamp(26px, 3.4vw, 54px); box-shadow: 0 1px 0 rgba(255, 255, 255, 0.4) inset, 0 40px 80px -30px rgba(0, 0, 0, 0.6); display: grid; }
+  .doc::before { content: ''; position: absolute; top: 0; bottom: 0; left: clamp(14px, 1.8vw, 28px); width: 1px; background: rgba(35, 64, 216, 0.3); }
+  .doc header { display: flex; justify-content: space-between; gap: 16px; color: var(--ink-2); margin-bottom: 22px; padding-bottom: 14px; border-bottom: 1px solid var(--rule); }
+  .doc .body { display: grid; }
+  .js .doc .body > * { grid-area: 1 / 1; }
+  .legal { font-family: var(--serif); font-size: clamp(16px, 1.25vw, 19px); line-height: 1.65; color: var(--ink); --o: 1; --h: 0; }
+  .legal span { transition: none; }
+  .legal span:not(.k) { opacity: var(--o); }
+  .legal .k { position: relative; display: inline-block; transform-origin: 0 0; will-change: transform; background-image: linear-gradient(rgba(35, 64, 216, 0.16), rgba(35, 64, 216, 0.16)); background-repeat: no-repeat; background-position: 0 88%; background-size: calc(var(--h) * 100%) 0.42em; }
+  .plain { font-family: var(--serif); font-weight: 300; font-size: clamp(28px, 2.9vw, 46px); line-height: 1.14; letter-spacing: -0.015em; align-self: center; --po: 0; }
+  .plain span:not(.k) { opacity: var(--po); }
+  .js .plain .k { visibility: hidden; }
+  .js .plain.landed .k { visibility: visible; }
+  .js .legal.landed .k { visibility: hidden; }
+  html:not(.js) .plain { margin-top: 28px; }
+  .doc footer { margin-top: 22px; padding-top: 14px; border-top: 1px solid var(--rule); display: flex; justify-content: space-between; color: var(--ink-2); }
+
+  /* ---------- § 3 areas: a table of contents ---------- */
+  .areas { padding-top: clamp(110px, 16vh, 180px); padding-bottom: clamp(90px, 14vh, 160px); }
+  .areas .para { top: clamp(118px, 16.6vh, 188px); }
+  .areas h2, .how h2, .contact h2 { font-size: clamp(48px, 6vw, 96px); max-width: 13ch; }
+  .areas h2 em, .how h2 em, .contact h2 em { font-style: italic; }
+  .toc { list-style: none; padding: 0; margin-top: clamp(48px, 7vh, 80px); border-top: 1px solid var(--ink); }
+  .toc a { display: grid; grid-template-columns: 70px minmax(0, auto) 1fr minmax(0, 1.1fr) 28px; align-items: baseline; gap: 18px; padding: 24px 0; border-bottom: 1px solid var(--rule); text-decoration: none; transition: color 0.25s ease, padding 0.35s cubic-bezier(0.16, 1, 0.3, 1); }
+  .toc .n { font-family: var(--mono); font-size: 13px; color: var(--ink-2); }
+  .toc h3 { font: 300 clamp(28px, 2.7vw, 42px)/1.05 var(--serif); letter-spacing: -0.015em; }
+  .toc .dots { align-self: end; margin-bottom: 0.55em; border-bottom: 1px dotted rgba(17, 20, 24, 0.35); min-width: 24px; }
+  .toc p { color: var(--ink-2); font-size: 16.5px; line-height: 1.5; }
+  .toc .arr { justify-self: end; transition: transform 0.3s ease; }
+  .toc a:hover { color: var(--pen); padding-left: 10px; }
+  .toc a:hover .arr { transform: translateX(4px); }
+  .toc a:hover .dots { border-color: var(--pen); }
+
+  /* ---------- § 4 how ---------- */
+  .how { padding-top: clamp(110px, 16vh, 180px); padding-bottom: clamp(100px, 14vh, 160px); background: var(--paper-2); }
+  .how .para { top: clamp(118px, 16.6vh, 188px); }
+  .how .grid { display: grid; grid-template-columns: 0.8fr 1.2fr; gap: clamp(40px, 6vw, 110px); }
+  .how .head { position: sticky; top: 130px; align-self: start; }
+  .how .head .lede { margin-top: 22px; }
+  .steps-list { list-style: none; padding: 0; position: relative; --p: 0; }
+  .steps-list::before, .steps-list::after { content: ''; position: absolute; left: 0; top: 10px; bottom: 10px; width: 1px; background: var(--rule); }
+  .steps-list::after { background: var(--pen); bottom: auto; height: calc(var(--p) * (100% - 20px)); }
+  .steps-list li { position: relative; padding: 0 0 clamp(44px, 7vh, 72px) 36px; }
+  .steps-list li::before { content: ''; position: absolute; left: -5px; top: 12px; width: 11px; height: 11px; border-radius: 50%; background: var(--paper-2); border: 1px solid var(--ink-2); transition: background-color 0.3s ease, border-color 0.3s ease; }
+  .steps-list li.lit::before { background: var(--pen); border-color: var(--pen); }
+  .steps-list .mono { color: var(--pen); }
+  .steps-list h3 { font: 300 clamp(32px, 3vw, 48px)/1.05 var(--serif); letter-spacing: -0.015em; margin: 8px 0 12px; }
+  .steps-list p { color: var(--ink-2); max-width: 46ch; }
+  .money { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; margin-top: 24px; background: var(--rule); border: 1px solid var(--rule); border-radius: 10px; overflow: hidden; }
+  .money div { background: var(--paper); padding: 26px 28px; }
+  .money h3 { font: 400 26px/1.1 var(--serif); margin: 10px 0 10px; }
+  .money p { color: var(--ink-2); font-size: 16px; }
+  .money .mono { color: var(--pen); }
+
+  /* ---------- § 5 contact ---------- */
+  .contact { padding-top: clamp(110px, 16vh, 180px); padding-bottom: 72px; }
+  .contact .para { top: clamp(118px, 16.6vh, 188px); }
+  .contact .grid { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(40px, 6vw, 110px); }
+  .contact .lede { margin-top: 22px; }
+  .details { margin-top: 40px; display: grid; gap: 8px; color: var(--night-2); }
+  .details .ph { color: #9fb0ff; }
+  form { display: grid; gap: 14px; align-content: start; }
+  label { display: grid; gap: 8px; }
+  label .mono { color: var(--night-2); }
+  input, select, textarea { width: 100%; background: rgba(233, 234, 229, 0.05); border: 1px solid var(--night-rule); border-radius: 10px; padding: 14px 16px; color: var(--night-ink); font: 400 16px/1.4 var(--sans); transition: border-color 0.2s ease, background-color 0.2s ease; }
+  select { appearance: none; background-image: linear-gradient(45deg, transparent 50%, var(--night-2) 50%), linear-gradient(-45deg, transparent 50%, var(--night-2) 50%); background-position: calc(100% - 22px) 52%, calc(100% - 16px) 52%; background-size: 6px 6px; background-repeat: no-repeat; }
+  select option { color: #111; }
+  textarea { min-height: 130px; resize: vertical; }
+  input:hover, select:hover, textarea:hover { border-color: rgba(233, 234, 229, 0.35); }
+  input::placeholder, textarea::placeholder { color: rgba(233, 234, 229, 0.5); }
+  form .btn { justify-self: start; margin-top: 4px; background: #e9eae5; color: var(--night); }
+  form .btn:hover { background: #fff; }
+  .sent { min-height: 1.6em; color: #9fb0ff; }
+  .sign { margin-top: clamp(64px, 10vh, 110px); padding-top: 28px; border-top: 1px solid var(--night-rule); display: grid; grid-template-columns: auto 1fr; align-items: end; gap: 28px; }
+  .sig { font-family: var(--hand); font-size: clamp(72px, 9vw, 140px); line-height: 1; color: #c9d1ff; padding: 0 0.3em 0.05em 0.05em; clip-path: inset(-20% calc((1 - var(--s, 1)) * 100%) -20% -5%); --s: 1; }
+  .js .sig { --s: 0; }
+  .sign .mono { color: var(--night-2); justify-self: end; text-align: right; line-height: 1.7; }
+  footer.page { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 16px; padding: 22px var(--gutter) 26px calc(var(--margin) + var(--gutter)); border-top: 1px solid var(--night-rule); background: var(--night); color: var(--night-2); position: relative; z-index: 2; }
+
+  @media (max-width: 960px) {
+    :root { --margin: 0px; }
+    .margin, .rail { display: none; }
+    .para { display: block; margin-bottom: 14px; }
+    nav { top: 10px; left: 10px; right: 10px; padding-left: 16px; }
+    nav .links, nav .who span { display: none; }
+    .hero { padding-top: 110px; }
+    .hero .row, .how .grid, .contact .grid { grid-template-columns: 1fr; }
+    .clarity .stage { grid-template-columns: 1fr; grid-template-rows: auto 1fr; align-items: start; gap: 18px; padding-top: 86px; padding-bottom: 20px; }
+    .clarity .para { display: none; }
+    .steps { min-height: 0; height: 13.5em; }
+    .js .step { top: 0; transform: translateY(16px); }
+    .js .step.on { transform: none; }
+    .step h2 { font-size: clamp(32px, 9vw, 44px); margin: 8px 0 10px; }
+    .step .lede { font-size: 16.5px; }
+    .doc { padding: 22px 20px 22px 30px; align-self: start; }
+    .doc::before { left: 16px; }
+    .legal { font-size: 15px; line-height: 1.6; }
+    .plain { font-size: 27px; }
+    .toc a { grid-template-columns: 44px 1fr 24px; row-gap: 8px; }
+    .toc .dots { display: none; }
+    .toc p { grid-column: 2 / 3; }
+    .toc .arr { grid-row: 1; grid-column: 3; }
+    .how .head { position: relative; top: auto; }
+    .money { grid-template-columns: 1fr; }
+    .sign { grid-template-columns: 1fr; }
+    .sign .mono { justify-self: start; text-align: left; }
+  }
+  @media (max-width: 380px) { .doc header .mono:last-child { display: none; } }
+  @media (prefers-reduced-motion: reduce) {
+    .js .step { transition: opacity 0.2s linear; }
+    .toc a, .toc .arr { transition: none; }
+  }
+</style>
+</head>
+<body>
+<div class="margin" aria-hidden="true"></div>
+
+<nav aria-label="Huvudmeny">
+  <a class="who" href="#inledning"><b>Dina Hariri</b><span class="mono">Advokat</span></a>
+  <span class="links"><a href="#klartext">Klartext</a><a href="#verksamhet">Verksamhet</a><a href="#arbetssatt">Arbetssätt</a></span>
+  <a class="btn" href="#kontakt">Boka samtal</a>
+</nav>
+
+<div class="rail" id="rail" aria-label="Avsnitt">
+  <a href="#inledning">§ 1 Inledning</a>
+  <a href="#klartext">§ 2 Klartext</a>
+  <a href="#verksamhet">§ 3 Verksamhet</a>
+  <a href="#arbetssatt">§ 4 Arbetssätt</a>
+  <a href="#kontakt">§ 5 Kontakt</a>
+</div>
+
+<main>
+  <section class="hero" id="inledning" data-tone="light">
+    <div class="top">
+      <p class="mono">Advokat · Privatpersoner och företag</p>
+      <h1 class="serif">Dina <em>Hariri</em></h1>
+    </div>
+    <div class="row">
+      <p class="serif claim">Juridik på svenska. <em>Inte på juridiska.</em></p>
+      <div>
+        <p class="lede">När det står mycket på spel behöver du någon som läser det finstilta åt dig och säger vad det betyder. Raka besked, en plan i skrift och inga överraskningar på fakturan.</p>
+        <div class="cta"><a class="btn" href="#kontakt">Boka ett första samtal</a><a class="textlink" href="#klartext">Se hur jag läser ett avtal</a></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="clarity dark" id="klartext" data-tone="dark" aria-label="Klartext">
+    <div class="stage">
+      <p class="para mono">§ 2</p>
+      <div class="steps">
+        <div class="step" data-step="0">
+          <p class="mono">Steg 1 av 3</p>
+          <h2 class="serif">Så här ser det ut när det kommer <em>med posten.</em></h2>
+          <p class="lede">Ett vanligt villkor ur ett hyresavtal. Allt viktigt står där, men det är svårt att hitta.</p>
+        </div>
+        <div class="step" data-step="1">
+          <p class="mono">Steg 2 av 3</p>
+          <h2 class="serif">Så här <em>läser jag det.</em></h2>
+          <p class="lede">Åtta ord bär hela meningen. Resten är hänvisningar och förbehåll, som jag kontrollerar åt dig.</p>
+        </div>
+        <div class="step" data-step="2">
+          <p class="mono">Steg 3 av 3</p>
+          <h2 class="serif">Och så här säger jag det <em>till dig.</em></h2>
+          <p class="lede">Samma innehåll, utan omvägar. Så får du besked i varje ärende.</p>
+        </div>
+      </div>
+      <article class="doc" aria-label="Exempel: ett hyresvillkor i original och i klartext">
+        <header><span class="mono">Hyresavtal · Bilaga 2</span><span class="mono">Sida 4 av 11</span></header>
+        <div class="body">
+          <p class="legal" id="legal">Hyresgästen äger, med iakttagande av vad som stadgas i 12 kap. 4 § jordabalken samt under förutsättning att hyresgästen icke befinner sig i dröjsmål med erläggande av förfallen hyra, {rätt} {att} {säga} {upp} {avtalet} till upphörande, varvid uppsägningen ska ske {skriftligen} och den uppsägningstid som parterna överenskommit, vilken uppgår till {tre} {månader} räknat från månadsskiftet närmast efter uppsägningen, ska tillämpas, såvida inte annat följer av tvingande lag.</p>
+          <p class="plain" id="plain">Du har {rätt} {att} {säga} {upp} {avtalet}, {skriftligen} och {tre} {månader} i förväg.</p>
+        </div>
+        <footer><span class="mono">§ 7.2 Uppsägning</span><span class="mono" id="docState">Original</span></footer>
+      </article>
+    </div>
+  </section>
+
+  <section class="areas" id="verksamhet" data-tone="light">
+    <p class="para mono">§ 3</p>
+    <h2 class="serif">Det här hjälper jag <em>till med.</em></h2>
+    <ul class="toc">
+      <li><a href="#kontakt"><span class="n">3.1</span><h3>Familjerätt</h3><span class="dots" aria-hidden="true"></span><p>Skilsmässa, bodelning, vårdnad, boende och umgänge.</p><span class="arr" aria-hidden="true">→</span></a></li>
+      <li><a href="#kontakt"><span class="n">3.2</span><h3>Arv och testamente</h3><span class="dots" aria-hidden="true"></span><p>Testamenten, bouppteckning, arvskiften och tvister om arv.</p><span class="arr" aria-hidden="true">→</span></a></li>
+      <li><a href="#kontakt"><span class="n">3.3</span><h3>Avtal och tvister</h3><span class="dots" aria-hidden="true"></span><p>Granskning innan du skriver på, och hjälp när något har gått fel.</p><span class="arr" aria-hidden="true">→</span></a></li>
+      <li><a href="#kontakt"><span class="n">3.4</span><h3>Brottmål</h3><span class="dots" aria-hidden="true"></span><p>Försvarare och målsägandebiträde, från första förhöret till dom.</p><span class="arr" aria-hidden="true">→</span></a></li>
+      <li><a href="#kontakt"><span class="n">3.5</span><h3>Bostad och hyra</h3><span class="dots" aria-hidden="true"></span><p>Köp, dolda fel och tvister med hyresvärd eller bostadsrättsförening.</p><span class="arr" aria-hidden="true">→</span></a></li>
+    </ul>
+  </section>
+
+  <section class="how" id="arbetssatt" data-tone="light">
+    <p class="para mono">§ 4</p>
+    <div class="grid">
+      <div class="head">
+        <h2 class="serif">Så går det <em>till.</em></h2>
+        <p class="lede">Fyra steg, i samma ordning varje gång. Du vet alltid var ärendet står och vad som händer härnäst.</p>
+      </div>
+      <div>
+        <ol class="steps-list" id="stepsList">
+          <li><p class="mono">4.1</p><h3>Ett första samtal</h3><p>Du berättar vad som har hänt. Jag lyssnar, ställer frågor och säger direkt om och hur jag kan hjälpa till.</p></li>
+          <li><p class="mono">4.2</p><h3>En plan i skrift</h3><p>Du får en kort sammanfattning: vad jag ser, vad som kan hända härnäst och vad det beräknas kosta.</p></li>
+          <li><p class="mono">4.3</p><h3>Jag driver ärendet</h3><p>Jag sköter kontakten med motpart, myndighet och domstol. Du får besked när något händer, inte bara när du frågar.</p></li>
+          <li><p class="mono">4.4</p><h3>Ett sista besked</h3><p>När ärendet är klart får du en sammanfattning av vad som gäller framåt. I klartext, förstås.</p></li>
+        </ol>
+        <div class="money">
+          <div><p class="mono">Rättsskydd</p><h3>Försäkringen kan betala</h3><p>Har du hemförsäkring kan rättsskyddet ofta stå för en stor del av kostnaden i en tvist. Jag hjälper dig att ansöka.</p></div>
+          <div><p class="mono">Rättshjälp</p><h3>Staten kan bidra</h3><p>Med låg inkomst kan du ha rätt till rättshjälp. Vi går igenom det redan vid första samtalet.</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="contact dark" id="kontakt" data-tone="dark">
+    <p class="para mono">§ 5</p>
+    <div class="grid">
+      <div>
+        <h2 class="serif">Berätta vad som <em>har hänt.</em></h2>
+        <p class="lede">Allt du skriver omfattas av advokatens tystnadsplikt. Jag återkommer med ett förslag på tid för ett första samtal.</p>
+        <div class="details mono">
+          <span>Adress: <span class="ph">[gatuadress, ort]</span></span>
+          <span>Telefon: <span class="ph">[telefonnummer]</span></span>
+          <span>E-post: <span class="ph">[e-postadress]</span></span>
+        </div>
+      </div>
+      <form id="ask">
+        <label for="f-name"><span class="mono">Namn</span><input id="f-name" name="name" autocomplete="name" required /></label>
+        <label for="f-reach"><span class="mono">Telefon eller e-post</span><input id="f-reach" name="reach" autocomplete="email" required /></label>
+        <label for="f-area"><span class="mono">Vad gäller det?</span>
+          <select id="f-area" name="area"><option>Familjerätt</option><option>Arv och testamente</option><option>Avtal och tvister</option><option>Brottmål</option><option>Bostad och hyra</option><option>Något annat</option></select>
+        </label>
+        <label for="f-text"><span class="mono">Kort om ärendet</span><textarea id="f-text" name="text" placeholder="Några meningar räcker. Detaljerna tar vi i samtalet."></textarea></label>
+        <button class="btn" type="submit">Skicka</button>
+        <p class="sent mono" id="sent" role="status" aria-live="polite"></p>
+      </form>
+    </div>
+    <div class="sign" id="sign">
+      <p class="sig" aria-label="Dina Hariri">Dina Hariri</p>
+      <p class="mono">Advokat<br />Ledamot av Sveriges advokatsamfund</p>
+    </div>
+  </section>
+</main>
+
+<footer class="page">
+  <span class="mono">Dina Hariri Advokat</span>
+  <span class="mono">Tystnadsplikt gäller allt du berättar</span>
+</footer>
+
+<script>
+(() => {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const $ = (s) => document.querySelector(s);
+  const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
+  const smooth = (a, b, v) => { const t = clamp((v - a) / (b - a)); return t * t * (3 - 2 * t); };
+  const ease = (t) => 1 - Math.pow(1 - t, 3);
+
+  // ---------- split both texts into words; {word} marks the eight that carry the meaning ----------
+  function split(el) {
+    const keys = [];
+    const html = el.textContent.trim().split(/\s+/).map((tok) => {
+      const m = tok.match(/^\{([^}]+)\}(.*)$/);
+      if (!m) return `<span>${tok}</span>`;
+      keys.push(m[1]);
+      return `<span class="k" data-k="${keys.length - 1}">${m[1]}</span>${m[2] ? `<span>${m[2]}</span>` : ''}`;
+    }).join(' ');
+    el.innerHTML = html;
+    return [...el.querySelectorAll('.k')];
+  }
+  const legal = $('#legal'), plain = $('#plain');
+  const from = split(legal), to = split(plain);
+  const docState = $('#docState');
+
+  // where each key word starts (in the clause) and lands (in the plain sentence), relative to the clause
+  let moves = [];
+  function measure() {
+    from.forEach((s) => { s.style.transform = ''; });
+    const scale = parseFloat(getComputedStyle(plain).fontSize) / parseFloat(getComputedStyle(legal).fontSize);
+    moves = from.map((s, i) => {
+      const a = s.getBoundingClientRect(), b = to[i].getBoundingClientRect();
+      return { el: s, dx: b.left - a.left, dy: b.top - a.top + (b.height - a.height * scale) * 0.5, scale };
+    });
+  }
+
+  // ---------- the pinned section: three held states, the morph only between reading stops ----------
+  const clarity = $('#klartext'), steps = [...document.querySelectorAll('.step')];
+  function clarityFrame() {
+    const r = clarity.getBoundingClientRect();
+    let p = clamp(-r.top / (clarity.offsetHeight - innerHeight));
+    const pinned = r.top <= innerHeight * 0.1;
+    const step = !pinned ? -1 : p < 0.3 ? 0 : p < 0.62 ? 1 : 2;
+    steps.forEach((s, i) => s.classList.toggle('on', i === step)); // nothing until pinned: one statement per screen
+    if (reduce) p = step <= 0 ? 0 : step === 1 ? 0.5 : 1; // jump between the states, never travel
+    const h = smooth(0.3, 0.4, p);                 // highlight the eight words
+    const m = smooth(0.62, 0.86, p);               // words travel into the plain sentence
+    legal.style.setProperty('--h', (h * (1 - smooth(0.62, 0.7, p))).toFixed(3)); // the marker stays on the page when the words lift off
+    legal.style.setProperty('--o', (1 - 0.68 * h - 0.32 * smooth(0.62, 0.72, p)).toFixed(3));
+    plain.style.setProperty('--po', smooth(0.84, 0.92, p).toFixed(3));
+    const n = moves.length;
+    moves.forEach((mv, i) => {
+      const d = (i / n) * 0.35;                      // a little stagger, in reading order
+      const e = reduce ? (m > 0.5 ? 1 : 0) : ease(clamp((m - d) / 0.65));
+      const s = 1 + (mv.scale - 1) * e;
+      mv.el.style.transform = e ? `translate(${(mv.dx * e).toFixed(2)}px, ${(mv.dy * e).toFixed(2)}px) scale(${s.toFixed(4)})` : '';
+      mv.el.style.color = e > 0 ? `color-mix(in srgb, var(--pen) ${Math.round((1 - e) * 100)}%, var(--ink))` : (h > 0.01 ? 'var(--pen)' : '');
+    });
+    const landed = m >= 0.999;
+    legal.classList.toggle('landed', landed);
+    plain.classList.toggle('landed', landed);
+    docState.textContent = p < 0.3 ? 'Original' : p < 0.62 ? 'Markerad' : 'Klartext';
+  }
+
+  // ---------- chrome: nav and margin index follow the section underneath ----------
+  const nav = $('nav'), rail = $('#rail'), railLinks = [...rail.querySelectorAll('a')];
+  const sections = [...document.querySelectorAll('main > section')];
+  const stepsList = $('#stepsList'), stepItems = [...stepsList.children];
+  const sig = $('.sig'), sign = $('#sign');
+  function chrome() {
+    const at = (y) => sections.find((s) => { const r = s.getBoundingClientRect(); return r.top <= y && r.bottom > y; });
+    const under = at(nav.getBoundingClientRect().bottom - 8);
+    nav.classList.toggle('on-dark', under?.dataset.tone === 'dark');
+    const mid = at(innerHeight / 2);
+    rail.classList.toggle('on-dark', mid?.dataset.tone === 'dark');
+    document.body.classList.toggle('dark-zone', mid?.dataset.tone === 'dark');
+    railLinks.forEach((a, i) => a.classList.toggle('on', sections[i] === mid));
+
+    const lr = stepsList.getBoundingClientRect();
+    const sp = clamp((innerHeight * 0.6 - lr.top) / lr.height);
+    stepsList.style.setProperty('--p', sp.toFixed(3));
+    stepItems.forEach((li) => li.classList.toggle('lit', li.offsetTop / stepsList.offsetHeight <= sp + 0.001));
+
+    // the signature writes itself as the page closes
+    // finished a little before the page can no longer scroll, so it always completes
+    const sr = sign.getBoundingClientRect();
+    const done = innerHeight - sign.offsetHeight - 140;
+    const s = reduce ? (sr.top < innerHeight ? 1 : 0) : 1 - smooth(done, innerHeight * 0.98, sr.top);
+    sig.style.setProperty('--s', s.toFixed(3));
+  }
+
+  let queued = false;
+  const frame = () => { queued = false; clarityFrame(); chrome(); };
+  const request = () => { if (!queued) { queued = true; requestAnimationFrame(frame); } };
+  addEventListener('scroll', request, { passive: true });
+  const relayout = () => { measure(); frame(); };
+  addEventListener('resize', relayout);
+  document.fonts?.ready.then(relayout);
+  addEventListener('load', relayout);
+  relayout();
+
+  $('#ask').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const f = new FormData(e.target);
+    $('#sent').textContent = `Tack ${String(f.get('name')).split(' ')[0]}. Jag återkommer om ${String(f.get('area')).toLowerCase()}.`;
+  });
+})();
+</script>
+</body>
+</html>
