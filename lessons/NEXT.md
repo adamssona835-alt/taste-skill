@@ -1,45 +1,39 @@
 # Next Lesson Plan
 
-Status: done (lesson 003 shipped 2026-10-08, 37/40)
-Lesson: 003
-Date: 2026-10-08 (morning run 07:52 Europe/Stockholm)
-Planned: 2026-10-08 00:30, replaced 2026-10-08 00:50
-
-Replacement history:
-- boc.studio (layout and grid): the owner chose the backup instead.
-- seasats.com (the backup, scroll motion): not usable. It stays on its preloader in headless Chromium after 45 seconds on desktop and mobile, so it cannot be studied live. (The first version of this file wrongly said it captured OK; the screenshots had not been checked.)
-- Chosen instead: the strongest scroll-motion site that renders headless.
+Status: pending
+Lesson: 004
+Date: 2026-10-09 (morning run 07:52 Europe/Stockholm)
+Planned: 2026-10-08 23:58
 
 ## Site
 
-- **URL:** https://white-desert.com
-- **Found in:** Awwwards Site of the Day, 11 Sep 2026 (https://www.awwwards.com/sites/white-desert)
-- **Area:** Scroll motion (last three: imagery and art direction, WebGL and 3D)
-- **Headless check:** captured OK on 2026-10-08 00:45, desktop 15 scroll stops, screenshots checked by eye.
+- **URL:** https://www.odysseeclinic.com.au/
+- **Found in:** Awwwards Site of the Day, 8 Oct 2026 (https://www.awwwards.com/sites/odyssee), by NIGHTJAR. Tags: Luxury, Minimal, Transitions, Microinteractions, GSAP, Next.js.
+- **Area:** Micro-interactions (last three: scroll motion, imagery and art direction, WebGL and 3D)
+- **Headless check:** captured 2026-10-08 23:50, desktop 11 scroll stops and mobile, screenshots checked by eye: photography, type and the feature row all render.
 
 ## Technique to learn
 
-**Scroll-scrubbed editorial reveals for a luxury travel story.** Three linked moves, all tied to scroll position:
-1. A large serif statement whose words light up one by one from pale to ink as you scroll through it, signed off with a handwritten signature line that draws in.
-2. An image revealed through vertical slices: the photo is cut into tall strips that open at staggered speeds, with a centered serif title over it.
-3. A pinned section where landscape cards slide horizontally across a full-bleed textured background, each card with a title, short copy and coordinates.
+**The focus rail.** A "Why us" row of four columns where exactly one is in focus: its image at full strength, its serif title dark, its paragraph visible. The other three sit at about 15 percent, title and image together. Above the row, a counter reads "3 : 4" and a hairline across the full width fills to the active item. Focus moves on its own on a slow timer, and hover, click and keyboard take it over. Around it: cream paper, navy ink, a thin serif for statements and a small sans for UI, and photo pairs that crop into each other.
 
-Why it qualifies: premium (luxury hospitality, Awwwards SOTD), reproducible with CSS scroll-driven animations (`animation-timeline: view()` / `scroll()`) and a small GSAP ScrollTrigger fallback, and no lesson or skill covers scroll motion yet.
+Why it qualifies: premium (luxury clinic, Awwwards SOTD and Developer Award), reproducible with plain CSS and about 40 lines of JS, and not covered in `lessons/` or `skills/` (no lesson yet on interaction states, timers or keyboard-driven selection).
+
+The craft to get right: dimming without losing contrast for the parts that must stay readable, pausing the timer on hover and focus and under reduced motion, an ARIA tabs pattern that screen readers and keyboards can actually use, a progress line that never jumps backwards, and a mobile version that becomes a swipe row with scroll-snap.
 
 ## Planned demo
 
-An invented polar expedition company (working name "Kalde Reach", Tromsø) with: full-bleed hero with huge condensed title, a word-by-word lighting statement with an SVG signature that draws on scroll, a sliced image reveal, a pinned horizontal track of three camp cards over a CSS/SVG-generated ice texture, a trips grid, and an enquiry footer. All imagery original: CSS/SVG gradients and generated textures, no copied photos.
+An invented dermatology clinic ("Halde Klinik", Gothenburg): cream and ink-blue, hero with a cropped photo pair (original generated imagery: soft skin-tone gradients and macro textures of serum drops in canvas), a statement paragraph, the focus rail with four reasons ("Assessment first", "One clinician, start to finish", "Combined protocols", "Follow-up at 12 weeks"), a treatments index with hover previews, and a booking footer.
 
 ## Morning steps
 
-1. Fetch the branch, re-read PROTOCOL.md and this file.
-2. Capture https://white-desert.com again; study the three moves frame by frame in the scroll video (start/end points, easing, how long each stays pinned) and on mobile. Read `report.json` for fonts, sizes and colors.
-3. Build each move with native CSS scroll-driven animations first; feature-detect `CSS.supports('animation-timeline: view()')` and fall back to GSAP ScrollTrigger (pinned versions) where unsupported.
-4. Reduced motion: every element shows in its final state, no pinning, horizontal track becomes a normal vertical list.
-5. Build the full demo page, then write `skills/scroll-reveal-story-skill/SKILL.md` with code identical to the demo.
-6. Run `verify-demo` until OK, also screenshot mid-scroll inside the pinned track and mid-reveal states, fix at least three visual flaws, verify again.
-7. Score with the quality gate (needs every criterion at least 4 and total at least 36/40), write the lesson file, register everywhere, set this file to `Status: done`, commit `Lesson 003: Scroll-scrubbed editorial reveals (scroll motion)`, push, notify.
+1. Fetch the branch, re-read PROTOCOL.md, PRINCIPLES.md, IMPROVE.md and this file.
+2. Capture https://www.odysseeclinic.com.au/ again. Study the rail frame by frame in the scroll video (timer length, fade timing, how the progress line moves), the menu overlay and the hover states. Read `report.json` for fonts, sizes and colors.
+3. Build the rail: `role="tablist"` with `aria-selected`, roving `tabindex`, arrow keys, a timer that pauses on hover, focus-within, hidden tab and reduced motion, and a progress line driven by a CSS custom property.
+4. Mobile: the rail becomes a horizontal scroll-snap row; the active item follows the snap position (IntersectionObserver), no timer.
+5. Build the full demo page, then write `skills/focus-rail-skill/SKILL.md` with code identical to the demo.
+6. Run `verify-demo` (all passes, `--stops 20`) until OK, look at every contact sheet including fallback and reduced, fix at least three visual flaws, verify again.
+7. Score with the quality gate (every criterion at least 4, total at least 38/40), write the lesson file, register everywhere, set this file to `Status: done`, commit `Lesson 004: Focus rail (micro-interactions)`, push, notify.
 
 ## Backup
 
-https://www.cerebrium.ai (Awwwards SOTD, 10 Sep 2026): sticky feature list that highlights the active item while product panels scroll past, plus a dark-to-light section handoff. Area: scroll motion. Captured headless on 2026-10-08 00:45, screenshots checked by eye.
+https://twks.ch/en (Awwwards SOTD, 7 Oct 2026, Geneva agency): Swiss grotesk typography with an inline glyph inside the headline and a two-column "what we do" split. Area: typography. Captured headless on 2026-10-08 23:50, screenshots checked by eye.
