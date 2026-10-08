@@ -1,0 +1,604 @@
+<!doctype html>
+<html lang="sv">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Varde Advokatbyrå</title>
+<meta name="description" content="Affärsjuridik för bolag som växer, köper, säljer och ibland hamnar i tvist. Stockholm och Göteborg." />
+<link rel="icon" href="data:," />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500&family=Geist+Mono:wght@400&family=Instrument+Serif:ital@1&display=swap" rel="stylesheet" />
+<script>document.documentElement.classList.add('js');</script>
+<style>
+  /* Layout: a dark instrument panel. Thin rules, mono readouts, one ice-blue signal color */
+  :root {
+    color-scheme: dark;
+    --bg: #08090b;
+    --bg-2: #0e1013;
+    --ink: #e8e6e1;
+    --ink-2: rgba(232, 230, 225, 0.72);
+    --ink-3: rgba(232, 230, 225, 0.48);
+    --rule: rgba(232, 230, 225, 0.12);
+    --ice: #9ed8f5;
+    --paper: #e7e6e2;
+    --paper-ink: #0d0e10;
+    --paper-2: #4a4c52;
+    --paper-rule: rgba(13, 14, 16, 0.14);
+    --sans: 'Geist', system-ui, sans-serif;
+    --mono: 'Geist Mono', ui-monospace, monospace;
+    --serif: 'Instrument Serif', 'Times New Roman', serif;
+    --gutter: clamp(18px, 4vw, 64px);
+  }
+  * { box-sizing: border-box; }
+  html { background: var(--bg); color: var(--ink); -webkit-font-smoothing: antialiased; }
+  /* color and type on body too, so a host page that styles body cannot change them */
+  body { margin: 0; overflow-x: hidden; background: var(--bg); color: var(--ink); font: 400 17px/1.55 var(--sans); }
+  h1, h2, h3, p, ul, ol, dl, dd, figure { margin: 0; }
+  ul, ol { padding: 0; list-style: none; }
+  a { color: inherit; }
+  ::selection { background: var(--ice); color: var(--bg); }
+  a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visible { outline: 2px solid var(--ice); outline-offset: 3px; }
+  .light a:focus-visible { outline-color: var(--paper-ink); }
+
+  .mono { font-family: var(--mono); font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase; }
+  .display { font-weight: 300; letter-spacing: -0.035em; line-height: 0.95; }
+  .display em, h2 em, h3 em { font-family: var(--serif); font-style: italic; font-weight: 400; letter-spacing: -0.01em; }
+  .lede { font-size: clamp(17px, 1.35vw, 20px); line-height: 1.55; color: var(--ink-2); max-width: 42ch; }
+  .light .lede { color: var(--paper-2); }
+
+  /* ---------- canvas, cursor, chrome ---------- */
+  #field { position: fixed; inset: 0; width: 100vw; height: 100vh; display: block; pointer-events: none; z-index: 0; transition: opacity 0.4s ease; }
+  html:not(.js) #field { display: none; }
+  #cross { position: fixed; left: 0; top: 0; z-index: 30; pointer-events: none; opacity: 0; transition: opacity 0.25s ease; }
+  #cross::before, #cross::after { content: ''; position: absolute; background: var(--ice); }
+  #cross::before { left: -10px; top: 0; width: 21px; height: 1px; }
+  #cross::after { top: -10px; left: 0; width: 1px; height: 21px; }
+  #cross span { position: absolute; left: 14px; top: 8px; white-space: nowrap; font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.06em; color: var(--ice); }
+  #cross.on { opacity: 1; }
+
+  nav { position: fixed; top: 16px; left: 16px; right: 16px; z-index: 20; display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 10px 10px 10px 18px; border: 1px solid var(--rule); border-radius: 12px; background: rgba(8, 9, 11, 0.62); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); color: var(--ink); transition: background-color 0.35s ease, color 0.35s ease, border-color 0.35s ease; }
+  .brand { display: flex; align-items: center; gap: 10px; text-decoration: none; font-weight: 500; letter-spacing: 0.16em; font-size: 15px; }
+  .brand svg { width: 18px; height: 18px; }
+  nav .links { display: flex; gap: 28px; font-size: 14.5px; color: var(--ink-2); }
+  nav .links a { text-decoration: none; transition: color 0.2s ease; }
+  nav .links a:hover { color: var(--ice); }
+  nav .right { display: flex; align-items: center; gap: 16px; }
+  .clock { color: var(--ink-3); font-variant-numeric: tabular-nums; }
+  .btn { display: inline-flex; align-items: center; gap: 10px; padding: 12px 18px; border-radius: 8px; border: 1px solid var(--ice); background: var(--ice); color: #06121a; font: 500 14.5px/1 var(--sans); text-decoration: none; cursor: pointer; transition: background-color 0.2s ease, color 0.2s ease; }
+  .btn:hover { background: transparent; color: var(--ice); }
+  .btn.ghost { background: transparent; color: var(--ink); border-color: var(--rule); }
+  .btn.ghost:hover { border-color: var(--ice); color: var(--ice); }
+  nav .btn { padding: 10px 14px; }
+  nav.on-light { background: rgba(231, 230, 226, 0.86); border-color: var(--paper-rule); color: var(--paper-ink); }
+  nav.on-light .links, nav.on-light .clock { color: var(--paper-2); }
+  nav.on-light .links a:hover { color: var(--paper-ink); }
+  nav.on-light .btn { background: var(--paper-ink); border-color: var(--paper-ink); color: var(--paper); }
+  nav.on-light .btn:hover { background: transparent; color: var(--paper-ink); }
+
+  main { position: relative; z-index: 2; overflow-x: clip; }
+  section { position: relative; }
+  .pad { padding-inline: var(--gutter); }
+  .hud { color: var(--ink-3); }
+  .hud b { color: var(--ink); font-weight: 400; }
+
+  /* ---------- hero ---------- */
+  .hero { min-height: 100svh; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); grid-template-rows: auto 1fr auto; padding-top: 112px; padding-bottom: 36px; }
+  .hero .meta-top { grid-column: 1 / -1; display: flex; justify-content: space-between; gap: 16px; }
+  .hero .copy { grid-column: 1; align-self: center; }
+  .hero h1 { font-size: clamp(56px, 7.6vw, 128px); max-width: 9ch; }
+  .hero .lede { margin-top: 28px; }
+  .cta { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 30px; }
+  .hero .meta-bot { grid-column: 1 / -1; display: flex; justify-content: space-between; gap: 16px; padding-top: 18px; border-top: 1px solid var(--rule); }
+
+  /* ---------- the engine (pinned) ---------- */
+  .engine { height: 460vh; }
+  .engine .stage { position: sticky; top: 0; height: 100svh; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); grid-template-rows: auto 1fr auto; padding-top: 104px; padding-bottom: 32px; }
+  .engine .label { grid-column: 1 / -1; display: flex; justify-content: space-between; gap: 16px; }
+  .states { position: relative; grid-column: 1; align-self: center; min-height: 16em; }
+  .js .state { position: absolute; inset: 50% 0 auto 0; transform: translateY(calc(-50% + 18px)); opacity: 0; transition: opacity 0.6s ease, transform 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
+  .js .state.on { opacity: 1; transform: translateY(-50%); }
+  html:not(.js) .state + .state { margin-top: 48px; }
+  .state .mono { color: var(--ice); }
+  .state h2 { font-size: clamp(40px, 4.6vw, 76px); margin: 14px 0 18px; max-width: 12ch; }
+  .counters { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border-top: 1px solid var(--rule); }
+  .counters div { padding: 16px 16px 0 0; }
+  .counters div + div { padding-left: 16px; border-left: 1px solid var(--rule); }
+  .counters b { display: block; font: 300 clamp(28px, 2.8vw, 44px)/1 var(--sans); letter-spacing: -0.03em; font-variant-numeric: tabular-nums; margin-top: 8px; transition: color 0.3s ease; }
+  .counters .live b { color: var(--ice); }
+
+  /* ---------- portfolio (pinned, horizontal, curved) ---------- */
+  .cases { background: var(--bg-2); }
+  .js .cases { height: 520vh; }
+  .cases .stage { position: sticky; top: 0; height: 100svh; overflow: hidden; display: grid; grid-template-rows: auto 1fr auto; padding-top: 100px; padding-bottom: 28px; }
+  html:not(.js) .cases .stage { position: static; height: auto; overflow: visible; }
+  .cases .head { display: flex; justify-content: space-between; align-items: end; gap: 24px; }
+  .cases h2 { font-size: clamp(44px, 5.4vw, 92px); }
+  .cases .head p { max-width: 34ch; text-align: right; }
+  .viewport { perspective: 1500px; perspective-origin: 50% 50%; display: flex; align-items: center; min-height: 0; }
+  .track { display: flex; gap: var(--gap); padding-inline: var(--side); --gap: 4vw; --pw: min(76vw, 1180px); --side: calc((100vw - var(--pw)) / 2); transform-style: preserve-3d; will-change: transform; }
+  html:not(.js) .track { overflow-x: auto; scroll-snap-type: x mandatory; padding-block: 24px; }
+  .case { flex: 0 0 var(--pw); display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: clamp(20px, 2.6vw, 40px); padding: clamp(16px, 1.6vw, 22px); border: 1px solid var(--rule); border-radius: 14px; background: linear-gradient(180deg, rgba(255, 255, 255, 0.035), rgba(255, 255, 255, 0.01)); transform-origin: 50% 50%; scroll-snap-align: center; text-decoration: none; transition: border-color 0.3s ease; }
+  .case:hover { border-color: rgba(158, 216, 245, 0.5); }
+  .cover { position: relative; aspect-ratio: 4 / 3.2; border-radius: 8px; overflow: hidden; background: #0b0d10; max-width: 100%; }
+  .cover canvas { width: 100%; height: 100%; display: block; }
+  .cover .tag { position: absolute; left: 12px; top: 12px; color: var(--ice); background: rgba(8, 9, 11, 0.7); padding: 6px 8px; border-radius: 4px; }
+  .info { display: flex; flex-direction: column; min-width: 0; padding-block: 6px; }
+  .info .idx { color: var(--ink-3); display: flex; justify-content: space-between; }
+  .info h3 { font: 300 clamp(26px, 2.3vw, 38px)/1.08 var(--sans); letter-spacing: -0.025em; margin: 16px 0 20px; }
+  .facts { display: grid; grid-template-columns: auto 1fr; gap: 8px 18px; padding: 14px 0; border-block: 1px solid var(--rule); font-size: 15px; }
+  .facts dt { color: var(--ink-3); }
+  .facts dd { font-variant-numeric: tabular-nums; }
+  .outcome { margin-top: 16px; color: var(--ink-2); font-size: 16px; }
+  .outcome b { color: var(--ice); font-weight: 400; }
+  .pills { display: flex; flex-wrap: wrap; gap: 6px; margin-top: auto; padding-top: 18px; }
+  .pills span { border: 1px solid var(--rule); border-radius: 999px; padding: 5px 10px; font-family: var(--mono); font-size: 11px; letter-spacing: 0.04em; color: var(--ink-2); }
+  .cases .foot { display: flex; align-items: center; gap: 20px; }
+  .progress { flex: 1; height: 1px; background: var(--rule); position: relative; }
+  .progress i { position: absolute; inset: 0 auto 0 0; width: calc(var(--p, 0) * 100%); background: var(--ice); }
+  .count { font-variant-numeric: tabular-nums; }
+
+  /* ---------- practice (light) ---------- */
+  .light { background: var(--paper); color: var(--paper-ink); }
+  .practice { padding-block: clamp(110px, 16vh, 180px) clamp(80px, 12vh, 140px); }
+  .practice .top { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 40px; align-items: end; }
+  .practice h2 { font-size: clamp(48px, 6vw, 100px); max-width: 10ch; }
+  .areas { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: clamp(32px, 5vw, 80px); margin-top: clamp(56px, 8vh, 96px); border-top: 1px solid var(--paper-ink); }
+  .areas li { display: grid; grid-template-columns: 54px minmax(0, 1fr); gap: 14px; padding: 22px 0; border-bottom: 1px solid var(--paper-rule); }
+  .areas .mono { color: var(--paper-2); padding-top: 6px; }
+  .areas h3 { font: 400 clamp(22px, 1.8vw, 28px)/1.15 var(--sans); letter-spacing: -0.02em; }
+  .areas p { color: var(--paper-2); margin-top: 6px; font-size: 16px; }
+  .figures { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); margin-top: clamp(64px, 10vh, 120px); border-top: 1px solid var(--paper-rule); }
+  .figures div { padding: 22px 18px 0 0; }
+  .figures div + div { padding-left: 18px; border-left: 1px solid var(--paper-rule); }
+  .figures b { display: block; font: 300 clamp(48px, 5vw, 84px)/1 var(--sans); letter-spacing: -0.04em; }
+  .figures .mono { color: var(--paper-2); display: block; margin-top: 12px; }
+
+  /* ---------- contact ---------- */
+  .contact { padding-block: clamp(110px, 16vh, 180px) 56px; }
+  .contact .grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(40px, 6vw, 110px); }
+  .contact h2 { font-size: clamp(48px, 6vw, 100px); max-width: 10ch; }
+  .contact .lede { margin-top: 24px; }
+  .offices { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 44px; padding-top: 22px; border-top: 1px solid var(--rule); }
+  .offices p { color: var(--ink-2); font-size: 15.5px; margin-top: 8px; }
+  form { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; align-content: start; }
+  label { display: grid; gap: 8px; }
+  label.wide { grid-column: 1 / -1; }
+  label .mono { color: var(--ink-3); }
+  input, textarea { width: 100%; background: rgba(232, 230, 225, 0.04); border: 1px solid var(--rule); border-radius: 8px; padding: 14px 14px; color: var(--ink); font: 400 16px/1.4 var(--sans); transition: border-color 0.2s ease; }
+  input:hover, textarea:hover { border-color: rgba(232, 230, 225, 0.3); }
+  textarea { min-height: 130px; resize: vertical; }
+  input::placeholder, textarea::placeholder { color: rgba(232, 230, 225, 0.4); }
+  form .row { grid-column: 1 / -1; display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-top: 4px; }
+  form .note { color: var(--ink-3); max-width: 36ch; }
+  .sent { grid-column: 1 / -1; color: var(--ice); min-height: 1.4em; }
+  footer { position: relative; z-index: 2; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 14px; padding-block: 20px 24px; border-top: 1px solid var(--rule); background: var(--bg); color: var(--ink-3); }
+
+  @media (max-width: 900px) {
+    nav { top: 10px; left: 10px; right: 10px; padding-left: 14px; }
+    nav .links, nav .clock { display: none; }
+    .hero { grid-template-columns: 1fr; grid-template-rows: auto auto 1fr auto; padding-top: 92px; padding-bottom: 24px; }
+    .hero .meta-top .mono:last-child { display: none; }
+    .hero .copy { align-self: start; margin-top: 28px; }
+    .hero h1 { font-size: clamp(46px, 13vw, 72px); }
+    .hero .lede { margin-top: 18px; font-size: 16.5px; }
+    .hero .meta-bot { grid-row: 4; }
+    .hero .meta-bot .mono:last-child { display: none; }
+    .engine .stage { grid-template-columns: 1fr; grid-template-rows: auto auto 1fr auto; padding-top: 84px; padding-bottom: 18px; }
+    .engine .label .mono:last-child { display: none; }
+    .states { align-self: start; min-height: 0; height: 13.5em; margin-top: 14px; }
+    .js .state { inset: 0 0 auto 0; transform: translateY(14px); }
+    .js .state.on { transform: none; }
+    .state h2 { font-size: clamp(32px, 9vw, 44px); margin: 8px 0 10px; }
+    .state .lede { font-size: 16px; }
+    .counters { grid-row: 4; grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 10px; }
+    .counters div:nth-child(3) { padding-left: 0; border-left: 0; }
+    .counters b { font-size: 26px; }
+    .cases .stage { padding-top: 84px; }
+    .cases .head { flex-direction: column; align-items: start; gap: 10px; }
+    .cases .head p { text-align: left; }
+    .track { --pw: 84vw; --gap: 14vw; }
+    .case { grid-template-columns: 1fr; gap: 14px; }
+    .cover { aspect-ratio: 16 / 9; }
+    .info h3 { margin: 10px 0 12px; font-size: 22px; }
+    .facts { font-size: 14px; padding: 10px 0; gap: 4px 14px; }
+    .outcome { font-size: 14.5px; margin-top: 10px; }
+    .pills { display: none; }
+    .practice .top, .areas, .contact .grid { grid-template-columns: 1fr; }
+    .figures { grid-template-columns: 1fr 1fr; row-gap: 28px; }
+    .figures div:nth-child(3) { padding-left: 0; border-left: 0; }
+    form { grid-template-columns: 1fr; }
+    .offices { grid-template-columns: 1fr; }
+  }
+  @media (max-height: 700px) and (max-width: 900px) { .outcome { display: none; } }
+  @media (prefers-reduced-motion: reduce) {
+    .js .state { transition: opacity 0.2s linear; }
+    #cross { display: none; }
+  }
+</style>
+</head>
+<body>
+<canvas id="field" aria-hidden="true"></canvas>
+<div id="cross" aria-hidden="true"><span id="crossLabel"></span></div>
+
+<nav aria-label="Huvudmeny">
+  <a class="brand" href="#top" aria-label="Varde Advokatbyrå, till början">
+    <svg viewBox="0 0 18 18" fill="currentColor" aria-hidden="true"><rect x="3" y="13" width="12" height="4" rx="2" /><rect x="4.5" y="8" width="9" height="4" rx="2" /><rect x="6.5" y="3" width="5" height="4" rx="2" /></svg>VARDE
+  </a>
+  <span class="links"><a href="#arenden">Ärenden</a><a href="#verksamhet">Verksamhet</a><a href="#kontakt">Kontakt</a></span>
+  <span class="right"><span class="clock mono" id="clock">Sthlm 00:00</span><a class="btn" href="#kontakt">Nytt ärende</a></span>
+</nav>
+
+<main>
+  <section class="hero pad" id="top" data-tone="dark">
+    <div class="meta-top"><p class="mono hud">Varde Advokatbyrå · Stockholm · Göteborg</p><p class="mono hud">59.3326° N, 18.0649° E</p></div>
+    <div class="copy">
+      <h1 class="display">Ordning i komplexa <em>ärenden.</em></h1>
+      <p class="lede">Affärsjuridik för bolag som växer, köper, säljer och ibland hamnar i tvist. En ansvarig partner i varje ärende, från första samtalet till sista underskriften.</p>
+      <div class="cta"><a class="btn" href="#arenden">Se utvalda ärenden</a><a class="btn ghost" href="#kontakt">Nytt ärende</a></div>
+    </div>
+    <div class="meta-bot"><p class="mono hud">Scrolla för att se hur ett ärende blir begripligt</p><p class="mono hud"><b id="ptsCount">0</b> dokument i fältet</p></div>
+  </section>
+
+  <section class="engine pad" id="metod" data-tone="dark" aria-label="Så arbetar vi">
+    <div class="stage">
+      <div class="label"><p class="mono hud">Metod · Ett förvärv, från datarum till beslut</p><p class="mono hud" id="engineState">Läge 1 av 4</p></div>
+      <div class="states">
+        <div class="state"><p class="mono">01 · Datarummet</p><h2 class="display">Ett ärende börjar sällan <em>enkelt.</em></h2><p class="lede">Ett vanligt förvärv: tusentals dokument, ett fåtal avtal som spelar roll och några veckor på sig.</p></div>
+        <div class="state"><p class="mono">02 · Ordning</p><h2 class="display">Först <em>sorterar</em> vi.</h2><p class="lede">Avtal, korrespondens, myndighetsbeslut och finansiering i var sin hög. Ingenting läses två gånger.</p></div>
+        <div class="state"><p class="mono">03 · Urval</p><h2 class="display">Sedan det som <em>påverkar.</em></h2><p class="lede">En bråkdel av dokumenten avgör utfallet. Där lägger vi tiden, och där lägger du pengarna.</p></div>
+        <div class="state"><p class="mono">04 · Beslut</p><h2 class="display">Till sist: det som <em>avgör.</em></h2><p class="lede">Sju klausuler bestämde priset i affären. Du får veta vilka, och varför, på en sida.</p></div>
+      </div>
+      <div class="counters" aria-hidden="true">
+        <div><span class="mono hud">Granskade</span><b id="cA">4 812</b></div>
+        <div><span class="mono hud">Sorterade</span><b id="cB">0</b></div>
+        <div><span class="mono hud">Relevanta</span><b id="cC">0</b></div>
+        <div><span class="mono hud">Avgörande</span><b id="cD">0</b></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="cases" id="arenden" data-tone="dark" aria-label="Utvalda ärenden">
+    <div class="stage">
+      <div class="head pad">
+        <h2 class="display">Utvalda <em>ärenden.</em></h2>
+        <p class="lede">Alla ärenden är anonymiserade. Vi lämnar aldrig ut klienternas namn, bara vad som gick att åstadkomma.</p>
+      </div>
+      <div class="viewport">
+        <div class="track" id="track">
+          <article class="case" data-art="merge">
+            <div class="cover"><canvas></canvas><span class="tag mono">Förvärv</span></div>
+            <div class="info">
+              <p class="idx mono"><span>Ärende 01</span><span>2025</span></p>
+              <h3>Ett nordiskt medtechbolag köper sin största konkurrent</h3>
+              <dl class="facts"><dt>Värde</dt><dd>1,4 mdkr</dd><dt>Roll</dt><dd>Köparens rådgivare</dd><dt>Tid</dt><dd>11 veckor från avsiktsförklaring</dd></dl>
+              <p class="outcome">Godkänd av Konkurrensverket <b>utan villkor</b>, tre veckor före tidplan.</p>
+              <div class="pills"><span>M&amp;A</span><span>Konkurrensrätt</span><span>Due diligence</span></div>
+            </div>
+          </article>
+          <article class="case" data-art="dispute">
+            <div class="cover"><canvas></canvas><span class="tag mono">Tvist</span></div>
+            <div class="info">
+              <p class="idx mono"><span>Ärende 02</span><span>2024</span></p>
+              <h3>Ett havererat systemprojekt prövas i skiljeförfarande</h3>
+              <dl class="facts"><dt>Belopp</dt><dd>86 mkr</dd><dt>Roll</dt><dd>Ombud för beställaren</dd><dt>Forum</dt><dd>SCC, Stockholm</dd></dl>
+              <p class="outcome">Förlikning med <b>full ersättning</b> innan huvudförhandlingen.</p>
+              <div class="pills"><span>Skiljeförfarande</span><span>IT-avtal</span><span>Skadestånd</span></div>
+            </div>
+          </article>
+          <article class="case" data-art="property">
+            <div class="cover"><canvas></canvas><span class="tag mono">Fastighet</span></div>
+            <div class="info">
+              <p class="idx mono"><span>Ärende 03</span><span>2025</span></p>
+              <h3>Sale and leaseback av ett logistiklager i Jönköping</h3>
+              <dl class="facts"><dt>Värde</dt><dd>640 mkr</dd><dt>Roll</dt><dd>Säljarens rådgivare</dd><dt>Struktur</dt><dd>Bolagsaffär, 15 års hyresavtal</dd></dl>
+              <p class="outcome">Frigjorde kapital för expansion, med <b>full kontroll</b> över lagret kvar.</p>
+              <div class="pills"><span>Fastighet</span><span>Hyresrätt</span><span>Skatt</span></div>
+            </div>
+          </article>
+          <article class="case" data-art="people">
+            <div class="cover"><canvas></canvas><span class="tag mono">Arbetsrätt</span></div>
+            <div class="info">
+              <p class="idx mono"><span>Ärende 04</span><span>2024</span></p>
+              <h3>Omställning av 220 tjänster i en industrikoncern</h3>
+              <dl class="facts"><dt>Omfattning</dt><dd>220 tjänster, 4 orter</dd><dt>Roll</dt><dd>Arbetsgivarens ombud</dd><dt>Tid</dt><dd>14 veckor</dd></dl>
+              <p class="outcome">Klart i förhandling med facken, <b>utan en enda tvist</b> efteråt.</p>
+              <div class="pills"><span>Arbetsrätt</span><span>MBL</span><span>Omställning</span></div>
+            </div>
+          </article>
+          <article class="case" data-art="model">
+            <div class="cover"><canvas></canvas><span class="tag mono">IT och AI</span></div>
+            <div class="info">
+              <p class="idx mono"><span>Ärende 05</span><span>2026</span></p>
+              <h3>Licens för en AI-modell tränad på medicinsk data</h3>
+              <dl class="facts"><dt>Parter</dt><dd>Regionen och ett AI-bolag</dd><dt>Roll</dt><dd>AI-bolagets rådgivare</dd><dt>Regelverk</dt><dd>GDPR, AI-förordningen</dd></dl>
+              <p class="outcome">Ett avtal som håller för <b>både dataskydd och AI-förordningen</b>.</p>
+              <div class="pills"><span>AI Act</span><span>GDPR</span><span>Licens</span></div>
+            </div>
+          </article>
+        </div>
+      </div>
+      <div class="foot pad"><span class="mono hud count" id="caseCount">01 / 05</span><span class="progress" aria-hidden="true"><i id="caseBar"></i></span><span class="mono hud">Scrolla</span></div>
+    </div>
+  </section>
+
+  <section class="practice light pad" id="verksamhet" data-tone="light">
+    <div class="top">
+      <h2 class="display">Det här gör <em>vi.</em></h2>
+      <p class="lede">Åtta områden, en byrå. När ett ärende spänner över flera områden sitter specialisterna redan i samma korridor.</p>
+    </div>
+    <ul class="areas">
+      <li><span class="mono">01</span><div><h3>Företagsförvärv</h3><p>Köp, försäljning och sammanslagningar, från avsiktsförklaring till tillträde.</p></div></li>
+      <li><span class="mono">02</span><div><h3>Tvistlösning</h3><p>Domstol och skiljeförfarande, och förhandlingen som gör att det inte behövs.</p></div></li>
+      <li><span class="mono">03</span><div><h3>Fastighet</h3><p>Transaktioner, hyresavtal och projekt, för ägare och hyresgäster.</p></div></li>
+      <li><span class="mono">04</span><div><h3>Arbetsrätt</h3><p>Anställningar, omställningar och förhandlingar med fackliga parter.</p></div></li>
+      <li><span class="mono">05</span><div><h3>IT, data och AI</h3><p>Licenser, dataskydd och efterlevnad av AI-förordningen.</p></div></li>
+      <li><span class="mono">06</span><div><h3>Bolagsrätt</h3><p>Styrelser, ägaravtal, emissioner och bolagsstämmor.</p></div></li>
+      <li><span class="mono">07</span><div><h3>Bank och finans</h3><p>Finansiering, säkerheter och omstrukturering.</p></div></li>
+      <li><span class="mono">08</span><div><h3>Konkurrensrätt</h3><p>Koncentrationsprövning, samarbeten och myndighetsutredningar.</p></div></li>
+    </ul>
+    <div class="figures">
+      <div><b>34</b><span class="mono">Jurister</span></div>
+      <div><b>2</b><span class="mono">Kontor</span></div>
+      <div><b>2011</b><span class="mono">Grundad</span></div>
+      <div><b>1</b><span class="mono">Ansvarig partner per ärende</span></div>
+    </div>
+  </section>
+
+  <section class="contact pad" id="kontakt" data-tone="dark">
+    <div class="grid">
+      <div>
+        <h2 class="display">Ett nytt ärende börjar med ett <em>samtal.</em></h2>
+        <p class="lede">Berätta kort vad det gäller. Vi gör en jävskontroll innan vi tar del av några detaljer, och en partner hör av sig inom en arbetsdag.</p>
+        <div class="offices">
+          <div><span class="mono hud">Stockholm</span><p>Biblioteksgatan 9<br />111 46 Stockholm</p></div>
+          <div><span class="mono hud">Göteborg</span><p>Södra Hamngatan 37<br />411 06 Göteborg</p></div>
+        </div>
+      </div>
+      <form id="intake">
+        <label for="f-name"><span class="mono">Namn</span><input id="f-name" name="name" autocomplete="name" required /></label>
+        <label for="f-org"><span class="mono">Bolag</span><input id="f-org" name="org" autocomplete="organization" /></label>
+        <label for="f-mail"><span class="mono">E-post</span><input id="f-mail" name="mail" type="email" autocomplete="email" required /></label>
+        <label for="f-tel"><span class="mono">Telefon</span><input id="f-tel" name="tel" type="tel" autocomplete="tel" /></label>
+        <label class="wide" for="f-text"><span class="mono">Kort om ärendet</span><textarea id="f-text" name="text" placeholder="Motpartens namn behöver vi för jävskontrollen. Detaljerna tar vi sedan."></textarea></label>
+        <div class="row"><p class="note mono">Skyddas av advokaters tystnadsplikt</p><button class="btn" type="submit">Skicka förfrågan</button></div>
+        <p class="sent mono" id="sent" role="status" aria-live="polite"></p>
+      </form>
+    </div>
+  </section>
+</main>
+
+<footer class="pad"><span class="mono">Varde Advokatbyrå AB</span><span class="mono">Ledamöter av Sveriges advokatsamfund</span><span class="mono">© 2026</span></footer>
+
+<script>
+(() => {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const fine = matchMedia('(pointer: fine)').matches;
+  const $ = (s) => document.querySelector(s);
+  const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
+  const smooth = (a, b, v) => { const t = clamp((v - a) / (b - a)); return t * t * (3 - 2 * t); };
+  const lerp = (a, b, t) => a + (b - a) * t;
+  function rng(seed) { return () => { seed |= 0; seed = (seed + 0x6d2b79f5) | 0; let t = Math.imul(seed ^ (seed >>> 15), 1 | seed); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
+  const fmt = (n) => Math.round(n).toLocaleString('sv-SE');
+
+  // ---------- clock ----------
+  const clock = $('#clock');
+  const tick = () => { clock.textContent = 'Sthlm ' + new Intl.DateTimeFormat('sv-SE', { timeZone: 'Europe/Stockholm', hour: '2-digit', minute: '2-digit' }).format(new Date()); };
+  tick(); setInterval(tick, 20000);
+
+  // ---------- the document field: one set of points, four layouts ----------
+  const canvas = $('#field'), ctx = canvas.getContext('2d');
+  const small = Math.min(screen.width, screen.height) < 700;
+  const N = small ? 760 : 1500;
+  const REL = Math.round(N * 312 / 4812) + 8;      // the share that matters
+  const r = rng(11);
+  const order = Array.from({ length: N }, (_, i) => i);
+  for (let i = N - 1; i > 0; i--) { const j = (r() * (i + 1)) | 0; [order[i], order[j]] = [order[j], order[i]]; }
+  const pts = Array.from({ length: N }, (_, i) => {
+    const a = r() * Math.PI * 2, d = Math.pow(r(), 0.7);
+    return {
+      i, rnd: r(), slot: order[i], cat: 0,
+      cu: Math.cos(a) * d + (r() - 0.5) * 0.08, cv: Math.sin(a) * d * 0.9 + (r() - 0.5) * 0.08,
+      ph: r() * Math.PI * 2, x: 0, y: 0,
+      rel: i < REL, dec: i < 7,
+    };
+  });
+  $('#ptsCount').textContent = fmt(N);
+
+  let W = 0, H = 0, area = null, cell = 3, layouts = null, heroDrop = 0;
+  function measure() {
+    W = innerWidth; H = innerHeight;
+    const dpr = Math.min(devicePixelRatio || 1, small ? 1.5 : 2);
+    canvas.width = W * dpr; canvas.height = H * dpr;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    const wide = W > 900;
+    // phones: below the hero's buttons, the cloud sits lower; it rises into the stage as the section pins
+    heroDrop = wide ? 0 : H * 0.085;
+    area = wide ? { x0: W * 0.52, x1: W * 0.95, y0: H * 0.2, y1: H * 0.76 } : { x0: W * 0.06, x1: W * 0.94, y0: H * 0.5, y1: H * 0.8 };
+    const aw = area.x1 - area.x0, ah = area.y1 - area.y0, cx = (area.x0 + area.x1) / 2, cy = (area.y0 + area.y1) / 2;
+    // grid: six piles (bands), sorted
+    const cols = wide ? 50 : 32, rows = Math.ceil(N / cols), bands = 6, gap = wide ? 14 : 8;
+    cell = Math.min(aw / cols, (ah - gap * (bands - 1)) / rows);
+    const gw = cell * cols, gh = cell * rows + gap * (bands - 1);
+    const perBand = Math.ceil(rows / bands);
+    // block of the relevant ones
+    const bc = Math.ceil(Math.sqrt(REL * 1.6)), bcell = cell * 1.9;
+    let relIdx = 0;
+    // the seven
+    const size7 = wide ? 22 : 14, gap7 = wide ? 30 : 18;
+    layouts = pts.map((p) => {
+      const col = p.slot % cols, row = Math.floor(p.slot / cols), band = Math.floor(row / perBand);
+      p.cat = band;
+      const g = { x: cx - gw / 2 + col * cell, y: cy - gh / 2 + row * cell + band * gap };
+      let b = g;
+      if (p.rel) { const k = relIdx++; b = { x: cx - (bc * bcell) / 2 + (k % bc) * bcell, y: cy - (Math.ceil(REL / bc) * bcell) / 2 + Math.floor(k / bc) * bcell }; }
+      const s = p.dec ? { x: cx - (7 * gap7) / 2 + p.i * gap7 + (gap7 - size7) / 2, y: cy - size7 / 2 } : b;
+      return { c: { x: cx + p.cu * aw * 0.5, y: cy + p.cv * ah * 0.5 }, g, b, s };
+    });
+  }
+
+  const engine = $('#metod'), states = [...document.querySelectorAll('.state')];
+  const cA = $('#cA'), cB = $('#cB'), cC = $('#cC'), cD = $('#cD'), engineState = $('#engineState');
+  const cases = $('#arenden');
+  let t = 0;
+  function engineProgress() {
+    const rr = engine.getBoundingClientRect();
+    return { p: clamp(-rr.top / (engine.offsetHeight - innerHeight)), pinned: rr.top <= innerHeight * 0.1, visible: rr.top < innerHeight };
+  }
+  function draw() {
+    const { p: raw, pinned } = engineProgress();
+    // reading stops hold; the moves happen between them
+    let k1 = smooth(0.12, 0.3, raw), k2 = smooth(0.4, 0.56, raw), k3 = smooth(0.68, 0.84, raw);
+    const step = !pinned ? -1 : raw < 0.21 ? 0 : raw < 0.48 ? 1 : raw < 0.76 ? 2 : 3;
+    if (reduce) { k1 = step >= 1 ? 1 : 0; k2 = step >= 2 ? 1 : 0; k3 = step >= 3 ? 1 : 0; }
+    states.forEach((s, i) => s.classList.toggle('on', i === step));
+    engineState.textContent = `Läge ${Math.max(step, 0) + 1} av 4`;
+    cB.textContent = fmt(4812 * k1); cC.textContent = fmt(lerp(0, 312, k2)); cD.textContent = fmt(7 * k3);
+    cA.parentElement.classList.toggle('live', step === 0); cB.parentElement.classList.toggle('live', step === 1);
+    cC.parentElement.classList.toggle('live', step === 2); cD.parentElement.classList.toggle('live', step === 3);
+
+    // the field fades out once the portfolio covers the screen
+    const cover = cases.getBoundingClientRect().top;
+    canvas.style.opacity = cover < innerHeight * 0.4 ? 0 : 1;
+    if (cover <= 0) return;
+
+    ctx.clearRect(0, 0, W, H);
+    const drift = reduce ? 0 : 1 - k1;
+    const drop = heroDrop * clamp(engine.getBoundingClientRect().top / H);
+    const buckets = new Map();
+    const add = (key, x, y, s) => { let b = buckets.get(key); if (!b) buckets.set(key, (b = [])); b.push(x, y, s); };
+    for (let n = 0; n < N; n++) {
+      const p = pts[n], L = layouts[n];
+      const st = (k) => clamp((k - p.rnd * 0.3) / 0.7);
+      const e1 = st(k1), e2 = st(k2), e3 = st(k3);
+      let x = lerp(L.c.x, L.g.x, e1), y = lerp(L.c.y + drop, L.g.y, e1);
+      x += Math.sin(t * 0.35 + p.ph) * 6 * drift; y += Math.cos(t * 0.3 + p.ph * 1.3) * 5 * drift;
+      if (p.rel) { x = lerp(x, L.b.x, e2); y = lerp(y, L.b.y, e2); }
+      if (p.dec) { x = lerp(x, L.s.x, e3); y = lerp(y, L.s.y, e3); }
+      let size = lerp(2.1, Math.max(1.4, cell * 0.62), e1), alpha, tone;
+      if (p.dec) { size = lerp(lerp(size, cell * 1.3, e2), small ? 14 : 22, e3); alpha = 1; tone = e2 > 0.5 ? 'ice' : 'ink'; }
+      else if (p.rel) { size = lerp(size, cell * 1.3, e2); alpha = lerp(lerp(0.75, 0.9, e1), 0.95, e2) * (1 - e3 * 0.88); tone = e2 > 0.5 || e1 > 0.5 ? 'ice' : 'ink'; }
+      else { alpha = lerp(0.7, 0.32 + p.cat * 0.07, e1) * (1 - e2 * 0.72) * (1 - e3 * 0.7); tone = 'ink'; }
+      const q = Math.round(alpha * 10);
+      if (q <= 0) continue;
+      add(tone + q, x, y, size);
+    }
+    for (const [key, arr] of buckets) {
+      const ice = key.startsWith('ice'), q = +key.replace(/\D/g, '') / 10;
+      ctx.fillStyle = ice ? `rgba(158,216,245,${q})` : `rgba(232,230,225,${q})`;
+      for (let j = 0; j < arr.length; j += 3) { const s = arr[j + 2]; ctx.fillRect(arr[j] - s / 2, arr[j + 1] - s / 2, s, s); }
+    }
+    // a hairline frame around the seven, like a selection in an instrument
+    if (k3 > 0.95) {
+      const L0 = layouts[0], L6 = layouts[6], s = small ? 14 : 22;
+      ctx.strokeStyle = 'rgba(158,216,245,0.6)'; ctx.lineWidth = 1;
+      ctx.strokeRect(L0.s.x - s / 2 - 10.5, L0.s.y - s / 2 - 10.5, L6.s.x - L0.s.x + s + 21, s + 21);
+    }
+  }
+
+  // ---------- portfolio: horizontal, on a gently curved surface ----------
+  const track = $('#track'), caseEls = [...track.children];
+  const caseCount = $('#caseCount'), caseBar = $('#caseBar');
+  let travel = 0;
+  function measureCases() {
+    track.style.transform = '';
+    travel = Math.max(0, track.scrollWidth - innerWidth);
+    cases.style.height = `${travel * 1.6 + innerHeight * 1.15}px`;
+  }
+  function casesFrame() {
+    const rr = cases.getBoundingClientRect();
+    const p = clamp(-rr.top / Math.max(1, cases.offsetHeight - innerHeight));
+    // each case holds centered for a stretch of scroll: read it still, then the track moves on
+    const n = caseEls.length - 1, f = p * n, i0 = Math.min(Math.floor(f), n - 1);
+    const q = reduce ? Math.round(f) / n : (i0 + smooth(0.3, 0.7, f - i0)) / n;
+    track.style.transform = `translate3d(${(-q * travel).toFixed(1)}px,0,0)`;
+    const mid = innerWidth / 2, depth = innerWidth > 900 ? 180 : 90, turn = innerWidth > 900 ? 16 : 7;
+    let nearest = 0, best = Infinity;
+    caseEls.forEach((el, i) => {
+      const b = el.getBoundingClientRect();
+      const d = (b.left + b.width / 2 - mid) / b.width;
+      if (Math.abs(d) < best) { best = Math.abs(d); nearest = i; }
+      const c = clamp(d, -1.6, 1.6);
+      el.style.transform = reduce ? '' : `translateZ(${(-Math.abs(c) * depth).toFixed(1)}px) rotateY(${(-c * turn).toFixed(2)}deg)`;
+      el.style.opacity = (1 - 0.5 * clamp(Math.abs(d) - 0.15)).toFixed(3);
+    });
+    caseCount.textContent = `${String(nearest + 1).padStart(2, '0')} / ${String(caseEls.length).padStart(2, '0')}`;
+    caseBar.parentElement.style.setProperty('--p', p.toFixed(3));
+  }
+
+  // ---------- 1-bit covers: each case gets a generated plate, ordered dither ----------
+  const BAYER = [0, 8, 2, 10, 12, 4, 14, 6, 3, 11, 1, 9, 15, 7, 13, 5];
+  const inPoly = (x, y, poly) => { let c = false; for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) { const [xi, yi] = poly[i], [xj, yj] = poly[j]; if ((yi > y) !== (yj > y) && x < ((xj - xi) * (y - yi)) / (yj - yi) + xi) c = !c; } return c; };
+  const ART = {
+    merge: (x, y) => { const f = (cx) => clamp(1 - Math.hypot((x - cx) * 1.25, y - 0.5) / 0.3); const a = f(0.38), b = f(0.62); return a > 0 && b > 0 ? 0.95 : Math.max(a, b) * 0.62 + 0.04 * y; },
+    dispute: (x, y) => { const w = x < 0.5 ? (0.5 - x) * 1.5 + 0.03 : (x - 0.5) * 1.5 + 0.03; const v = clamp(1 - Math.abs(y - 0.5 - Math.sin(x * 9) * 0.02) / w); const gap = Math.abs(x - 0.5 - Math.sin(y * 40) * 0.006) < 0.018 ? 0 : 1; return v * gap * (0.4 + 0.6 * Math.abs(x - 0.5) * 2); },
+    property: (x, y) => { const top = [[0.5, 0.22], [0.86, 0.4], [0.5, 0.58], [0.14, 0.4]], left = [[0.14, 0.4], [0.5, 0.58], [0.5, 0.86], [0.14, 0.68]], right = [[0.5, 0.58], [0.86, 0.4], [0.86, 0.68], [0.5, 0.86]]; if (inPoly(x, y, top)) return 0.9 - (y - 0.22) * 0.4; if (inPoly(x, y, left)) return 0.52; if (inPoly(x, y, right)) return 0.22 + Math.floor(x * 18) % 2 * 0.06; return y > 0.7 ? 0.08 : 0.02; },
+    people: (x, y) => { const gx = 22, gy = 10; const u = x * gx, v = (y - 0.12) / 0.76 * gy; if (v < 0 || v > gy) return 0.03; const d = Math.hypot(u - Math.floor(u) - 0.5, v - Math.floor(v) - 0.5); return d < 0.3 ? 0.35 + 0.65 * (0.5 + 0.5 * Math.sin(x * 9 - y * 4)) : 0.03; },
+    model: (x, y) => { const d = Math.hypot(x - 0.5, (y - 0.5) * 1.2); const n = Math.sin(Math.atan2(y - 0.5, x - 0.5) * 6) * 0.012; return clamp(1 - d * 1.7) * (0.5 + 0.5 * Math.sin((d + n) * 70)); },
+  };
+  function plate(cv, kind) {
+    const w = cv.clientWidth, h = cv.clientHeight;
+    if (!w) return;
+    const dpr = Math.min(devicePixelRatio || 1, 2), c = 3;
+    cv.width = w * dpr; cv.height = h * dpr;
+    const g = cv.getContext('2d');
+    g.setTransform(dpr, 0, 0, dpr, 0, 0);
+    g.fillStyle = '#0b0d10'; g.fillRect(0, 0, w, h);
+    const f = ART[kind];
+    for (let y = 0, j = 0; y < h; y += c, j++) {
+      for (let x = 0, i = 0; x < w; x += c, i++) {
+        const L = f(x / w, y / h);
+        if (L <= (BAYER[(j % 4) * 4 + (i % 4)] + 0.5) / 16) continue;
+        g.fillStyle = L > 0.78 ? '#e8e6e1' : '#9ed8f5';
+        g.fillRect(x, y, c - 1, c - 1);
+      }
+    }
+  }
+  const drawPlates = () => caseEls.forEach((el) => plate(el.querySelector('canvas'), el.dataset.art));
+
+  // ---------- chrome ----------
+  const nav = $('nav'), sections = [...document.querySelectorAll('main > section')];
+  function chrome() {
+    const y = nav.getBoundingClientRect().bottom - 6;
+    const under = sections.find((s) => { const b = s.getBoundingClientRect(); return b.top <= y && b.bottom > y; });
+    nav.classList.toggle('on-light', under?.dataset.tone === 'light');
+  }
+
+  // ---------- crosshair readout over the field (mouse only) ----------
+  const cross = $('#cross'), crossLabel = $('#crossLabel');
+  if (fine && !reduce) {
+    addEventListener('pointermove', (e) => {
+      const overField = cases.getBoundingClientRect().top > e.clientY && !e.target.closest('a, button, nav');
+      cross.classList.toggle('on', overField);
+      cross.style.transform = `translate(${e.clientX}px, ${e.clientY}px)`;
+      crossLabel.textContent = `X ${String(Math.round(e.clientX)).padStart(4, '0')}  Y ${String(Math.round(e.clientY)).padStart(4, '0')}`;
+    }, { passive: true });
+    document.addEventListener('pointerleave', () => cross.classList.remove('on'));
+  }
+
+  // ---------- loop: draws while the field moves, rests otherwise ----------
+  let last = performance.now(), lastY = -1;
+  function frame(now) {
+    const dt = Math.min((now - last) / 1000, 0.05); last = now;
+    const heroVisible = $('#top').getBoundingClientRect().bottom > 0;
+    const idle = !reduce && heroVisible && !document.hidden;
+    if (idle) t += dt;
+    if (idle || scrollY !== lastY) { draw(); casesFrame(); chrome(); lastY = scrollY; }
+    requestAnimationFrame(frame);
+  }
+  const relayout = () => { measure(); measureCases(); drawPlates(); draw(); casesFrame(); chrome(); };
+  addEventListener('resize', relayout);
+  document.fonts?.ready.then(relayout);
+  addEventListener('load', relayout);
+  relayout();
+  requestAnimationFrame(frame);
+
+  $('#intake').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const f = new FormData(e.target);
+    $('#sent').textContent = `Tack ${String(f.get('name')).split(' ')[0]}. Jävskontrollen startar nu, en partner hör av sig.`;
+  });
+})();
+</script>
+</body>
+</html>
