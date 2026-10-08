@@ -140,15 +140,15 @@ for (const pass of passes) {
     const page = await ctx.newPage();
     await page.goto(`http://localhost:${port}/`, { waitUntil: 'load', timeout: 45000 });
     await page.waitForTimeout(800);
-    const out = await page.evaluate(() => [...document.body.querySelectorAll('*')]
+    const out = await page.evaluate(() => [['body background', (({ backgroundColor: c, backgroundImage: i }) => `${c} ${i}`)(getComputedStyle(document.body))], ...[...document.body.querySelectorAll('*')]
       .filter((el) => [...el.childNodes].some((n) => n.nodeType === 3 && n.textContent.trim()) && el.getClientRects().length)
-      .map((el) => { const s = getComputedStyle(el); return [el.tagName.toLowerCase() + ' "' + el.textContent.trim().slice(0, 28) + '"', `${s.color} ${s.fontSize} ${s.fontFamily.split(',')[0]}`]; }));
+      .map((el) => { const s = getComputedStyle(el); return [el.tagName.toLowerCase() + ' "' + el.textContent.trim().slice(0, 28) + '"', `${s.color} ${s.fontSize} ${s.fontFamily.split(',')[0]}`]; })]);
     await ctx.close();
     return out;
   };
   const plain = await looks(false), hosted = await looks(true);
   const changed = plain.filter(([, look], i) => hosted[i] && hosted[i][1] !== look).map(([id], i) => id);
-  if (changed.length) problems.push(`[host] ${changed.length} text element(s) change color or size when a host page styles <body> (set color and font on body yourself), e.g. ${changed.slice(0, 3).join(', ')}`);
+  if (changed.length) problems.push(`[host] ${changed.length} element(s) change background, color or size when a host page styles <body> (set background, color and font on body yourself; a bare body turns the page white), e.g. ${changed.slice(0, 3).join(', ')}`);
 }
 
 // Keyboard focus: every element Tab reaches must look different when focused.
