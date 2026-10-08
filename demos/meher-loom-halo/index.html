@@ -1,0 +1,581 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Meher &amp; Loom · Handwoven silk from Varanasi</title>
+<meta name="description" content="Handwoven Banarasi silk with real zari, made to order in Varanasi.">
+<link rel="icon" href="data:,">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=Manrope:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  /* ===== Scroll progress: one number per section (same driver as scroll-scrub-story) ===== */
+  @property --p { syntax: '<number>'; inherits: true; initial-value: 1; }
+  @keyframes scrub-p { from { --p: 0; } to { --p: 1; } }
+  .scrub { animation: scrub-p linear both; animation-timeline: view(); }
+
+  :root {
+    --night: #14110E;
+    --night-2: #1E1915;
+    --ivory: #F6EFE7;
+    --blush: #EFD9CC;
+    --ink: #1C1612;
+    --mute: #6E625A;
+    --gold: #D9BF94;
+    --gold-hot: #F7E2B9;
+    --rose: #C98E7C;
+    --line: rgba(217, 191, 148, .28);
+    --gutter: clamp(18px, 4vw, 64px);
+    --serif: 'Playfair Display', Georgia, serif;
+    --sans: 'Manrope', 'Helvetica Neue', Arial, sans-serif;
+  }
+  *, *::before, *::after { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body { margin: 0; background: var(--night); color: var(--ivory); font: 400 16px/1.55 var(--sans); -webkit-font-smoothing: antialiased; }
+  a { color: inherit; }
+  img, svg, canvas { display: block; }
+  :focus-visible { outline: 2px solid var(--gold-hot); outline-offset: 3px; border-radius: 4px; }
+  .skip { position: absolute; left: 12px; top: -60px; z-index: 80; padding: 10px 14px; background: var(--gold); color: var(--ink); border-radius: 999px; font-weight: 600; }
+  .skip:focus { top: 12px; }
+
+  .eyebrow { margin: 0 0 14px; font: 500 13px/1 var(--sans); letter-spacing: .14em; text-transform: uppercase; color: var(--gold); }
+  .eyebrow b { font-weight: 600; color: var(--gold-hot); }
+  .light .eyebrow { color: #9A7550; }
+  .display { margin: 0; font: 400 clamp(44px, 5.6vw, 92px)/1.02 var(--serif); letter-spacing: -.012em; }
+  .display em { font-style: italic; color: var(--gold-hot); }
+  .light .display em { color: #A57A55; }
+  .lede { margin: 22px 0 0; max-width: 30em; color: rgba(246, 239, 231, .74); font-size: 17px; }
+  .light .lede { color: var(--mute); }
+  .pill {
+    display: inline-flex; align-items: center; gap: 10px; height: 48px; padding: 0 26px; border-radius: 999px; text-decoration: none;
+    background: linear-gradient(180deg, var(--gold-hot), var(--gold)); color: var(--ink); font: 600 14px var(--sans); letter-spacing: .04em;
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, .35) inset, 0 10px 30px -10px rgba(217, 191, 148, .6); transition: transform .3s, box-shadow .3s;
+  }
+  .pill:hover { transform: translateY(-1px); box-shadow: 0 0 0 1px rgba(255, 255, 255, .5) inset, 0 14px 36px -10px rgba(247, 226, 185, .8); }
+  .ghost { display: inline-flex; align-items: center; gap: 10px; height: 48px; padding: 0 6px; text-decoration: none; font-weight: 500; font-size: 14px; color: var(--ivory); border-bottom: 1px solid var(--line); }
+  .actions { display: flex; flex-wrap: wrap; gap: 22px; align-items: center; margin-top: 34px; }
+
+  /* ---------- Header ---------- */
+  .top { position: fixed; inset: 18px var(--gutter) auto; z-index: 60; display: flex; align-items: center; justify-content: space-between; gap: 18px; }
+  .brand { text-decoration: none; display: grid; line-height: 1; }
+  .brand b { font: 500 22px/1 var(--serif); letter-spacing: .01em; }
+  .brand small { margin-top: 5px; font-size: 10px; letter-spacing: .3em; text-transform: uppercase; color: var(--gold); }
+  .nav { display: flex; gap: 4px; padding: 5px; border-radius: 999px; background: rgba(30, 25, 21, .55); border: 1px solid var(--line); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); }
+  .nav a { padding: 8px 16px; border-radius: 999px; text-decoration: none; font-size: 13px; font-weight: 500; color: rgba(246, 239, 231, .78); }
+  .nav a:hover, .nav a[aria-current] { background: rgba(217, 191, 148, .16); color: var(--gold-hot); }
+  .top .pill { height: 40px; padding: 0 20px; font-size: 13px; }
+  /* the header sits over dark and ivory scenes: it inverts with the scene underneath */
+  .on-light .brand, .on-light .nav a { color: var(--ink); }
+  .on-light .nav { background: rgba(246, 239, 231, .7); border-color: rgba(28, 22, 18, .1); }
+  .on-light .nav a:hover { background: rgba(165, 122, 85, .12); color: var(--ink); }
+  .on-light .brand small { color: #9A7550; }
+
+  .rail { position: fixed; right: calc(var(--gutter) - 6px); top: 50%; z-index: 55; transform: translateY(-50%); display: grid; gap: 10px; justify-items: center; color: var(--gold); font: 500 11px var(--sans); letter-spacing: .1em; }
+  .rail i { width: 1px; height: 90px; background: var(--line); position: relative; overflow: hidden; }
+  .rail i::after { content: ''; position: absolute; left: 0; right: 0; top: 0; height: calc(var(--scroll, 0) * 100%); background: var(--gold-hot); }
+  .on-light .rail { color: #9A7550; }
+  .on-light .rail i { background: rgba(28, 22, 18, .14); }
+  .on-light .rail i::after { background: #9A7550; }
+
+  /* ---------- Stage: halo + pedestal + product ---------- */
+  .stage { position: relative; width: min(46vw, 640px); aspect-ratio: 1 / 1.02; }
+  .halo {
+    position: absolute; left: 50%; top: 4%; width: 78%; aspect-ratio: 1; transform: translateX(-50%); border-radius: 50%;
+    border: 1.5px solid rgba(247, 226, 185, .9);
+    box-shadow: 0 0 18px 2px rgba(247, 226, 185, .55), 0 0 70px 6px rgba(217, 160, 100, .28), inset 0 0 18px 1px rgba(247, 226, 185, .45);
+  }
+  .halo::before { /* a brighter arc that slowly travels round the ring */
+    content: ''; position: absolute; inset: -3px; border-radius: 50%;
+    background: conic-gradient(from var(--spin, 0deg), transparent 0 62%, rgba(255, 244, 220, .95) 70%, transparent 78% 100%);
+    -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 4px), #000 calc(100% - 3px));
+            mask: radial-gradient(farthest-side, transparent calc(100% - 4px), #000 calc(100% - 3px));
+    filter: blur(1.5px); animation: spin 14s linear infinite;
+  }
+  @property --spin { syntax: '<angle>'; inherits: false; initial-value: 0deg; }
+  @keyframes spin { to { --spin: 360deg; } }
+  .glow { position: absolute; left: 50%; top: 40%; width: 70%; aspect-ratio: 1; transform: translate(-50%, -50%); border-radius: 50%; background: radial-gradient(closest-side, rgba(217, 160, 100, .24), transparent); }
+  .pedestal { position: absolute; left: 50%; bottom: 3%; width: 70%; height: 15%; transform: translateX(-50%); }
+  .pedestal::before { /* top face */
+    content: ''; position: absolute; inset: 0 0 38%; border-radius: 50%;
+    background: radial-gradient(60% 70% at 50% 40%, #3a312a, #1b1612 70%);
+    box-shadow: 0 0 0 1px rgba(247, 226, 185, .35), 0 0 22px rgba(247, 226, 185, .35), inset 0 -2px 8px rgba(247, 226, 185, .25);
+  }
+  .pedestal::after { /* drum side */
+    content: ''; position: absolute; inset: 30% 0 0; z-index: -1; border-radius: 0 0 50% 50% / 0 0 60% 60%;
+    background: linear-gradient(90deg, #0c0a08, #2a231d 45%, #0f0c0a); box-shadow: 0 30px 60px -20px rgba(0, 0, 0, .8);
+  }
+  .product { position: absolute; left: 50%; bottom: 10%; height: 84%; aspect-ratio: 300 / 520; transform: translateX(-50%); filter: drop-shadow(0 26px 30px rgba(0, 0, 0, .45)); }
+  .sparks { position: absolute; inset: -10%; width: 120%; height: 120%; pointer-events: none; }
+
+  /* ---------- Hero ---------- */
+  .hero { position: relative; min-height: 100svh; display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 2vw; padding: 110px var(--gutter) 90px;
+    background: radial-gradient(70% 80% at 72% 45%, #2a221c 0%, var(--night) 62%); overflow: hidden; }
+  .hero__copy { max-width: 34rem; position: relative; z-index: 2; }
+  .dashes { position: absolute; left: 50%; bottom: 34px; transform: translateX(-50%); display: flex; gap: 8px; }
+  .dashes i { width: 22px; height: 2px; border-radius: 2px; background: rgba(246, 239, 231, .25); }
+  .dashes i:first-child { width: 36px; background: var(--gold-hot); }
+  .scene-tag { position: absolute; left: var(--gutter); bottom: 30px; margin: 0; font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: rgba(246, 239, 231, .55); }
+
+  /* ---------- Thread: product + loupe over the statement ---------- */
+  .thread { position: relative; display: grid; grid-template-columns: 1fr 1.1fr; gap: 5vw; align-items: center; padding: 16vh var(--gutter); background: var(--night); }
+  .thread__fig { position: relative; aspect-ratio: 1; display: grid; place-items: center; border-radius: 50%; background: radial-gradient(closest-side, #2b241e, #1a1511 70%, transparent 71%); }
+  .thread__fig .product { position: relative; left: auto; bottom: auto; transform: none; height: 86%; }
+  .thread__copy .display { font-size: clamp(38px, 4.6vw, 74px); }
+  .loupe {
+    position: absolute; width: clamp(120px, 13vw, 190px); aspect-ratio: 1; border-radius: 50%; left: 0; top: 0; pointer-events: none; z-index: 3;
+    translate: var(--lx, 58%) var(--ly, 30%);
+    background: var(--zari-url) var(--bx, 50%) var(--by, 50%) / 340% auto;
+    box-shadow: 0 0 0 1.5px rgba(247, 226, 185, .85), 0 0 26px rgba(247, 226, 185, .35), 0 24px 50px -10px rgba(0, 0, 0, .7), inset 0 0 30px rgba(0, 0, 0, .35);
+  }
+  .loupe::after { content: ''; position: absolute; inset: 0; border-radius: 50%; background: radial-gradient(60% 60% at 32% 28%, rgba(255, 255, 255, .25), transparent 60%); }
+
+  /* ---------- Iris: the loupe opens into the macro scene ---------- */
+  .iris { position: relative; background: var(--night); }
+  .iris__stage { position: relative; height: 100svh; overflow: hidden; }
+  .iris__macro { position: absolute; inset: 0; background: var(--zari-url) center / cover; }
+  .iris__macro::after { content: ''; position: absolute; inset: 0; background: radial-gradient(80% 80% at 50% 50%, transparent 40%, rgba(20, 17, 14, .55)); }
+  .callouts { position: absolute; inset: 0; }
+  .callout { position: absolute; display: grid; gap: 4px; max-width: 15em; color: var(--ivory); }
+  .callout b { font: italic 400 clamp(18px, 1.6vw, 24px)/1.15 var(--serif); color: var(--gold-hot); }
+  .callout span { font-size: 13px; line-height: 1.45; color: rgba(246, 239, 231, .82); }
+  .callout svg { position: absolute; overflow: visible; }
+  .callout path { fill: none; stroke: rgba(247, 226, 185, .85); stroke-width: 1; stroke-dasharray: 1; stroke-dashoffset: 0; }
+  .callout circle { fill: var(--gold-hot); }
+  .callout > div { display: grid; gap: 4px; padding: 12px 14px; border-radius: 10px; background: rgba(20, 17, 14, .58); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); }
+  .iris__title { position: absolute; left: var(--gutter); bottom: 9vh; margin: 0; max-width: 12em; }
+  .iris__cue { display: none; }
+  .motion .iris__cue { display: block; position: absolute; left: var(--gutter); top: 50%; transform: translateY(-50%); margin: 0; max-width: 14em; opacity: calc(1 - var(--o) * 2.2); }
+  .iris__cue b { display: block; font: italic 400 clamp(26px, 2.6vw, 40px)/1.15 var(--serif); color: var(--gold-hot); }
+  .iris__cue span { font-size: 14px; color: rgba(246, 239, 231, .7); }
+
+  .motion .iris { height: 330svh; }
+  .motion .iris__stage { position: sticky; top: 0;
+    --o: clamp(0, calc(var(--p) / .45), 1);              /* iris opens */
+    --c: clamp(0, calc((var(--p) - .42) / .4), 1); }     /* callouts draw */
+  .motion .iris__macro { clip-path: circle(calc(14vmax + var(--o) * 76vmax) at 62% 50%); transform: scale(calc(1.25 - var(--o) * .25)); }
+  .motion .callout { opacity: clamp(0, calc(var(--c) * 3 - var(--k) * .7), 1); }
+  .motion .callout path { stroke-dashoffset: clamp(0, calc(1 - var(--c) * 2.4 + var(--k) * .5), 1); }
+  .motion .iris__title { opacity: clamp(0, calc(var(--c) * 3 - 1.6), 1); }
+
+  /* ---------- Collection: floating numbered cards ---------- */
+  .light { background: var(--ivory); color: var(--ink); }
+  .collection { position: relative; padding: 18vh var(--gutter) 20vh; overflow: hidden; }
+  .collection__head { display: flex; justify-content: space-between; align-items: end; gap: 24px; flex-wrap: wrap; margin-bottom: 8vh; }
+  .collection__head .lede { margin: 0; max-width: 26em; }
+  .cards { position: relative; height: clamp(620px, 78vw, 1000px); }
+  .ccard {
+    position: absolute; left: var(--x); top: var(--y); width: var(--w); padding: 12px 12px 18px; border-radius: 6px; text-decoration: none; color: var(--ink);
+    background: #fff; box-shadow: 0 1px 0 rgba(28, 22, 18, .04), 0 30px 60px -28px rgba(80, 50, 30, .35);
+    transform: translateY(calc((1 - var(--p)) * var(--depth) * 1px)) rotate(var(--r, 0deg));
+    transition: box-shadow .4s, scale .4s;
+  }
+  .ccard:hover, .ccard:focus-visible { scale: 1.03; box-shadow: 0 1px 0 rgba(28, 22, 18, .04), 0 40px 80px -28px rgba(80, 50, 30, .5); }
+  .ccard__img { aspect-ratio: 3 / 4; border-radius: 3px; display: grid; place-items: end center; overflow: hidden; background: linear-gradient(180deg, var(--bg1), var(--bg2)); }
+  .ccard__img svg { height: 92%; width: auto; }
+  .ccard__meta { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; margin-top: 12px; }
+  .ccard__n { font: 400 clamp(30px, 2.8vw, 44px)/1 var(--serif); }
+  .ccard__name { font-size: 13px; font-weight: 600; text-align: right; }
+  .ccard__name small { display: block; font-weight: 400; color: var(--mute); }
+  .ghost-n { position: absolute; left: -1vw; bottom: -4vw; margin: 0; font: italic 400 clamp(160px, 26vw, 420px)/1 var(--serif); color: rgba(165, 122, 85, .09); pointer-events: none; }
+
+  /* ---------- Motion: satin ribbon + counter ---------- */
+  .ribbon-scene { position: relative; min-height: 100svh; padding: 16vh var(--gutter) 12vh; background: linear-gradient(180deg, var(--ivory), var(--blush)); color: var(--ink); overflow: hidden; display: grid; align-content: space-between; gap: 6vh; }
+  .ribbon { position: absolute; left: 0; top: 18%; width: 100%; height: 62%; pointer-events: none; }
+  .ribbon-scene > :not(.ribbon) { position: relative; }
+  .stat { justify-self: end; text-align: left; max-width: 19em; padding: 18px 20px; border-radius: 12px; background: rgba(246, 239, 231, .6); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); }
+  .stat small { font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: #9A7550; font-weight: 600; }
+  .stat b { display: block; margin: 8px 0 6px; font: 400 clamp(54px, 6vw, 96px)/1 var(--serif); font-variant-numeric: tabular-nums; }
+  .stat b span + span { font-size: .32em; color: var(--mute); margin-left: 6px; font-family: var(--sans); }
+  .stat p { margin: 0; color: var(--mute); font-size: 14px; }
+
+  /* ---------- Voices ---------- */
+  .voices { position: relative; padding: 20vh var(--gutter); background: var(--night-2); overflow: hidden; }
+  .quote { position: relative; z-index: 2; max-width: 46rem; margin: 0 auto; text-align: center; }
+  .quote p { margin: 0; font: 400 clamp(28px, 3.2vw, 48px)/1.25 var(--serif); }
+  .quote p::before { content: '“'; display: block; font-size: 2.4em; line-height: .6; color: var(--gold); }
+  .quote cite { display: block; margin-top: 26px; font-style: normal; font-size: 14px; color: rgba(246, 239, 231, .65); }
+  .swatch { position: absolute; width: var(--s); aspect-ratio: 1; border-radius: 3px; background: var(--zari-url) var(--bp, 30% 40%) / 300% auto; opacity: .55;
+    box-shadow: 0 20px 40px -12px rgba(0, 0, 0, .7); transform: translateY(calc((1 - var(--p)) * var(--depth) * 1px)) rotate(var(--r)); }
+
+  /* ---------- Finale ---------- */
+  .finale { position: relative; min-height: 100svh; display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 2vw; padding: 110px var(--gutter) 60px;
+    background: radial-gradient(70% 80% at 70% 50%, #2a221c 0%, var(--night) 62%); overflow: hidden; }
+  .orbit { position: absolute; inset: -6% -14%; pointer-events: none; }
+  .orbit i { position: absolute; left: 50%; top: 42%; width: 15%; aspect-ratio: 1; border-radius: 3px; background: var(--zari-url) var(--bp) / 300% auto;
+    box-shadow: 0 16px 30px -10px rgba(0, 0, 0, .7); offset-path: ellipse(64% 22% at 50% 50%);
+    transform: translate(-50%, -50%) rotate(var(--r)); }
+  .footer { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 16px; padding: 26px var(--gutter) 34px; border-top: 1px solid var(--line); background: var(--night); font-size: 13px; color: rgba(246, 239, 231, .6); }
+
+  /* ---------- Small screens ---------- */
+  @media (max-width: 900px) {
+    .nav { display: none; }
+    .rail { display: none; }
+    .hero, .finale { grid-template-columns: 1fr; padding-top: 100px; }
+    .stage { width: min(92vw, 520px); justify-self: center; }
+    .thread { grid-template-columns: 1fr; padding: 12vh var(--gutter); }
+    .thread__fig { width: min(86vw, 460px); justify-self: center; }
+    .cards { height: auto; display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .ccard { position: relative; left: auto; top: auto; width: auto; transform: none; }
+    .ghost-n { display: none; }
+    .callouts { display: flex; flex-direction: column; gap: 10px; padding: 96px var(--gutter) 0; }
+    .callout { position: relative; inset: auto !important; max-width: 20em; }
+    .callout svg, .callout[data-k="3"] { display: none; }
+    .dashes { display: none; }
+    .stat { justify-self: start; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .halo::before { animation: none; }
+    .pill, .ccard { transition: none; }
+  }
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="top" data-header>
+  <a class="brand" href="#main" aria-label="Meher and Loom, home"><b>Meher &amp; Loom</b><small>Varanasi · since 1962</small></a>
+  <nav class="nav" aria-label="Primary">
+    <a href="#main" aria-current="true">House</a><a href="#thread">The thread</a><a href="#collection">Collection</a><a href="#voices">Voices</a>
+  </nav>
+  <a class="pill" href="#finale">Book a fitting</a>
+</header>
+<div class="rail" aria-hidden="true"><span data-scene-no>01</span><i></i><span>07</span></div>
+
+<main id="main">
+  <section class="hero" data-scene="01" aria-labelledby="hero-title">
+    <div class="hero__copy">
+      <p class="eyebrow">Handwoven Banarasi silk</p>
+      <h1 class="display" id="hero-title">Silk that <em>holds</em> the light</h1>
+      <p class="lede">Every sari is woven on a pit loom by one master weaver, with real zari: silver wire, drawn fine and plated in gold. Made to order, eleven to forty days.</p>
+      <div class="actions"><a class="pill" href="#collection">Explore the collection</a><a class="ghost" href="#thread">Inside the thread <span aria-hidden="true">→</span></a></div>
+    </div>
+    <div class="stage" aria-hidden="true">
+      <div class="glow"></div>
+      <div class="halo"></div>
+      <canvas class="sparks" data-sparks></canvas>
+      <div class="pedestal"></div>
+      <div class="product" data-drape="rose"></div>
+    </div>
+    <p class="scene-tag">Scene 01 · The house</p>
+    <div class="dashes" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+  </section>
+
+  <section class="thread" id="thread" data-scene="02" aria-labelledby="thread-title">
+    <div class="thread__fig" data-loupe-area>
+      <div class="product" data-drape="rose" role="img" aria-label="A rose silk sari with a gold zari border, draped on a form"></div>
+      <div class="loupe" aria-hidden="true" data-loupe></div>
+    </div>
+    <div class="thread__copy">
+      <p class="eyebrow">Scene 02 · <b>The thread</b></p>
+      <h2 class="display" id="thread-title">Look closer. <em>That</em> is the difference.</h2>
+      <p class="lede">From a step away, good silk and great silk look alike. Under the loupe they do not: count the twist in the zari, the density of the weft, the way a motif ends without a knot.</p>
+    </div>
+  </section>
+
+  <section class="iris" data-range="contain 0 100" data-scene="03" aria-labelledby="iris-title">
+    <div class="iris__stage">
+      <div class="iris__macro" role="img" aria-label="Macro view of gold zari paisley motifs woven into rose silk"></div>
+      <div class="callouts">
+        <div class="callout" data-k="0" style="--k:0; left:8%; top:16%">
+          <svg width="220" height="120" style="left:100%; top:30px" aria-hidden="true"><path pathLength="1" d="M0 0 H90 L200 100"/><circle cx="200" cy="100" r="4"/></svg>
+          <div><b>Real zari</b><span>Silver wire drawn to 0.08 mm, plated in 24 carat gold, then wound on silk.</span></div>
+        </div>
+        <div class="callout" data-k="1" style="--k:1; right:9%; top:22%">
+          <svg width="200" height="120" style="right:100%; top:30px" aria-hidden="true"><path pathLength="1" d="M200 0 H120 L10 96"/><circle cx="10" cy="96" r="4"/></svg>
+          <div><b>Kadhua weave</b><span>Each motif is woven in separately by hand, so the back stays clean. No floats to cut.</span></div>
+        </div>
+        <div class="callout" data-k="2" style="--k:2; right:16%; bottom:16%">
+          <svg width="200" height="110" style="right:100%; bottom:30px" aria-hidden="true"><path pathLength="1" d="M200 110 H130 L20 10"/><circle cx="20" cy="10" r="4"/></svg>
+          <div><b>38 hours</b><span>for one border motif, at two weavers per loom.</span></div>
+        </div>
+        <div class="callout" data-k="3" style="--k:3; left:40%; top:7%">
+          <div><b>Katan silk</b><span>Two twisted threads per warp.</span></div>
+        </div>
+      </div>
+      <p class="iris__cue" aria-hidden="true"><b>Under the loupe</b><span>Keep scrolling to step inside the weave.</span></p>
+      <h2 class="display iris__title" id="iris-title">Woven, <em>not printed</em></h2>
+    </div>
+  </section>
+
+  <section class="collection light" id="collection" data-scene="04" data-range="cover 0 70" aria-labelledby="col-title">
+    <div class="collection__head">
+      <div><p class="eyebrow">Scene 04 · The collection</p><h2 class="display" id="col-title">Five looms, <em>five</em> moods</h2></div>
+      <p class="lede">Each piece is a single run of six to nine saris, never repeated. Numbered by loom, signed by the weaver.</p>
+    </div>
+    <div class="cards">
+      <a class="ccard" href="#finale" style="--x:0%; --y:6%; --w:24%; --depth:220; --r:-2deg; --bg1:#F1E3DA; --bg2:#E6CFC2"><div class="ccard__img" data-drape="rose"></div><div class="ccard__meta"><span class="ccard__n">01</span><span class="ccard__name">Gulabi Kadhua<small>Rose · real zari</small></span></div></a>
+      <a class="ccard" href="#finale" style="--x:29%; --y:0%; --w:21%; --depth:90; --bg1:#EDE6D6; --bg2:#DCD2BA"><div class="ccard__img" data-drape="sage"></div><div class="ccard__meta"><span class="ccard__n">02</span><span class="ccard__name">Neem Jangla<small>Sage · silver zari</small></span></div></a>
+      <a class="ccard" href="#finale" style="--x:54%; --y:12%; --w:23%; --depth:300; --r:1.5deg; --bg1:#EFDCD6; --bg2:#DDBDB3"><div class="ccard__img" data-drape="wine"></div><div class="ccard__meta"><span class="ccard__n">03</span><span class="ccard__name">Raat Butidar<small>Wine · antique zari</small></span></div></a>
+      <a class="ccard" href="#finale" style="--x:80%; --y:2%; --w:19%; --depth:140; --r:2deg; --bg1:#EDE4DA; --bg2:#DCCFBE"><div class="ccard__img" data-drape="ivory"></div><div class="ccard__meta"><span class="ccard__n">04</span><span class="ccard__name">Chandni Tissue<small>Ivory · gold tissue</small></span></div></a>
+      <a class="ccard" href="#finale" style="--x:36%; --y:52%; --w:22%; --depth:380; --r:-1deg; --bg1:#E4E0EA; --bg2:#CCC5D6"><div class="ccard__img" data-drape="dusk"></div><div class="ccard__meta"><span class="ccard__n">05</span><span class="ccard__name">Sham Meenakari<small>Dusk · enamel zari</small></span></div></a>
+      <p class="ghost-n" aria-hidden="true">Loom</p>
+    </div>
+  </section>
+
+  <section class="ribbon-scene" data-scene="05" data-range="cover 10 60" aria-labelledby="motion-title">
+    <canvas class="ribbon" data-ribbon aria-hidden="true"></canvas>
+    <div><p class="eyebrow" style="color:#9A7550">Scene 05 · Motion</p><h2 class="display" id="motion-title" style="max-width:9em">Silk is only <em style="color:#A57A55">finished</em> when it moves</h2></div>
+    <div class="stat"><small>Hours on the loom, 2025</small><b><span data-count="1565">1565</span><span>h</span></b><p>Logged by our eleven weavers last year, for 64 saris. We publish it every January.</p></div>
+  </section>
+
+  <section class="voices" id="voices" data-scene="06" data-range="cover 0 100" aria-labelledby="voices-title">
+    <h2 class="sr" id="voices-title" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">Voices</h2>
+    <i class="swatch" aria-hidden="true" style="--s:9vw; left:7%; top:14%; --r:-14deg; --depth:260; --bp:20% 30%"></i>
+    <i class="swatch" aria-hidden="true" style="--s:6vw; left:18%; bottom:12%; --r:10deg; --depth:120; --bp:70% 60%"></i>
+    <i class="swatch" aria-hidden="true" style="--s:11vw; right:6%; top:20%; --r:12deg; --depth:340; --bp:50% 20%"></i>
+    <i class="swatch" aria-hidden="true" style="--s:5vw; right:20%; bottom:10%; --r:-8deg; --depth:90; --bp:10% 80%"></i>
+    <blockquote class="quote">
+      <p>My mother’s sari from this loom is fifty years old. I wore it at my wedding, and the zari had not lost its light.</p>
+      <cite>Aditi Rao, Bengaluru · a customer since 2009</cite>
+    </blockquote>
+  </section>
+
+  <section class="finale" id="finale" data-scene="07" aria-labelledby="finale-title">
+    <div class="hero__copy">
+      <p class="eyebrow">Scene 07 · Heritage</p>
+      <h2 class="display" id="finale-title">Sixty years, <em>one</em> street of looms</h2>
+      <p class="lede">Visit the workshop in Varanasi or book a fitting in Mumbai, Delhi or London. We bring the looms’ current runs to you.</p>
+      <div class="actions"><a class="pill" href="mailto:fittings@meherloom.example">Book a fitting</a><a class="ghost" href="#collection">See the collection <span aria-hidden="true">→</span></a></div>
+    </div>
+    <div class="stage" aria-hidden="true">
+      <div class="glow"></div>
+      <div class="halo"></div>
+      <canvas class="sparks" data-sparks></canvas>
+      <div class="pedestal"></div>
+      <div class="product" data-drape="wine"></div>
+      <div class="orbit" data-orbit>
+        <i style="--bp:20% 30%; --r:-10deg"></i><i style="--bp:60% 70%; --r:8deg"></i><i style="--bp:80% 20%; --r:14deg"></i><i style="--bp:40% 50%; --r:-6deg"></i>
+      </div>
+    </div>
+  </section>
+</main>
+<footer class="footer"><span>Meher &amp; Loom Weaving House · Madanpura, Varanasi</span><span>GI-tagged Banarasi silk · Silk Mark certified</span><span>© 2026</span></footer>
+
+<script type="module">
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+// ===== Scroll driver: one --p per [data-range] element (from scroll-scrub-story) =====
+const native = CSS.supports('animation-timeline: view()') && CSS.supports('animation-range: cover 0% cover 100%');
+const scrubs = [...document.querySelectorAll('[data-range]')].map((el) => {
+  const [name, a, b] = el.dataset.range.split(' ');
+  return { el, name, a: +a / 100, b: +b / 100 };
+});
+function progress({ el, name, a, b }) {
+  const r = el.getBoundingClientRect(), vh = innerHeight;
+  const c = name === 'contain' ? -r.top / Math.max(1, r.height - vh) : (vh - r.top) / (vh + r.height);
+  return Math.min(1, Math.max(0, (c - a) / (b - a)));
+}
+if (!reduce) {
+  document.documentElement.classList.add('motion');
+  if (native) {
+    for (const s of scrubs) { s.el.style.animationRange = `${s.name} ${s.a * 100}% ${s.name} ${s.b * 100}%`; s.el.classList.add('scrub'); }
+  } else {
+    let queued = false;
+    const update = () => { queued = false; for (const s of scrubs) s.el.style.setProperty('--p', progress(s).toFixed(4)); };
+    addEventListener('scroll', () => { if (!queued) { queued = true; requestAnimationFrame(update); } }, { passive: true });
+    update();
+  }
+}
+
+// ===== Generated imagery: a draped sari (SVG) and gold zari (SVG with specular lighting) =====
+const PALETTES = {
+  rose:  { body: ['#F2C9B8', '#C98E7C', '#8E5A4C'], pallu: ['#F6D6C6', '#D79E8B'], blouse: '#8A3F38', zari: ['#FFF0C8', '#D9B074', '#8C6233'] },
+  sage:  { body: ['#DCE0C6', '#A9B08A', '#6E7556'], pallu: ['#E7EAD3', '#B8BE98'], blouse: '#4E5A3A', zari: ['#F4F2EA', '#BFC3C6', '#7A7F85'] },
+  wine:  { body: ['#C9727A', '#8E3445', '#4E1A26'], pallu: ['#D98A8E', '#9E4252'], blouse: '#3A121C', zari: ['#FFE6B0', '#C99A5A', '#7A5224'] },
+  ivory: { body: ['#FBF4EA', '#E8D8C2', '#B9A27F'], pallu: ['#FFF8EE', '#EEDFC8'], blouse: '#B98C55', zari: ['#FFF4D4', '#E1C084', '#9C7438'] },
+  dusk:  { body: ['#C9C2D9', '#8C82A8', '#4F466C'], pallu: ['#D8D1E6', '#9E95BA'], blouse: '#3B3356', zari: ['#FFF0D6', '#D6B27A', '#8E6936'] },
+};
+let uid = 0;
+function drapeSVG(name) {
+  const P = PALETTES[name], id = `d${uid++}`;
+  // pleated skirt: pleats fan out from the waist to the hem, alternating light and shadow
+  const pleats = [], n = 14, wl = 120, wr = 182, hl = 38, hr = 262;
+  for (let i = 0; i < n; i++) {
+    const t0 = i / n, t1 = (i + 1) / n, sway = Math.sin(i * 1.9) * 3;
+    const x0 = wl + (wr - wl) * t0, x1 = wl + (wr - wl) * t1, b0 = hl + (hr - hl) * t0, b1 = hl + (hr - hl) * t1;
+    pleats.push(`<path d="M${x0} 206 L${x1} 206 L${b1 + sway} 494 Q${(b0 + b1) / 2 + sway} ${500 + (i % 2) * 7} ${b0 + sway} 494 Z" fill="url(#${id}${i % 2 ? 'pd' : 'pl'})"/>`);
+  }
+  return `<svg viewBox="0 0 300 520" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+  <defs>
+    <linearGradient id="${id}pl" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${P.body[0]}"/><stop offset="1" stop-color="${P.body[1]}"/></linearGradient>
+    <linearGradient id="${id}pd" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${P.body[1]}"/><stop offset="1" stop-color="${P.body[2]}"/></linearGradient>
+    <linearGradient id="${id}pa" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${P.pallu[0]}"/><stop offset=".6" stop-color="${P.pallu[1]}"/><stop offset="1" stop-color="${P.body[2]}"/></linearGradient>
+    <linearGradient id="${id}fall" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="${P.body[2]}"/><stop offset=".45" stop-color="${P.pallu[1]}"/><stop offset="1" stop-color="${P.pallu[0]}"/></linearGradient>
+    <linearGradient id="${id}z" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${P.zari[2]}"/><stop offset=".35" stop-color="${P.zari[0]}"/><stop offset=".6" stop-color="${P.zari[1]}"/><stop offset="1" stop-color="${P.zari[2]}"/></linearGradient>
+    <linearGradient id="${id}sk" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#2a221c"/><stop offset=".5" stop-color="#4a3e34"/><stop offset="1" stop-color="#211a15"/></linearGradient>
+    <pattern id="${id}m" width="16" height="16" patternUnits="userSpaceOnUse" patternTransform="rotate(30)"><path d="M8 3 C11 5 11 9 8 12 C5 9 5 5 8 3 Z" fill="${P.zari[0]}" opacity=".8"/></pattern>
+  </defs>
+  <rect x="141" y="22" width="18" height="34" rx="7" fill="url(#${id}sk)"/>
+  <path d="M100 74 C112 58 132 54 150 54 C168 54 188 58 200 74 C206 100 196 130 186 152 L184 206 L116 206 L114 152 C104 130 94 100 100 74 Z" fill="${P.blouse}"/>
+  <path d="M116 150 C138 160 162 160 184 150 L186 208 L114 208 Z" fill="${P.body[0]}" opacity=".55"/>
+  <path d="M196 76 C214 120 226 200 242 300 C250 352 258 400 264 446 L236 452 C226 380 214 300 200 220 C194 170 190 120 186 84 Z" fill="url(#${id}fall)"/>
+  ${pleats.join('')}
+  <path d="M36 490 Q150 510 264 490" fill="none" stroke="url(#${id}z)" stroke-width="12"/>
+  <path d="M36 490 Q150 510 264 490" fill="none" stroke="${P.zari[2]}" stroke-width="1.6" stroke-dasharray="2 6" opacity=".7"/>
+  <path d="M112 226 C130 180 160 120 196 74 C204 82 208 92 206 104 C176 150 150 200 134 248 C126 246 116 238 112 226 Z" fill="url(#${id}pa)"/>
+  <path d="M112 226 C130 180 160 120 196 74 C204 82 208 92 206 104 C176 150 150 200 134 248 C126 246 116 238 112 226 Z" fill="url(#${id}m)" opacity=".45"/>
+  <path d="M134 248 C150 200 176 150 206 104" fill="none" stroke="url(#${id}z)" stroke-width="6" stroke-linecap="round"/>
+  <path d="M264 446 L236 452" stroke="url(#${id}z)" stroke-width="8" stroke-linecap="round"/>
+  <path d="M242 300 C250 352 258 400 264 446" fill="none" stroke="url(#${id}z)" stroke-width="5" stroke-linecap="round"/>
+</svg>`;
+}
+
+// Zari: rows of paisley (buta) motifs in raised metallic thread on silk, lit by feSpecularLighting.
+function zariSVG() {
+  // buta (paisley): a teardrop whose tip curls over, an inner contour, a three-dot crown
+  const buta = 'M2 -40 C30 -36 36 4 18 24 C4 38 -22 36 -26 16 C-30 -2 -16 -16 -2 -12 C10 -8 10 6 0 8';
+  const inner = 'M4 -26 C20 -22 24 2 12 14 C2 24 -14 22 -16 10';
+  const flower = 'M0 -7 C4 -3 4 3 0 7 C-4 3 -4 -3 0 -7 Z M-7 0 C-3 -4 3 -4 7 0 C3 4 -3 4 -7 0 Z';
+  let motifs = '', flowers = '';
+  for (let r = 0; r < 6; r++) for (let c = 0; c < 8; c++) {
+    const x = c * 112 + (r % 2) * 56 + 20, y = r * 108 + 46, rot = r % 2 ? 160 : -18, sc = (r + c) % 3 ? 1 : 0.82;
+    motifs += `<g transform="translate(${x} ${y}) rotate(${rot}) scale(${sc})"><path d="${buta}"/><path d="${inner}" stroke-width="3.5"/><circle cx="2" cy="-50" r="3.5"/><circle cx="14" cy="-46" r="2.6"/><circle cx="-10" cy="-46" r="2.6"/></g>`;
+    flowers += `<path transform="translate(${x + 56} ${y + 54})" d="${flower}"/>`;
+  }
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="860" height="680" viewBox="0 0 860 680">
+  <defs>
+    <filter id="silk" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency=".9 .02" numOctaves="2" seed="4"/><feColorMatrix values="0 0 0 0 .55  0 0 0 0 .32  0 0 0 0 .27  0 0 0 .22 0"/><feComposite in2="SourceGraphic" operator="over"/></filter>
+    <filter id="metal" x="-10%" y="-10%" width="120%" height="120%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="2.2" result="b"/>
+      <feSpecularLighting in="b" surfaceScale="5" specularConstant="1.1" specularExponent="22" lighting-color="#FFF3D6" result="s"><feDistantLight azimuth="235" elevation="38"/></feSpecularLighting>
+      <feComposite in="s" in2="SourceAlpha" operator="in" result="sp"/>
+      <feComposite in="SourceGraphic" in2="sp" operator="arithmetic" k1="0" k2="1" k3="1" k4="0"/>
+      <feDropShadow dx="1.5" dy="2.5" stdDeviation="1.6" flood-color="#4a2418" flood-opacity=".55"/>
+    </filter>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#E9C98E"/><stop offset=".5" stop-color="#B98A4C"/><stop offset="1" stop-color="#E3BF83"/></linearGradient>
+    <radialGradient id="bg" cx=".4" cy=".35" r=".9"><stop offset="0" stop-color="#E9B8A6"/><stop offset=".6" stop-color="#C98E7C"/><stop offset="1" stop-color="#9C6253"/></radialGradient>
+  </defs>
+  <rect width="860" height="680" fill="url(#bg)" filter="url(#silk)"/>
+  <g filter="url(#metal)" fill="none" stroke="url(#g)" stroke-width="6" stroke-linecap="round" stroke-linejoin="round">${motifs}</g>
+  <g filter="url(#metal)" fill="url(#g)">${flowers}</g>
+  <g filter="url(#metal)"><rect x="0" y="616" width="860" height="40" fill="url(#g)"/></g>
+  <g fill="#7A4A2A" opacity=".55">${Array.from({ length: 43 }, (_, i) => `<path d="M${i * 20 + 10} 624 l6 12 l-6 12 l-6 -12z"/>`).join('')}</g>
+</svg>`;
+}
+
+document.querySelectorAll('[data-drape]').forEach((el) => { el.innerHTML = drapeSVG(el.dataset.drape); });
+const zariURL = URL.createObjectURL(new Blob([zariSVG()], { type: 'image/svg+xml' }));
+document.documentElement.style.setProperty('--zari-url', `url(${zariURL})`);
+
+// ===== Header inverts over light scenes, rail shows the scene number =====
+const header = document.querySelector('[data-header]'), rail = document.querySelector('.rail'), sceneNo = document.querySelector('[data-scene-no]');
+const scenes = [...document.querySelectorAll('[data-scene]')];
+function chrome() {
+  const probe = 40, mid = innerHeight / 2;
+  const under = scenes.find((s) => { const r = s.getBoundingClientRect(); return r.top <= probe && r.bottom > probe; });
+  const current = scenes.find((s) => { const r = s.getBoundingClientRect(); return r.top <= mid && r.bottom > mid; });
+  const light = !!under && (under.classList.contains('light') || under.classList.contains('ribbon-scene'));
+  header.classList.toggle('on-light', light);
+  if (current) {
+    sceneNo.textContent = current.dataset.scene;
+    const r = current.getBoundingClientRect();
+    rail.classList.toggle('on-light', current.classList.contains('light') || current.classList.contains('ribbon-scene'));
+    rail.style.setProperty('--scroll', Math.min(1, Math.max(0, (mid - r.top) / r.height)).toFixed(3));
+  }
+}
+addEventListener('scroll', chrome, { passive: true }); chrome();
+
+// ===== Visibility-gated animation loop (sparks, ribbon, orbit, loupe drift) =====
+const visible = new Set();
+const io = new IntersectionObserver((es) => es.forEach((e) => e.isIntersecting ? visible.add(e.target) : visible.delete(e.target)), { rootMargin: '100px' });
+const loops = [];
+function every(el, fn) { io.observe(el); loops.push({ el, fn }); }
+let t0 = performance.now();
+function frame(now) {
+  requestAnimationFrame(frame);
+  if (document.hidden) return;
+  const t = (now - t0) / 1000;
+  for (const l of loops) if (visible.has(l.el)) l.fn(t);
+}
+
+function fit(canvas) {
+  const dpr = Math.min(devicePixelRatio || 1, 2), r = canvas.getBoundingClientRect();
+  canvas.width = Math.max(1, Math.round(r.width * dpr)); canvas.height = Math.max(1, Math.round(r.height * dpr));
+  return dpr;
+}
+
+// Sparks: slow gold dust drifting around the halo
+document.querySelectorAll('[data-sparks]').forEach((cv) => {
+  const ctx = cv.getContext('2d'); let dpr = fit(cv), last = 0;
+  new ResizeObserver(() => { dpr = fit(cv); draw(last); }).observe(cv); // layout settles after fonts load; refitting clears a canvas, so repaint
+  const dots = Array.from({ length: 70 }, () => ({ a: Math.random() * Math.PI * 2, r: 0.28 + Math.random() * 0.2, s: (Math.random() - 0.5) * 0.08, z: Math.random(), y: (Math.random() - 0.5) * 0.08 }));
+  function draw(t) {
+    last = t; const w = cv.width, h = cv.height; ctx.clearRect(0, 0, w, h);
+    for (const d of dots) {
+      const a = d.a + t * d.s, x = w / 2 + Math.cos(a) * d.r * w, y = h * 0.42 + Math.sin(a) * d.r * h * 0.92 + d.y * h;
+      const tw = 0.35 + 0.65 * Math.abs(Math.sin(t * (0.6 + d.z) + d.a * 3));
+      ctx.fillStyle = `rgba(255,236,196,${(0.25 + d.z * 0.6) * tw})`;
+      ctx.beginPath(); ctx.arc(x, y, (0.6 + d.z * 1.4) * dpr, 0, Math.PI * 2); ctx.fill();
+    }
+  }
+  draw(0);
+  if (!reduce) every(cv, draw);
+});
+
+// Satin ribbon: a twisting band drawn as thin slices; shading follows the twist so it reads as satin
+const rib = document.querySelector('[data-ribbon]');
+if (rib) {
+  const ctx = rib.getContext('2d'); let dpr = fit(rib), last = 2;
+  new ResizeObserver(() => { dpr = fit(rib); draw(last); }).observe(rib);
+  const front = [[156, 112, 84], [214, 170, 134], [250, 226, 206]], back = [[112, 74, 58], [168, 120, 96]];
+  const lerp = (a, b, t) => a.map((v, i) => Math.round(v + (b[i] - v) * t));
+  function draw(t) {
+    last = t; const w = rib.width, h = rib.height, N = 220; ctx.clearRect(0, 0, w, h);
+    let prev = null;
+    for (let i = 0; i <= N; i++) {
+      const u = i / N, x = -0.05 * w + u * 1.1 * w;
+      const y = h * (0.5 + 0.22 * Math.sin(u * 5.2 + t * 0.35) + 0.08 * Math.sin(u * 11 - t * 0.5));
+      const twist = u * 5.2 + t * 0.4 + Math.sin(u * 3 + t * 0.2);
+      const c = Math.cos(twist), half = h * (0.07 + 0.2 * Math.pow(Math.sin(Math.PI * u), 0.6)) * Math.abs(c) + h * 0.008;
+      const lit = Math.pow(Math.max(0, Math.sin(twist * 1 + 0.9)), 3);
+      const col = c >= 0 ? lerp(lerp(front[0], front[1], Math.abs(c)), front[2], lit) : lerp(back[0], back[1], Math.abs(c) * 0.8);
+      const cur = { x, top: y - half, bot: y + half, col };
+      if (prev) {
+        ctx.fillStyle = `rgb(${col[0]},${col[1]},${col[2]})`;
+        ctx.beginPath(); ctx.moveTo(prev.x, prev.top); ctx.lineTo(cur.x + 0.6, cur.top); ctx.lineTo(cur.x + 0.6, cur.bot); ctx.lineTo(prev.x, prev.bot); ctx.closePath(); ctx.fill();
+      }
+      prev = cur;
+    }
+  }
+  draw(2);
+  if (!reduce) every(rib, draw);
+}
+
+// Orbiting swatches around the finale halo (CSS offset-path, driven here so it can pause offscreen)
+const orbit = document.querySelector('[data-orbit]');
+if (orbit) {
+  const items = [...orbit.children];
+  const place = (t) => items.forEach((el, i) => { el.style.offsetDistance = `${((i / items.length) * 100 + t * 1.6) % 100}%`; el.style.offsetRotate = '0deg'; });
+  place(0);
+  if (!reduce) every(orbit, place);
+}
+
+// Loupe: follows the pointer over the product; drifts on its own when idle or on touch
+const area = document.querySelector('[data-loupe-area]'), loupe = document.querySelector('[data-loupe]');
+if (area && loupe) {
+  let px = 0.62, py = 0.42, pointer = false;
+  const set = (x, y) => {
+    const s = loupe.offsetWidth / area.offsetWidth;
+    loupe.style.setProperty('--lx', `${(x - s / 2) * area.offsetWidth}px`);
+    loupe.style.setProperty('--ly', `${(y - s / 2) * area.offsetHeight}px`);
+    loupe.style.setProperty('--bx', `${x * 100}%`); loupe.style.setProperty('--by', `${y * 100}%`);
+  };
+  area.addEventListener('pointermove', (e) => { const r = area.getBoundingClientRect(); pointer = true; px = (e.clientX - r.left) / r.width; py = (e.clientY - r.top) / r.height; set(px, py); });
+  area.addEventListener('pointerleave', () => { pointer = false; });
+  set(px, py);
+  if (!reduce) every(area, (t) => { if (!pointer) set(0.56 + 0.12 * Math.sin(t * 0.4), 0.46 + 0.16 * Math.sin(t * 0.27 + 1)); });
+}
+
+// Counter: counts with scroll progress of its scene (reads the same --p the CSS uses)
+const count = document.querySelector('[data-count]');
+if (count && !reduce) {
+  const target = +count.dataset.count, scene = count.closest('[data-range]');
+  const tick = () => { const p = parseFloat(getComputedStyle(scene).getPropertyValue('--p')) || 0; count.textContent = Math.round(target * (0.6 + 0.4 * p)).toLocaleString('en'); };
+  every(scene, tick);
+}
+
+requestAnimationFrame(frame);
+</script>
+</body>
+</html>
