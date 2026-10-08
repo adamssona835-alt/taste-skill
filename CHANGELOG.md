@@ -12,6 +12,8 @@ All notable changes to taste-skill live here. The repo follows SemVer-ish discip
 - New `CHANGELOG.md` (this file).
 - New `particle-morph-skill` (install name `particle-morph-hero`): scroll-driven Three.js particle morph hero.
 - New `dither-tile-skill` (install name `dither-tile-grid`): ordered-dither imagery in a hairline Swiss tile grid (lesson 002).
+- New `scroll-scrub-story-skill` (install name `scroll-scrub-story`): scroll-scrubbed editorial chapters with one pinned scene (lesson 003).
+- `lessons/NEXT.md` and an evening plan step (protocol section 0): the next site is picked at 23:55 and the owner can veto it.
 - `scripts/verify-demo.mjs`: proxy bypass now includes `<-loopback>`, so Chromium stops sending localhost through the egress proxy (it answered 405).
 - New `lessons/` folder: one web design lesson per day, found and studied autonomously, each shipped as a verified skill with a working demo. Rules and quality gate in `lessons/PROTOCOL.md`.
 - New `scripts/capture-site.mjs` (live site capture: scroll video, screenshots, design fingerprint) and `scripts/verify-demo.mjs` (headless render check on desktop, mobile, and reduced motion).

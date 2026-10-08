@@ -1,6 +1,6 @@
 # Next Lesson Plan
 
-Status: approved (owner said yes to white-desert.com on 2026-10-08)
+Status: done (lesson 003 shipped 2026-10-08, 37/40)
 Lesson: 003
 Date: 2026-10-08 (morning run 07:52 Europe/Stockholm)
 Planned: 2026-10-08 00:30, replaced 2026-10-08 00:50

@@ -1,0 +1,550 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kalde Reach · Expeditions to the high Arctic</title>
+<meta name="description" content="Small-group expeditions to Svalbard and the high Arctic, from three seasonal camps. Tromsø, Norway.">
+<link rel="icon" href="data:,">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,400;0,500;1,400;1,500&family=Inter+Tight:wght@400;500;600&family=Oswald:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  /* ===== One number per section. Everything visual is derived from --p (0..1). ===== */
+  @property --p { syntax: '<number>'; inherits: true; initial-value: 1; }
+  @keyframes scrub-p { from { --p: 0; } to { --p: 1; } }
+  .scrub { animation: scrub-p linear both; animation-timeline: view(); }
+
+  :root {
+    --paper: #FFFFFF;
+    --stone: #F4F2EE;
+    --ink: #1D2840;
+    --mute: #6B7385;
+    --pale: #C9CDD6;
+    --accent: #C94A12;
+    --gutter: clamp(16px, 4.2vw, 60px);
+    --serif: 'Cormorant', 'Cormorant Garamond', Georgia, serif;
+    --sans: 'Inter Tight', 'Helvetica Neue', Arial, sans-serif;
+    --display: 'Oswald', 'Arial Narrow', Arial, sans-serif;
+    --img-ridge: linear-gradient(#dfe4ea, #8a96a3);
+    --img-ice: linear-gradient(135deg, #8fd6e2, #4aaec5);
+  }
+  *, *::before, *::after { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body { margin: 0; background: var(--paper); color: var(--ink); font: 400 16px/1.5 var(--sans); -webkit-font-smoothing: antialiased; }
+  a { color: inherit; }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+  .skip { position: absolute; left: 12px; top: -60px; z-index: 60; padding: 10px 14px; background: var(--ink); color: #fff; font-weight: 500; }
+  .skip:focus { top: 12px; }
+  .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+  /* Column hairlines over the whole page: the grid stays visible under every scene */
+  .columns {
+    position: fixed; inset: 0 var(--gutter); z-index: 40; pointer-events: none;
+    display: grid; grid-template-columns: repeat(6, 1fr);
+    border-right: 1px solid rgba(29, 40, 68, .07);
+  }
+  .columns i { border-left: 1px solid rgba(29, 40, 68, .07); }
+
+  /* ---------- Header ---------- */
+  .top {
+    position: fixed; inset: 16px 16px auto; z-index: 50;
+    display: grid; grid-template-columns: 1fr auto 1fr; align-items: center;
+  }
+  .chips { display: flex; gap: 6px; }
+  .chips:last-child { justify-content: flex-end; }
+  .chip {
+    display: inline-flex; align-items: center; height: 40px; padding: 0 22px; border-radius: 2px;
+    background: rgba(29, 40, 68, .72); color: #fff; text-decoration: none; font-size: 15px; font-weight: 500;
+    -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); transition: background-color .2s;
+  }
+  .chip:hover { background: var(--ink); }
+  .chip--accent { background: var(--accent); }
+  .chip--accent:hover { background: #A93C0C; }
+  .logo { display: grid; justify-items: center; gap: 2px; text-decoration: none; color: var(--ink); }
+  .logo svg { width: 34px; height: 16px; }
+  .logo span { font: 500 19px/1 var(--display); letter-spacing: .14em; }
+
+  .tab {
+    position: fixed; right: 0; top: 50%; z-index: 45; transform: translateY(-50%);
+    width: 52px; height: 190px; display: grid; place-items: center; text-decoration: none;
+    background: var(--accent); color: #fff; font-size: 14px; font-weight: 500;
+  }
+  .tab span { writing-mode: vertical-rl; transform: rotate(180deg); display: flex; gap: 10px; align-items: center; }
+  .tab:hover { background: #A93C0C; }
+
+  /* ---------- Hero ---------- */
+  .hero {
+    position: relative; height: 100svh; min-height: 560px; overflow: hidden;
+    background: linear-gradient(#E8EBEE 0%, #C9CFD6 45%, #6A7684 100%);
+  }
+  .hero__range { position: absolute; inset: auto 0 0; width: 100%; height: 62%; }
+  .hero__line {
+    position: absolute; left: var(--gutter); top: 46%; margin: 0; max-width: 15em;
+    font: italic 400 clamp(18px, 1.5vw, 22px)/1.25 var(--serif); color: var(--ink);
+  }
+  .hero__title {
+    position: absolute; left: 0; right: 0; bottom: -0.035em; margin: 0; text-align: center;
+    font: 400 clamp(84px, 17.6vw, 268px)/0.86 var(--display); letter-spacing: .02em; text-transform: uppercase; color: #fff;
+    animation: rise 1.4s cubic-bezier(.2, .7, .1, 1) both .15s;
+  }
+  @keyframes rise { from { transform: translateY(18%); opacity: 0; } }
+  .hero__film {
+    position: absolute; right: var(--gutter); top: 46%; display: flex; gap: 28px; align-items: center;
+    padding: 12px 0; border-block: 1px solid rgba(29, 40, 68, .2); color: var(--ink); text-decoration: none; font-weight: 500; font-size: 15px;
+  }
+
+  /* ---------- Statement: words go from pale to ink ---------- */
+  .letter { position: relative; padding: clamp(120px, 18vh, 200px) var(--gutter) clamp(120px, 16vh, 180px); }
+  .letter__inner { margin-left: calc((100% - 0px) / 6 * 2); max-width: 60rem; }
+  .eyebrow { margin: 0 0 28px; font: italic 400 20px/1.2 var(--serif); }
+  .statement {
+    margin: 0; font: 500 clamp(30px, 3.9vw, 58px)/1.06 var(--serif); text-transform: uppercase; letter-spacing: .005em;
+  }
+  .statement .w {
+    /* word i of n lights between p = i/n and p = (i + 3)/n */
+    opacity: clamp(.16, calc(var(--p) * (var(--n) + 3) - var(--i)), 1);
+  }
+  .letter__body { margin: 30px 0 0; max-width: 34em; font: italic 400 clamp(19px, 1.6vw, 23px)/1.4 var(--serif); }
+  .sign { margin-top: 40px; }
+  .sign svg { width: min(360px, 80%); height: auto; overflow: visible; }
+  .sign path { fill: none; stroke: var(--ink); stroke-width: 1.4; stroke-linecap: round; stroke-dasharray: 1; stroke-dashoffset: calc(1 - var(--p)); }
+  .sign b { display: block; margin-top: 12px; font-weight: 500; font-size: 15px; }
+  .sign small { color: var(--mute); font-size: 14px; }
+
+  /* ---------- Inset image that opens to full bleed ---------- */
+  .reveal { position: relative; height: 92svh; overflow: hidden;
+    clip-path: inset(calc((1 - var(--p)) * 9%) calc((1 - var(--p)) * (var(--gutter) + 2vw)) round calc((1 - var(--p)) * 6px)); }
+  .reveal__img { position: absolute; inset: -6% 0; background: var(--img-ridge) center / cover; transform: scale(calc(1.14 - var(--p) * .14)); }
+  .reveal__cap {
+    position: absolute; left: var(--gutter); bottom: 6%; margin: 0; max-width: 24em; padding: 12px 18px; color: var(--ink);
+    font: italic 500 clamp(18px, 1.5vw, 21px)/1.3 var(--serif);
+    background: rgba(255, 255, 255, .74); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); border-radius: 2px;
+    opacity: clamp(0, calc(var(--p) * 3 - 2), 1);
+  }
+
+  /* ---------- Camps: pinned scene, strips wipe in, cards glide ---------- */
+  .camps { position: relative; background: var(--img-ice) center top / 1600px auto repeat; } /* static flow: tile at native size, never stretch */
+  .camps__stage { position: relative; }
+  .camps__ice { position: absolute; inset: 0; background: var(--img-ice) center / cover; }
+  .camps__base { position: absolute; inset: 0; background: var(--img-ridge) center / cover; display: none; }
+  .camps__strips { display: none; }
+  .camps__title {
+    margin: 0; padding: 18vh var(--gutter) 0; text-align: center; color: var(--ink);
+    font: 400 clamp(44px, 6.4vw, 96px)/1 var(--serif); text-transform: uppercase; letter-spacing: .02em; text-shadow: 0 0 40px rgba(255, 255, 255, .9);
+    position: relative;
+  }
+  .camps__track { position: relative; display: grid; gap: 6vw; padding: 8vh var(--gutter) 14vh; justify-items: center; }
+  .frost {
+    width: min(100%, var(--cw)); padding: clamp(10px, 1.4vw, 20px); border-radius: 4px;
+    background: rgba(255, 255, 255, .2); -webkit-backdrop-filter: blur(14px) saturate(1.2); backdrop-filter: blur(14px) saturate(1.2);
+    box-shadow: 0 30px 80px -40px rgba(10, 40, 60, .55);
+  }
+  .card { position: relative; aspect-ratio: 4 / 3; overflow: hidden; color: #fff; background: #8b97a4 center / cover; display: grid; align-content: space-between; padding: 6% 7%; text-align: center; }
+  .card::before { content: ''; position: absolute; inset: 0; background: linear-gradient(rgba(20, 30, 46, .42), rgba(20, 30, 46, 0) 46%, rgba(20, 30, 46, 0) 64%, rgba(20, 30, 46, .5)); }
+  .card > * { position: relative; }
+  .card h3 { margin: 0; font: 400 clamp(32px, 3.6vw, 56px)/1 var(--serif); text-transform: uppercase; letter-spacing: .04em; }
+  .card p { margin: 14px auto 0; max-width: 30em; font-size: clamp(14px, 1.05vw, 16px); line-height: 1.45; }
+  .card .coords { font: 400 14px/1 var(--display); letter-spacing: .06em; }
+  .camps__note { position: relative; margin: 0 auto 10vh; padding: 14px 22px; width: fit-content; max-width: min(34em, calc(100% - 2 * var(--gutter))); color: var(--ink); text-align: center; font: italic 500 20px/1.35 var(--serif);
+    background: rgba(255, 255, 255, .72); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); border-radius: 2px; }
+
+  /* Motion layout only when JS confirmed motion is allowed: no-JS and reduced motion keep the static flow above */
+  .motion .camps { height: 520svh; background: none; }
+  .motion .camps__stage { position: sticky; top: 0; height: 100svh; overflow: hidden;
+    --a: clamp(0, calc(var(--p) / .28), 1);
+    --b: clamp(0, calc((var(--p) - .26) / .74), 1); }
+  .motion .camps__base { display: block; transform: scale(calc(1.08 - var(--a) * .08)); }
+  .motion .camps__ice { opacity: 0; }
+  .motion .camps__strips { display: grid; grid-template-columns: repeat(6, 1fr); position: absolute; inset: 0; }
+  .motion .strip {
+    --r: clamp(0, calc(var(--a) * 1.6 - var(--k) * .12), 1);
+    background: var(--img-ice) no-repeat;
+    background-size: 100vw 100svh; background-position: calc(var(--k) * -100vw / 6) 0;
+    transform: translateY(calc((1 - var(--r)) * 101% * var(--dir)));
+  }
+  .motion .camps__title { position: absolute; inset: 0; display: grid; place-items: center; padding: 0 var(--gutter); opacity: calc(1 - var(--a) * 1.4); }
+  .motion .camps__note { position: absolute; left: 0; right: 0; bottom: 7vh; margin: 0 auto; opacity: clamp(0, calc(var(--a) * 4 - 3 - var(--b) * 6), 1); }
+  .motion .camps__track {
+    position: absolute; top: 50%; left: var(--start); display: flex; gap: var(--gap); padding: 0; align-items: center;
+    /* starts peeking in at --start, ends with the last card centred: travel = start - 50vw + (n - 1)(card + gap) + card / 2 */
+    transform: translate(calc(var(--b) * -1 * (var(--start) - 50vw + (var(--n) - 1) * (var(--cw) + var(--gap)) + var(--cw) / 2)), -50%);
+  }
+  .motion .frost { flex: none; width: var(--cw); }
+  .camps { --cw: min(52vw, 760px); --gap: 8vw; --n: 3; --start: 72vw; }
+
+  /* ---------- Trips: panels that open on hover / focus ---------- */
+  .trips { padding: clamp(110px, 16vh, 170px) var(--gutter) clamp(90px, 12vh, 140px); }
+  .trips__head { display: grid; grid-template-columns: 2fr 4fr; gap: 24px; align-items: end; margin-bottom: 48px; }
+  .trips__head h2 { margin: 0; font: 400 clamp(44px, 5.6vw, 84px)/.95 var(--serif); text-transform: uppercase; }
+  .trips__head p { margin: 0; max-width: 32em; color: var(--mute); }
+  .panels { display: flex; gap: 0; height: clamp(460px, 70svh, 680px); }
+  .panel {
+    position: relative; flex: 1 1 0; min-width: 0; overflow: hidden; text-decoration: none; color: #fff;
+    background: #7d8a97 center / cover; transition: flex-grow .7s cubic-bezier(.2, .7, .1, 1);
+  }
+  .panel::before { content: ''; position: absolute; inset: 0; z-index: 1; background: linear-gradient(rgba(16, 24, 40, .5), rgba(16, 24, 40, 0) 34%, rgba(16, 24, 40, 0) 48%, rgba(16, 24, 40, .78)); }
+  .panel__img { position: absolute; inset: 0; background: inherit; filter: blur(10px) saturate(.9); transform: scale(1.12); transition: filter .7s; }
+  .panel__body { position: absolute; inset: 0; z-index: 2; padding: clamp(20px, 3vw, 44px); display: grid; align-content: space-between; min-width: 380px; opacity: 0; transition: opacity .35s; }
+  .panel h3 { margin: 0; font: italic 400 clamp(34px, 3.2vw, 50px)/1 var(--serif); }
+  .panel .price { font-weight: 600; font-size: 16px; }
+  .panel p { margin: 10px 0 18px; max-width: 26em; font-size: 15px; }
+  .panel .more { display: inline-flex; gap: 10px; align-items: center; font-weight: 500; border-bottom: 1px solid currentColor; padding-bottom: 2px; }
+  .panels:not(:hover):not(:focus-within) .panel:first-child,
+  .panel:hover, .panel:focus-visible { flex-grow: 4; }
+  .panels:not(:hover):not(:focus-within) .panel:first-child .panel__img,
+  .panel:hover .panel__img, .panel:focus-visible .panel__img { filter: none; }
+  .panels:not(:hover):not(:focus-within) .panel:first-child .panel__body,
+  .panel:hover .panel__body, .panel:focus-visible .panel__body { opacity: 1; transition-delay: .25s; }
+  .panel:focus-visible { outline-offset: -4px; outline-color: #fff; }
+
+  /* ---------- Enquire ---------- */
+  .enquire { background: var(--stone); padding: clamp(100px, 15vh, 160px) var(--gutter) 40px; }
+  .enquire__grid { display: grid; grid-template-columns: 2fr 4fr; gap: 24px; }
+  .enquire h2 { margin: 0; font: 400 clamp(48px, 6.6vw, 104px)/.92 var(--serif); text-transform: uppercase; }
+  .enquire__side { display: grid; gap: 28px; align-content: start; padding-top: 10px; }
+  .enquire__side p { margin: 0; max-width: 30em; font: italic 400 22px/1.35 var(--serif); }
+  .form { display: flex; gap: 6px; max-width: 520px; }
+  .form label { flex: 1; }
+  .form input { width: 100%; height: 48px; padding: 0 16px; border: 1px solid rgba(29, 40, 68, .25); border-radius: 2px; background: #fff; font: inherit; color: var(--ink); }
+  .form button { height: 48px; padding: 0 24px; border: 0; border-radius: 2px; background: var(--accent); color: #fff; font: 500 15px var(--sans); cursor: pointer; }
+  .form button:hover { background: #A93C0C; }
+  .foot { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-top: clamp(80px, 12vh, 140px); padding-top: 20px; border-top: 1px solid rgba(29, 40, 68, .15); font-size: 13px; color: var(--mute); }
+  .foot span:nth-child(2) { font: 400 13px var(--display); letter-spacing: .08em; }
+
+  /* ---------- Small screens ---------- */
+  @media (max-width: 820px) {
+    .top { inset: 10px 10px auto; grid-template-columns: auto 1fr auto; }
+    .chips:first-child .chip:not(:first-child), .chips:last-child .chip:first-child { display: none; }
+    .chip { height: 36px; padding: 0 14px; font-size: 14px; }
+    .logo span { font-size: 16px; }
+    .tab { display: none; } /* the header's Enquire chip covers it; a fixed tab would sit on the copy */
+    .hero__line { top: 34%; }
+    .hero__film { top: auto; left: var(--gutter); right: auto; bottom: 30%; }
+    .letter__inner { margin-left: 0; }
+    .camps { --cw: 84vw; --gap: 6vw; --start: 88vw; }
+    .motion .camps__strips { grid-template-columns: repeat(6, 1fr); }
+    .card { aspect-ratio: 3 / 4; }
+    .trips__head, .enquire__grid { grid-template-columns: 1fr; }
+    .panels { flex-direction: column; height: auto; gap: 6px; }
+    .panel { min-height: 380px; }
+    .panel__img { filter: none; }
+    .panel__body { opacity: 1; min-width: 0; }
+    .form { flex-direction: column; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hero__title { animation: none; }
+    .panel, .panel__img, .panel__body { transition: none; }
+  }
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<div class="columns" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+
+<header class="top">
+  <nav class="chips" aria-label="Primary">
+    <a class="chip" href="#camps">Camps</a><a class="chip" href="#trips">Expeditions</a><a class="chip" href="#letter">About</a>
+  </nav>
+  <a class="logo" href="#main" aria-label="Kalde Reach, home">
+    <svg viewBox="0 0 34 16" aria-hidden="true"><path d="M0 16 L9 4 L13 9 L19 0 L26 9 L29 6 L34 16Z" fill="currentColor"/></svg>
+    <span>KALDE REACH</span>
+  </a>
+  <div class="chips"><a class="chip" href="#trips">Rates</a><a class="chip chip--accent" href="#enquire">Enquire</a></div>
+</header>
+<a class="tab" href="#enquire"><span>Plan a season <svg width="10" height="10" viewBox="0 0 10 10" aria-hidden="true"><path d="M5 0v10M0 5h10" stroke="currentColor" stroke-width="1.4"/></svg></span></a>
+
+<main id="main">
+  <section class="hero" aria-label="Introduction">
+    <svg class="hero__range" viewBox="0 0 1440 560" preserveAspectRatio="none" aria-hidden="true">
+      <path d="M0 330 L120 270 L210 300 L340 190 L450 260 L560 220 L700 300 L820 210 L930 250 L1060 160 L1180 240 L1300 200 L1440 260 V560 H0Z" fill="#AEB7C1" opacity=".55"/>
+      <path d="M0 420 L160 330 L260 370 L380 300 L520 380 L640 330 L780 400 L900 320 L1040 390 L1160 340 L1300 400 L1440 350 V560 H0Z" fill="#8D99A6" opacity=".7"/>
+    </svg>
+    <p class="hero__line">Small expeditions to the last quiet edge of Europe</p>
+    <a class="hero__film" href="#letter">Read the founder’s letter <svg width="10" height="12" viewBox="0 0 10 12" aria-hidden="true"><path d="M0 0 L10 6 L0 12Z" fill="currentColor"/></svg></a>
+    <h1 class="hero__title">Svalbard</h1>
+  </section>
+
+  <section class="letter" id="letter" aria-labelledby="letter-title">
+    <div class="letter__inner">
+      <p class="eyebrow" id="letter-title">The High North</p>
+      <p class="statement" data-range="cover 12 58" data-words>Twelve guests, three camps and a coastline that has no road to it. We go where the ice decides, and we come back with less noise in our heads.</p>
+      <p class="letter__body">Every season we read the sea ice with the same people who have read it for twenty years. Nothing on the schedule is more important than that conversation.</p>
+      <div class="sign" data-range="cover 30 62">
+        <svg viewBox="0 0 360 80" aria-hidden="true"><path pathLength="1" d="M6 52 C 20 20, 44 14, 40 40 C 36 64, 18 70, 24 50 C 30 30, 62 22, 70 44 C 74 56, 82 58, 92 46 C 100 36, 108 38, 106 50 C 104 62, 118 60, 128 48 C 140 34, 150 30, 152 44 C 154 58, 170 56, 182 44 L 196 30 C 202 52, 214 58, 232 50 C 262 38, 300 34, 352 42"/></svg>
+        <b>Ingrid Solvang</b>
+        <small>Founder and expedition lead</small>
+      </div>
+    </div>
+  </section>
+
+  <section class="reveal" data-range="cover 0 48" aria-label="The coast at Hornsund">
+    <div class="reveal__img" role="img" aria-label="Dark rock peaks above snowfields and a pale sky"></div>
+    <p class="reveal__cap">Hornsund, late May. Light around the clock and the fjord still frozen at the head.</p>
+  </section>
+
+  <section class="camps" id="camps" data-range="contain 0 100" aria-labelledby="camps-title">
+    <div class="camps__stage">
+      <div class="camps__ice" aria-hidden="true"></div>
+      <div class="camps__base" aria-hidden="true"></div>
+      <div class="camps__strips" aria-hidden="true">
+        <i class="strip" style="--k:0;--dir:1"></i><i class="strip" style="--k:1;--dir:-1"></i><i class="strip" style="--k:2;--dir:1"></i><i class="strip" style="--k:3;--dir:-1"></i><i class="strip" style="--k:4;--dir:1"></i><i class="strip" style="--k:5;--dir:-1"></i>
+      </div>
+      <h2 class="camps__title" id="camps-title">Our camps</h2>
+      <p class="camps__note">Three seasonal camps, each a day apart by boat. Heated, quiet, and taken down without a trace in September.</p>
+      <div class="camps__track">
+        <article class="frost"><div class="card" data-scene="1"><div><h3>Lysning</h3><p>Our first camp, on a raised beach below the glacier front. Eight domes, one long table, and the sound of ice calving at night.</p></div><span class="coords">[ 77° 00′ 12″ N, 15° 33′ 40″ E ]</span></div></article>
+        <article class="frost"><div class="card" data-scene="2"><div><h3>Drift</h3><p>Built for the far north coast. Glass-roofed sleeping pods that face the pack ice, with a sauna on the shingle.</p></div><span class="coords">[ 79° 51′ 05″ N, 18° 12′ 30″ E ]</span></div></article>
+        <article class="frost"><div class="card" data-scene="3"><div><h3>Nordlys</h3><p>Our late-season camp, open into the first dark weeks. Wood-lined huts, a heated lookout, and the aurora from your bed.</p></div><span class="coords">[ 78° 13′ 41″ N, 13° 49′ 02″ E ]</span></div></article>
+      </div>
+    </div>
+  </section>
+
+  <section class="trips" id="trips" aria-labelledby="trips-title">
+    <div class="trips__head">
+      <h2 id="trips-title">Expeditions</h2>
+      <p>Three itineraries, each limited to twelve guests and run four times a season. Prices are per person, all flights from Tromsø included.</p>
+    </div>
+    <div class="panels">
+      <a class="panel" href="#enquire" data-scene="4"><div class="panel__img" aria-hidden="true"></div><div class="panel__body"><h3>Edge of the Pack</h3><div><span class="price">NOK 184,000 · 9 days</span><p>North past 80°, sleeping at Drift and sailing to the sea ice by day. Walrus, polar bear and almost no one else.</p><span class="more">View itinerary <span aria-hidden="true">→</span></span></div></div></a>
+      <a class="panel" href="#enquire" data-scene="5"><div class="panel__img" aria-hidden="true"></div><div class="panel__body"><h3>Glacier Season</h3><div><span class="price">NOK 126,000 · 6 days</span><p>Ski touring from Lysning onto the ice cap, with two nights in a snow camp on the plateau.</p><span class="more">View itinerary <span aria-hidden="true">→</span></span></div></div></a>
+      <a class="panel" href="#enquire" data-scene="6"><div class="panel__img" aria-hidden="true"></div><div class="panel__body"><h3>First Dark</h3><div><span class="price">NOK 98,000 · 5 days</span><p>The blue weeks of October at Nordlys: dog sledding, still fjords and the aurora overhead.</p><span class="more">View itinerary <span aria-hidden="true">→</span></span></div></div></a>
+    </div>
+  </section>
+
+  <section class="enquire" id="enquire" aria-labelledby="enquire-title">
+    <div class="enquire__grid">
+      <h2 id="enquire-title">Plan a season</h2>
+      <div class="enquire__side">
+        <p>Tell us when you can travel. An expedition lead, not a sales team, writes back within two days.</p>
+        <form class="form" onsubmit="event.preventDefault(); this.querySelector('button').textContent = 'Thank you';">
+          <label><span class="sr">Email address</span><input type="email" required placeholder="you@example.com" autocomplete="email"></label>
+          <button type="submit">Enquire</button>
+        </form>
+      </div>
+    </div>
+    <div class="foot"><span>Kalde Reach AS · Tromsø, Norway</span><span>[ 69° 38′ 56″ N, 18° 57′ 18″ E ]</span><span>Licensed by the Governor of Svalbard · 2026</span></div>
+  </section>
+</main>
+
+<script type="module">
+// ===== Scroll driver (identical to SKILL.md section 5) =====
+// Every [data-range="cover|contain start end"] element gets one number, --p, from 0 to 1.
+// Native scroll-driven animations when the browser has them, a rAF fallback when it does not,
+// and nothing at all under reduced motion: --p keeps its registered initial value of 1 (final state).
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const native = CSS.supports('animation-timeline: view()') && CSS.supports('animation-range: cover 0% cover 100%');
+
+const scrubs = [...document.querySelectorAll('[data-range]')].map((el) => {
+  const [name, a, b] = el.dataset.range.split(' ');
+  return { el, name, a: +a / 100, b: +b / 100 };
+});
+
+function progress({ el, name, a, b }) {
+  const r = el.getBoundingClientRect(), vh = innerHeight;
+  const c = name === 'contain'
+    ? -r.top / Math.max(1, r.height - vh)        // tall pinned section: 0 when its top hits the top, 1 when its bottom hits the bottom
+    : (vh - r.top) / (vh + r.height);            // cover: 0 when its top enters, 1 when its bottom leaves
+  return Math.min(1, Math.max(0, (c - a) / (b - a)));
+}
+
+if (!reduce) {
+  document.documentElement.classList.add('motion');
+  if (native) {
+    for (const s of scrubs) {
+      s.el.style.animationRange = `${s.name} ${s.a * 100}% ${s.name} ${s.b * 100}%`;
+      s.el.classList.add('scrub');
+    }
+  } else {
+    let queued = false;
+    const update = () => {
+      queued = false;
+      for (const s of scrubs) s.el.style.setProperty('--p', progress(s).toFixed(4));
+    };
+    const queue = () => { if (!queued) { queued = true; requestAnimationFrame(update); } };
+    addEventListener('scroll', queue, { passive: true });
+    addEventListener('resize', queue);
+    update();
+  }
+}
+
+// Split a statement into words that each know their index (--i) and the total (--n).
+for (const el of document.querySelectorAll('[data-words]')) {
+  const words = el.textContent.trim().split(/\s+/);
+  el.setAttribute('aria-label', el.textContent.trim());
+  el.style.setProperty('--n', words.length);
+  el.innerHTML = words.map((w, i) => `<span class="w" aria-hidden="true" style="--i:${i}">${w}</span>`).join(' ');
+}
+
+// ===== Generated imagery (original, no photos) =====
+function rng(seed) { // mulberry32
+  return () => { seed |= 0; seed = (seed + 0x6D2B79F5) | 0; let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
+}
+function noise1d(rand, n, octaves = 5, div = 3) {
+  const out = new Float32Array(n);
+  for (let o = 0; o < octaves; o++) {
+    const step = Math.max(2, Math.floor(n / (div * 2 ** o))), amp = 1 / 2 ** o;
+    const pts = Array.from({ length: Math.ceil(n / step) + 2 }, () => rand() * 2 - 1);
+    for (let x = 0; x < n; x++) {
+      const i = Math.floor(x / step), f = (x % step) / step, s = f * f * (3 - 2 * f);
+      out[x] += (pts[i] * (1 - s) + pts[i + 1] * s) * amp;
+    }
+  }
+  return out;
+}
+const mix = (a, b, t) => a.map((v, i) => Math.round(v + (b[i] - v) * t));
+const rgbStr = (c, a = 1) => `rgba(${c[0]},${c[1]},${c[2]},${a})`;
+
+function grain(ctx, w, h, amount, rand) {
+  const img = ctx.getImageData(0, 0, w, h), d = img.data;
+  for (let i = 0; i < d.length; i += 4) { const g = (rand() - 0.5) * amount; d[i] += g; d[i + 1] += g; d[i + 2] += g; }
+  ctx.putImageData(img, 0, 0);
+}
+
+// Layered mountains: a few peaks plus fractal roughness, faces lit from the upper left,
+// rock above a ragged snowline, snow below. Lighting uses a smoothed slope so faces read as broad planes.
+function paintLandscape(w, h, o) {
+  const c = document.createElement('canvas'); c.width = w; c.height = h;
+  const ctx = c.getContext('2d', { willReadFrequently: true }), rand = rng(o.seed);
+  const sky = ctx.createLinearGradient(0, 0, 0, h * 0.75);
+  sky.addColorStop(0, o.sky[0]); sky.addColorStop(1, o.sky[1]);
+  ctx.fillStyle = sky; ctx.fillRect(0, 0, w, h);
+  if (o.glow) { const g = ctx.createRadialGradient(w * o.glow[0], h * o.glow[1], 0, w * o.glow[0], h * o.glow[1], w * 0.5);
+    g.addColorStop(0, o.glow[2]); g.addColorStop(1, 'rgba(255,255,255,0)'); ctx.fillStyle = g; ctx.fillRect(0, 0, w, h); }
+  o.layers.forEach((L, li) => {
+    const prof = new Float32Array(w), rough = noise1d(rand, w, 4), jag = noise1d(rand, w, 4, 60);
+    const peaks = Array.from({ length: L.peaks || 4 }, () => ({ cx: rand() * w, hl: w * (0.06 + rand() * 0.18), hr: w * (0.06 + rand() * 0.18), ph: 0.4 + rand() * 0.6 }));
+    for (const P of peaks) for (let x = 0; x < w; x++) { // asymmetric flanks
+      const d = x < P.cx ? (P.cx - x) / P.hl : (x - P.cx) / P.hr;
+      if (d < 1) prof[x] = Math.max(prof[x], P.ph * Math.pow(1 - d, L.sharp || 1.25));
+    }
+    const top = new Float32Array(w);
+    for (let x = 0; x < w; x++) top[x] = h * L.y - (prof[x] + rough[x] * (L.rough || 0.12) + jag[x] * 0.03 * (0.3 + prof[x])) * h * L.amp;
+    const ridgePath = () => { ctx.beginPath(); ctx.moveTo(0, h); for (let x = 0; x < w; x += 2) ctx.lineTo(x, top[x]); ctx.lineTo(w, top[w - 1]); ctx.lineTo(w, h); ctx.closePath(); };
+    const peakY = h * (L.y - L.amp);
+    // 1. the body: one path, one vertical gradient
+    ridgePath();
+    const body = ctx.createLinearGradient(0, peakY, 0, h);
+    if (L.flat) { body.addColorStop(0, rgbStr(L.light)); body.addColorStop(1, rgbStr(mix(L.shade, L.light, 0.6))); }
+    else { body.addColorStop(0, rgbStr(mix(L.snowShade, [250, 252, 255], 0.75))); body.addColorStop(1, 'rgb(244,247,251)'); }
+    ctx.fillStyle = body; ctx.fill();
+    ctx.save(); ridgePath(); ctx.clip();
+    // 2. rock: a band under the ridge, deeper where the face is steep, with ragged couloirs
+    if (!L.flat) {
+      const steep = new Float32Array(w), snowN = noise1d(rand, w, 3, 10), edge = noise1d(rand, w, 2, 90);
+      for (let x = 0; x < w; x++) steep[x] = Math.min(1, Math.abs(top[Math.min(w - 1, x + 4)] - top[Math.max(0, x - 4)]) / 8 * 1.3);
+      for (let pass = 0; pass < 6; pass++) for (let x = 1; x < w - 1; x++) steep[x] = (steep[x - 1] + steep[x] + steep[x + 1]) / 3;
+      ctx.beginPath(); ctx.moveTo(0, top[0]);
+      for (let x = 0; x < w; x += 2) ctx.lineTo(x, top[x] - 2);
+      for (let x = w - 1; x >= 0; x -= 2) ctx.lineTo(x, top[x] + h * L.amp * L.snow * (0.1 + 0.9 * steep[x]) * (0.25 + prof[x]) * (0.7 + 0.45 * snowN[x]) + edge[x] * 6);
+      ctx.closePath();
+      const rg = ctx.createLinearGradient(0, peakY, 0, h * L.y); rg.addColorStop(0, rgbStr(L.rock)); rg.addColorStop(1, rgbStr(mix(L.rock, L.rockDark, 0.5)));
+      ctx.fillStyle = rg; ctx.fill();
+    }
+    // 3. shadow faces: from each summit, the right-hand flank down to the foot, like a poster print
+    for (const P of peaks) {
+      const x0 = Math.round(Math.max(0, Math.min(w - 1, P.cx))), x1 = Math.min(w - 1, Math.round(P.cx + P.hr));
+      ctx.beginPath(); ctx.moveTo(x0, top[x0]);
+      for (let x = x0; x <= x1; x += 2) ctx.lineTo(x, top[x]);
+      ctx.lineTo(P.cx + P.hr * (0.15 + rand() * 0.2), h * L.y + h * L.amp * 0.05); ctx.closePath(); // ends at the foot, never a hard vertical
+      ctx.fillStyle = L.flat ? 'rgba(60,76,104,.16)' : 'rgba(40,56,90,.26)'; ctx.fill();
+    }
+    ctx.restore();
+    if (li < o.layers.length - 1) { // atmospheric haze below each layer's peaks
+      const y0 = h * (L.y - L.amp * 0.4), hz = ctx.createLinearGradient(0, y0, 0, h);
+      hz.addColorStop(0, 'rgba(238,242,247,0)'); hz.addColorStop(0.55, `rgba(238,242,247,${o.haze})`);
+      ctx.fillStyle = hz; ctx.fillRect(0, y0, w, h - y0);
+    }
+  });
+  if (o.dome) { // a camp dome, for the camp cards
+    const [dx, dy, dr] = [w * o.dome[0], h * o.dome[1], w * o.dome[2]];
+    ctx.fillStyle = 'rgba(30,40,56,.2)'; ctx.beginPath(); ctx.ellipse(dx + dr * 0.3, dy + 2, dr * 1.3, dr * 0.16, 0, 0, Math.PI * 2); ctx.fill();
+    const dg = ctx.createLinearGradient(dx - dr, 0, dx + dr, 0); dg.addColorStop(0, '#fbfcfd'); dg.addColorStop(1, '#aeb9c6');
+    ctx.fillStyle = dg; ctx.beginPath(); ctx.ellipse(dx, dy, dr, dr * 0.8, 0, Math.PI, 0); ctx.fill();
+    ctx.strokeStyle = 'rgba(70,84,104,.3)'; ctx.lineWidth = 1.2;
+    for (let k = 1; k <= 2; k++) { ctx.beginPath(); ctx.ellipse(dx, dy, k * dr * 0.33, dr * 0.8, 0, Math.PI, 0); ctx.stroke(); }
+    ctx.beginPath(); ctx.moveTo(dx - dr, dy - dr * 0.4); ctx.quadraticCurveTo(dx, dy - dr * 0.62, dx + dr, dy - dr * 0.4); ctx.stroke();
+    ctx.fillStyle = o.dome[3] || '#2a3346'; ctx.fillRect(dx - dr * 0.12, dy - dr * 0.38, dr * 0.24, dr * 0.38);
+  }
+  grain(ctx, w, h, 9, rand);
+  return c;
+}
+
+// Sea ice: mottled cyan with deep and pale zones, long branching fractures with a soft glow,
+// and a few wind-blown snow drifts.
+function paintIce(w, h, seed) {
+  const c = document.createElement('canvas'); c.width = w; c.height = h;
+  const ctx = c.getContext('2d', { willReadFrequently: true }), rand = rng(seed);
+  const g = ctx.createLinearGradient(0, 0, w, h); g.addColorStop(0, '#a6e0ea'); g.addColorStop(0.55, '#62c0d4'); g.addColorStop(1, '#3b98b4');
+  ctx.fillStyle = g; ctx.fillRect(0, 0, w, h);
+  for (let i = 0; i < 140; i++) {
+    const x = rand() * w, y = rand() * h, r = 30 + rand() * 260, rg = ctx.createRadialGradient(x, y, 0, x, y, r);
+    const col = rand() < 0.55 ? '255,255,255' : '18,104,136';
+    rg.addColorStop(0, `rgba(${col},${0.04 + rand() * 0.1})`); rg.addColorStop(1, `rgba(${col},0)`);
+    ctx.fillStyle = rg; ctx.fillRect(x - r, y - r, r * 2, r * 2);
+  }
+  const paths = [];
+  const crack = (x, y, a, len, width, depth) => {
+    const pts = [[x, y]];
+    for (let s = 0; s < len; s += 18) {
+      a += (rand() - 0.5) * 0.16; x += Math.cos(a) * 18; y += Math.sin(a) * 18; pts.push([x, y]);
+      if (depth < 2 && rand() < 0.07) crack(x, y, a + (rand() < 0.5 ? 1 : -1) * (0.7 + rand() * 0.6), len * 0.45, width * 0.6, depth + 1);
+    }
+    paths.push({ pts, width });
+  };
+  for (let i = 0; i < 14; i++) crack(rand() * w, rand() * h, rand() * Math.PI * 2, 500 + rand() * 1200, 0.8 + rand() * 2.2, 0);
+  ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+  const stroke = (k, style, ox = 0, oy = 0) => {
+    ctx.strokeStyle = style;
+    for (const { pts, width } of paths) { ctx.lineWidth = width * k; ctx.beginPath(); pts.forEach(([x, y], i) => ctx[i ? 'lineTo' : 'moveTo'](x + ox, y + oy)); ctx.stroke(); }
+  };
+  stroke(1.2, 'rgba(10,70,100,.28)', 1.5, 2);   // the crack's depth
+  stroke(6, 'rgba(255,255,255,.09)');           // frosted halo
+  stroke(1, 'rgba(255,255,255,.8)');            // bright edge
+  for (let i = 0; i < 3; i++) { // wind-blown snow drifts: long soft streaks
+    const x = rand() * w, y = rand() * h, a = -0.5 + rand() * 0.3, len = 160 + rand() * 300;
+    ctx.save(); ctx.translate(x, y); ctx.rotate(a); ctx.filter = 'blur(10px)';
+    ctx.fillStyle = `rgba(255,255,255,${0.35 + rand() * 0.3})`; ctx.beginPath(); ctx.ellipse(0, 0, len, 14 + rand() * 26, 0, 0, Math.PI * 2); ctx.fill();
+    ctx.restore();
+  }
+  grain(ctx, w, h, 7, rand);
+  return c;
+}
+
+const ROCK = { rock: [138, 100, 80], rockDark: [52, 38, 34], snowShade: [138, 160, 190] };
+const scenes = {
+  ridge: () => paintLandscape(1600, 1000, { seed: 7, sky: ['#DCE4EC', '#F7F9FB'], haze: 0.7, glow: [0.72, 0.28, 'rgba(255,255,255,.8)'],
+    layers: [
+      { y: 0.56, amp: 0.2, flat: true, peaks: 6, shade: [170, 184, 200], light: [218, 226, 236] },
+      { y: 0.72, amp: 0.5, snow: 0.6, peaks: 3, sharp: 1.35, ...ROCK },
+      { y: 0.98, amp: 0.3, snow: 0.18, peaks: 4, ...ROCK, rock: [150, 112, 88] },
+    ] }),
+  1: () => paintLandscape(900, 680, { seed: 21, sky: ['#93A3B6', '#EDE5DC'], haze: 0.55, glow: [0.62, 0.62, 'rgba(255,214,176,.6)'], dome: [0.4, 0.86, 0.13],
+    layers: [{ y: 0.66, amp: 0.2, flat: true, peaks: 5, shade: [140, 152, 170], light: [192, 200, 212] }, { y: 0.87, amp: 0.08, snow: 0.3, peaks: 6, ...ROCK, rock: [104, 86, 76] }] }),
+  2: () => paintLandscape(900, 680, { seed: 34, sky: ['#CDD6DF', '#F4F6F8'], haze: 0.75, dome: [0.56, 0.88, 0.15, '#1f2633'],
+    layers: [{ y: 0.72, amp: 0.42, snow: 0.55, peaks: 2, sharp: 1.4, ...ROCK }, { y: 0.89, amp: 0.03, flat: true, shade: [214, 222, 230], light: [246, 248, 250] }] }),
+  3: () => paintLandscape(900, 680, { seed: 52, sky: ['#26314B', '#7E829E'], haze: 0.25, glow: [0.3, 0.22, 'rgba(120,236,196,.4)'], dome: [0.64, 0.86, 0.12, '#f2b25c'],
+    layers: [{ y: 0.68, amp: 0.26, flat: true, peaks: 4, shade: [56, 66, 92], light: [96, 104, 134] }, { y: 0.87, amp: 0.05, snow: 0.2, ...ROCK, snowShade: [96, 110, 146] }] }),
+  4: () => paintLandscape(900, 1000, { seed: 61, sky: ['#7398C0', '#DCE6EF'], haze: 0.45,
+    layers: [{ y: 0.66, amp: 0.16, flat: true, peaks: 5, shade: [178, 194, 210], light: [228, 234, 242] }, { y: 0.84, amp: 0.04, flat: true, shade: [222, 230, 238], light: [250, 251, 252] }] }),
+  5: () => paintLandscape(900, 1000, { seed: 75, sky: ['#B4C2D0', '#F1F3F5'], haze: 0.6,
+    layers: [{ y: 0.64, amp: 0.44, snow: 0.55, peaks: 3, sharp: 1.3, ...ROCK }, { y: 0.9, amp: 0.2, snow: 0.15, peaks: 4, ...ROCK, rock: [120, 100, 90] }] }),
+  6: () => paintLandscape(900, 1000, { seed: 88, sky: ['#1A2540', '#56648C'], haze: 0.25, glow: [0.55, 0.22, 'rgba(110,230,186,.45)'],
+    layers: [{ y: 0.7, amp: 0.26, flat: true, peaks: 4, shade: [40, 50, 76], light: [70, 82, 114] }, { y: 0.88, amp: 0.05, flat: true, shade: [92, 104, 138], light: [146, 156, 188] }] }),
+};
+
+const toURL = (canvas) => new Promise((res) => canvas.toBlob((b) => res(URL.createObjectURL(b)), 'image/webp', 0.86));
+const idle = window.requestIdleCallback || ((fn) => setTimeout(fn, 1));
+(async () => {
+  const root = document.documentElement.style;
+  root.setProperty('--img-ridge', `url(${await toURL(scenes.ridge())})`);
+  root.setProperty('--img-ice', `url(${await toURL(paintIce(1600, 1000, 3))})`);
+  idle(async () => {
+    for (const el of document.querySelectorAll('[data-scene]')) el.style.backgroundImage = `url(${await toURL(scenes[el.dataset.scene]())})`;
+  });
+})();
+</script>
+</body>
+</html>
