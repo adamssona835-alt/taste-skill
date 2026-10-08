@@ -28,7 +28,8 @@
   }
   * { box-sizing: border-box; margin: 0; }
   html { background: var(--night); color: var(--ink); font-family: var(--sans); font-size: 16px; -webkit-font-smoothing: antialiased; }
-  body { overflow-x: hidden; background: linear-gradient(#0b1328, #05070d 60%, #0d1222); }
+  /* color and type set on body too: a host page (an embed, an artifact viewer) may style body itself, and everything inheriting would turn dark */
+  body { overflow-x: hidden; margin: 0; color: var(--ink); font: 400 16px/1.5 var(--sans); background: linear-gradient(#0b1328, #05070d 60%, #0d1222); }
   .js body { background: var(--night); }
   a { color: inherit; }
   ::selection { background: var(--ember); color: var(--night); }
