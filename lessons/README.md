@@ -4,6 +4,11 @@ One technique a day, found and studied by the agent itself from live premium sit
 
 How every lesson is made, and the quality bar it must clear: [`PROTOCOL.md`](PROTOCOL.md). Each day must score at least as high as the best day before it.
 
+Two loops run every day:
+
+- **Learn** (morning, [`PROTOCOL.md`](PROTOCOL.md)): a new technique from a live award-level site, shipped as a skill with a verified demo.
+- **Improve** (evening, [`IMPROVE.md`](IMPROVE.md)): the weakest existing skill is audited and raised, and the tools or [`PRINCIPLES.md`](PRINCIPLES.md) get sharper so later runs start from a higher floor.
+
 Each lesson is short and practical:
 
 - **Seen in**: where the pattern showed up (described, never copied).
@@ -21,3 +26,8 @@ The full, reusable version of each lesson lives in `skills/<slug>-skill/` with a
 | 001 | 2026-10-07 | [Particle morph hero](2026-10-07-particle-morph-hero.md) | WebGL and 3D | getlayers.ai "Vesper" template | [`particle-morph-skill`](../skills/particle-morph-skill/SKILL.md) | 34/40 |
 | 002 | 2026-10-07 | [Dither tile grid](2026-10-07-dither-tile-grid.md) | Imagery and art direction | aspensearch.com (Awwwards SOTD, 15 Sep 2026) | [`dither-tile-skill`](../skills/dither-tile-skill/SKILL.md) | 36/40 |
 | 003 | 2026-10-08 | [Scroll scrub story](2026-10-08-scroll-scrub-story.md) | Scroll motion | white-desert.com (Awwwards SOTD, 11 Sep 2026) | [`scroll-scrub-story-skill`](../skills/scroll-scrub-story-skill/SKILL.md) | 37/40 |
+
+## Improvement log
+
+| Date | Skill | Score | Biggest fix | Machine improvement |
+| --- | --- | --- | --- | --- |

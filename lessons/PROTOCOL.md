@@ -2,6 +2,8 @@
 
 This is the contract every daily run follows. Nobody hands the agent a website or a topic. The agent finds a premium site on its own, studies it live, and ships a **verified skill with a working demo**. Every day must match or beat the best entry so far. A day that cannot meet the bar ships nothing rather than something weaker.
 
+Before anything else, read [`PRINCIPLES.md`](PRINCIPLES.md) and apply every rule in it.
+
 The reference for "quality" is [`skills/particle-morph-skill`](../skills/particle-morph-skill/SKILL.md) (lesson 001). Read it before starting.
 
 ---
