@@ -58,6 +58,12 @@
 
   /* ---------- Header ---------- */
   .top { position: fixed; inset: 18px var(--gutter) auto; z-index: 60; display: flex; align-items: center; justify-content: space-between; gap: 18px; }
+  /* a soft band behind the header: copy and cards scroll under the wordmark, never through it */
+  .top::before { content: ''; position: fixed; inset: 0 0 auto; height: 104px; z-index: -1; pointer-events: none;
+    background: linear-gradient(color-mix(in srgb, var(--night) 82%, transparent) 45%, transparent);
+    -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+    -webkit-mask: linear-gradient(#000 55%, transparent); mask: linear-gradient(#000 55%, transparent); transition: background .3s; }
+  .on-light.top::before, .top.on-light::before { background: linear-gradient(color-mix(in srgb, var(--ivory) 86%, transparent) 45%, transparent); }
   .brand { text-decoration: none; display: grid; line-height: 1; }
   .brand b { font: 500 22px/1 var(--serif); letter-spacing: .01em; }
   .brand small { margin-top: 5px; font-size: 10px; letter-spacing: .3em; text-transform: uppercase; color: var(--gold); }
