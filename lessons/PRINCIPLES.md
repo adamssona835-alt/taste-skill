@@ -4,10 +4,10 @@ Rules distilled from every lesson so far. Each one has shown up more than once, 
 
 ## Look
 
-1. **Never park the reader between states.** Any section where text must be read holds a settled visual state. Transitions happen between reading stops, never under them. (001 mid-morph noise, 003 pinned sections)
+1. **Never park the reader between states.** Any section where text must be read holds a settled visual state. Transitions happen between reading stops, never under them. A card track or carousel driven by scroll holds each item centred and moves only between holds; a linear glide shows two half-cut items at most positions. (001 mid-morph noise, 003 pinned sections and card track)
 2. **Text over moving or busy imagery gets a scrim.** A soft gradient under the text block, never a solid box. (001 stats row)
 3. **One loud thing per screen.** The visual or the headline carries weight, not both; light type next to heavy motion.
-4. **Contrast sections on purpose.** A light editorial break makes dark sections feel deep, and the reverse. Fixed chrome (nav, frame, cursor) must flip with it: a dark glass pill over a light section reads as a grey smear. (001)
+4. **Contrast sections on purpose.** A light editorial break makes dark sections feel deep, and the reverse. Fixed chrome (nav, frame, cursor) must flip with it: a dark glass pill over a light section reads as a grey smear. Fixed chrome whose text has no backing needs a frosted band, or headlines scroll through the logo; verify-demo fails on it. (001, 003)
 5. **One statement per screen.** Two sections whose text sits on adjacent edges show up together. Put empty space on one side of every section boundary. (001, 003)
 6. **Copy tells the truth on the device reading it.** Numbers that depend on tier, locale or feature support are written by the code that knows them. (001 "80k points" on phones)
 

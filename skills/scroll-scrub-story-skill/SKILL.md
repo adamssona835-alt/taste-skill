@@ -20,7 +20,7 @@ Use this skill when the brief says: "story", "chapters", "cinematic", "luxury", 
 3. **Initial value 1 is the safety net.** With no JS, no support, or reduced motion, `--p` stays at 1 and every section shows its finished state. Nothing can get stuck invisible.
 4. **Light words, do not move them.** Statement words go from opacity 0.16 to 1, three words of overlap (`p * (n + 3) - i`). No slide, no blur, no per-letter split: the sentence stays readable as a block from the first pixel.
 5. **Pin once.** One pinned scene per page, about 5 viewports tall (`520svh`). Pins everywhere feel like a slideshow you cannot skip.
-6. **Phases inside the pin.** Split the pinned `--p` into named sub-ranges in CSS: `--a` = strips wipe (0 to 0.28), `--b` = card track (0.26 to 1). The overlap means something is always moving; a stretch of empty frame reads as broken.
+6. **Phases inside the pin, holds inside the phases.** Split the pinned `--p` into named sub-ranges in CSS: `--a` = strips wipe (0 to 0.28), `--b` = card track (0.26 to 1). The overlap means the frame is never empty. Inside the track, each card holds centred for a stretch of scroll (`b` 0.2 to 0.36, 0.56 to 0.72, 0.92 to 1) and only moves between holds: a track that glides linearly parks the reader on two half-cut cards at most scroll positions. For n cards, use one `--m` per card after the first and split `b` into an entry, n holds and n - 1 moves of about equal length.
 7. **Strips alternate.** Six vertical strips, odd ones from below and even ones from above (`--dir: ±1`), staggered by 0.12 of the phase each. Each strip shows its own slice of the incoming image (`background-position: calc(k * -100vw / 6)`), so together they assemble one picture, not six.
 8. **The frame opens, the photo settles.** The inset image's `clip-path: inset()` shrinks from 9 percent and a gutter-wide side margin to 0, while the image inside scales from 1.14 to 1. Two opposite movements read as depth.
 9. **Type pairing does the luxury.** A tall condensed sans for the place name (Oswald 400, 17.6vw, letter-spacing 0.02em, cropped by the fold), a high-contrast serif for statements and titles (Cormorant 500, uppercase), and a neutral grotesk for UI (Inter Tight 500, 15px). Italic serif for captions and asides.
@@ -167,18 +167,35 @@ The pinned scene. Everything under `.motion` only applies when JS confirmed that
 .motion .camps__note { position: absolute; left: 0; right: 0; bottom: 7vh; margin: 0 auto; opacity: clamp(0, calc(var(--a) * 4 - 3 - var(--b) * 6), 1); }
 .motion .camps__track {
   position: absolute; top: 50%; left: var(--start); display: flex; gap: var(--gap); padding: 0; align-items: center;
-  /* starts peeking in at --start, ends with the last card centred: travel = start - 50vw + (n - 1)(card + gap) + card / 2 */
-  transform: translate(calc(var(--b) * -1 * (var(--start) - 50vw + (var(--n) - 1) * (var(--cw) + var(--gap)) + var(--cw) / 2)), -50%);
+  /* Enter, then hold each card centred for a reading stretch; cards only move between holds.
+     --e brings card 1 from --start to the centre; --m1, --m2 each slide one card width + gap. */
+  --e: clamp(0, calc(var(--b) / .2), 1);
+  --m1: clamp(0, calc((var(--b) - .36) / .2), 1);
+  --m2: clamp(0, calc((var(--b) - .72) / .2), 1);
+  transform: translate(calc(-1 * (var(--e) * (var(--start) - 50vw + var(--cw) / 2) + (var(--m1) + var(--m2)) * (var(--cw) + var(--gap)))), -50%);
 }
 .motion .frost { flex: none; width: var(--cw); }
-.camps { --cw: min(52vw, 760px); --gap: 8vw; --n: 3; --start: 72vw; }
+.camps { --cw: min(52vw, 760px); --gap: 8vw; --start: 100vw; } /* starts fully off screen: a peeking card would share the screen with the title. Three cards: holds at b .2–.36, .56–.72, .92–1 */
+```
+
+Fixed header over a scrolling story: give it a band of its own, or headlines and cards scroll straight through the logo (`.top` is the fixed header, `z-index: 50`):
+
+```css
+/* A frosted band behind the fixed header: headlines and cards scroll under the logo, never through it */
+.top::before {
+  content: ''; position: fixed; inset: 0 0 auto; height: 96px; z-index: -1; pointer-events: none;
+  background: linear-gradient(color-mix(in srgb, var(--paper) 88%, transparent) 50%, transparent);
+  -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+  -webkit-mask: linear-gradient(#000 55%, transparent); mask: linear-gradient(#000 55%, transparent);
+}
 ```
 
 Mobile overrides:
 
 ```css
-.camps { --cw: 84vw; --gap: 6vw; --start: 88vw; }
+.camps { --cw: 84vw; --gap: 6vw; }
 .card { aspect-ratio: 3 / 4; }
+.top::before { height: 76px; }
 ```
 
 ---
@@ -474,6 +491,9 @@ Painting lessons learned:
 - Words that slide, blur or bounce in. Lighting words is enough.
 - Three pinned sections in a row. One pin, earned.
 - A pinned scene with an empty middle: strips finish, then nothing until the next card. Overlap the phases.
+- A card track that glides at constant speed. Most scroll positions then show two half-cut cards and no readable one. Hold each card centred, move between holds.
+- A card peeking in from the edge while the scene title is still up: two statements on one screen, and on a phone a stray sliver of box. Start the track fully off screen.
+- A transparent fixed header over long editorial copy: the headline runs through the logo.
 - Strips that all move in one direction or each show the whole image (six tiny copies instead of one picture).
 - Text in white on light snow or sky photos with no scrim or chip.
 - `initial-value: 0` on the progress property: no JS or no support leaves the page blank.
@@ -485,14 +505,15 @@ Painting lessons learned:
 
 [`demo/index.html`](demo/index.html) is a complete single-file page for an invented Arctic expedition company, Kalde Reach (Tromsø): fog hero with a huge condensed "SVALBARD", a founder's statement that lights word by word with a drawn signature, an inset landscape that opens to full bleed, a pinned camps scene (landscape replaced by six alternating strips of sea ice, then three frosted camp cards gliding across), expedition panels that open on hover and focus, and an enquiry footer. All imagery is generated on canvas at load.
 
-Verified with `node scripts/verify-demo.mjs skills/scroll-scrub-story-skill/demo` (desktop, mobile and reduced motion; no console errors, no failed requests, no horizontal overflow), plus 36-stop desktop and 22-stop mobile scroll sweeps in native mode, the forced JS fallback, and a reduced-motion sweep through the middle of the page.
+Verified with `node scripts/verify-demo.mjs skills/scroll-scrub-story-skill/demo --stops 16` (desktop, phones at 360/390/430, reduced motion at every stop, forced fallback, host reset, keyboard focus, text under fixed chrome), plus 36-stop desktop and 22-stop mobile scroll sweeps in native mode, the forced JS fallback, and a reduced-motion sweep through the middle of the page.
 
 ![Demo preview](demo/preview.webp)
 
 Lessons learned while building it (already folded into the rules above):
 
 - The first generated landscapes were thin brown bands over streaky snow. Path fills plus poster-style shadow faces fixed both.
-- With the card phase starting after the strips, two whole frames showed empty ice. Starting the track already peeking in at 72vw and overlapping the phases removed the dead stretch.
+- With the card phase starting after the strips, two whole frames showed empty ice. Overlapping the phases removed the dead stretch. (A first fix started the track peeking in at 72vw; the improvement run replaced that with an off-screen start, because the sliver shared the screen with the title.)
+- (Improvement run, 2026-10-09) The track glided linearly, so most mobile stops showed two cut cards. Each card now holds centred for 16 to 8 percent of the track. The fixed header had no backing and headlines scrolled through the logo on phones; it now has a frosted band, and verify-demo fails on text under unbacked fixed chrome.
 - White captions and a white "OUR CAMPS" over light snow failed contrast. Captions moved onto frosted chips, the title went navy with a white glow.
 - A fixed side tab sat on top of the statement on mobile. It is hidden below 820px; the header's Enquire chip covers the same job.
 - In the static (reduced motion) flow, `background-size: cover` stretched the ice across a very tall section and fattened every crack. It now tiles at its native 1600px.
@@ -511,3 +532,5 @@ Before shipping, answer yes to all:
 5. Does every line of text over an image have a scrim or a frosted chip?
 6. Does anchor navigation (`#camps`, `#enquire`) still land correctly, with native scrolling?
 7. Mobile: do the cards fit (84vw), and does nothing fixed sit on top of body copy?
+8. At every stop of a `--stops 30` sweep inside the pin, is there either one whole card centred or a moving transition, never two cut cards held still?
+9. Does the fixed header have its own backing band, so verify-demo's chrome check passes?
