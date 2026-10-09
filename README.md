@@ -141,6 +141,7 @@ The `Install name` column is the exact value you pass to `--skill`.
 | **particle-morph-skill** | `particle-morph-hero` | Living WebGL hero: one Three.js particle cloud morphs orb → galaxy → model on scroll, reacts to the pointer, steps down by device, honors reduced motion. |
 | **dither-tile-skill** | `dither-tile-grid` | Print-native art direction: images and procedural fields rendered as 3px ordered (Bayer) dither in a 1px-ruled Swiss tile grid. Colors from CSS, dither-in reveal, pointer light, hover-swapped previews, dark mode, CSS halftone fallback. |
 | **scroll-scrub-story-skill** | `scroll-scrub-story` | Cinematic, scrubbed scroll chapters: one `--p` per section drives word-by-word lighting, a drawn signature, an inset-to-full-bleed reveal, and a single pinned scene with strip wipes and gliding cards. Native scroll timelines with JS fallback, never scroll-jacks. |
+| **swiss-grid-type-skill** | `swiss-grid-type` | Swiss studio typography: one grotesk, three sizes, gray at the same size, every indent on a column (`text-indent` from a container-measured column), inline brand glyph, blend-mode text header, staggered cases. No JS needed for content. |
 
 ### Image generation skills
 
@@ -163,6 +164,7 @@ These produce design images only (no code). Use with ChatGPT Images, Codex image
 - Add **output-skill** if the agent keeps truncating output. 
 - Add **particle-morph-skill** when the brief asks for an immersive, "living" WebGL / particle hero. 
 - Add **scroll-scrub-story-skill** when the brief is a story told in chapters (luxury travel, hospitality, brand films) and scroll should drive the motion. 
+- Add **swiss-grid-type-skill** when the brand is a studio, agency or institution with strong work images and the site should step back into pure typography and grid. 
 - Add **dither-tile-skill** when the brief is technical, editorial or Swiss and the imagery needs one engineered, printed look (or the client has no good photos). 
 - New techniques studied day by day land in [`lessons/`](lessons/README.md). 
 - Use **imagegen-frontend-web**, **imagegen-frontend-mobile**, or **brandkit** when the deliverable is **images** (comps, flows, identity boards), then pass results to your coding agent.

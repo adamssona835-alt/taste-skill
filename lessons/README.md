@@ -26,6 +26,7 @@ The full, reusable version of each lesson lives in `skills/<slug>-skill/` with a
 | 001 | 2026-10-07 | [Particle morph hero](2026-10-07-particle-morph-hero.md) | WebGL and 3D | getlayers.ai "Vesper" template | [`particle-morph-skill`](../skills/particle-morph-skill/SKILL.md) | 34 → 38/40 |
 | 002 | 2026-10-07 | [Dither tile grid](2026-10-07-dither-tile-grid.md) | Imagery and art direction | aspensearch.com (Awwwards SOTD, 15 Sep 2026) | [`dither-tile-skill`](../skills/dither-tile-skill/SKILL.md) | 36 → 38/40 |
 | 003 | 2026-10-08 | [Scroll scrub story](2026-10-08-scroll-scrub-story.md) | Scroll motion | white-desert.com (Awwwards SOTD, 11 Sep 2026) | [`scroll-scrub-story-skill`](../skills/scroll-scrub-story-skill/SKILL.md) | 37/40 |
+| 004 | 2026-10-09 | [Swiss grid typography](2026-10-09-swiss-grid-type.md) | Typography | twks.ch (Awwwards SOTD, 7 Oct 2026) | [`swiss-grid-type-skill`](../skills/swiss-grid-type-skill/SKILL.md) | 38/40 |
 
 ## Improvement log
 

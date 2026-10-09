@@ -1,6 +1,6 @@
 # Next Lesson Plan
 
-Status: replaced (owner said no to odysseeclinic.com.au on 2026-10-09; the backup is used)
+Status: done (lesson 004 shipped 2026-10-09 with twks.ch, 38/40; odysseeclinic.com.au was rejected by the owner)
 Lesson: 004
 Date: 2026-10-09 (morning run 07:52 Europe/Stockholm)
 Planned: 2026-10-08 23:58, replaced 2026-10-09 00:10

@@ -1,0 +1,309 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rheinlicht · Type and brand studio, Basel</title>
+<meta name="description" content="Rheinlicht is an independent type and brand studio in Basel. Identities, typefaces and campaigns for public institutions and the companies that keep a city running.">
+<link rel="icon" href="data:,">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  /* ===== The system: one family, three sizes, one gray, a 6-column grid ===== */
+  :root {
+    --paper: #FFFFFF;
+    --ink: #0B0B0B;
+    --gray: #737373;               /* same size as the text it sits under, never smaller; 4.7:1 on white */
+    --night: #0B0B0B;
+    --night-gray: #9A9A9A;         /* 7.0:1 on --night */
+    --sans: 'Schibsted Grotesk', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+
+    --t-display: clamp(30px, 3.66vw, 56px);  /* 53px at 1440 */
+    --t-ui: clamp(17px, 1.39vw, 20px);       /* 20px at 1440 */
+    --t-small: clamp(14px, 1.11vw, 16px);
+
+    --cols: 6;
+    --m: clamp(12px, .9vw, 16px);            /* page margin */
+    --g: clamp(12px, .9vw, 16px);            /* column gap */
+    /* one column, measured from the page container so indents land on the grid at every width */
+    --col: calc((100vw - 2 * var(--m) - (var(--cols) - 1) * var(--g)) / var(--cols));
+  }
+  /* The container is .page, never an ancestor of the fixed header: container-type adds layout
+     containment, which would turn position: fixed into "fixed to this box" and scroll it away. */
+  @supports (width: 1cqw) {
+    .page { container-type: inline-size; }
+    .page * { --col: calc((100cqw - 2 * var(--m) - (var(--cols) - 1) * var(--g)) / var(--cols)); }
+  }
+  @media (max-width: 760px) { :root { --cols: 4; } }
+
+  *, *::before, *::after { box-sizing: border-box; }
+  html, body { background: var(--paper); color: var(--ink); }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0; font: 400 var(--t-ui)/1.2 var(--sans); letter-spacing: .01em;
+    -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; font-kerning: normal;
+  }
+  a { color: inherit; text-decoration: none; }
+  img, svg { display: block; max-width: 100%; }
+  :focus-visible { outline: 2px solid currentColor; outline-offset: 3px; }
+  .skip { position: absolute; left: var(--m); top: -80px; z-index: 90; padding: 8px 12px; background: var(--ink); color: var(--paper); }
+  .skip:focus { top: var(--m); }
+
+  .grid { display: grid; grid-template-columns: repeat(var(--cols), minmax(0, 1fr)); column-gap: var(--g); padding-inline: var(--m); }
+  .gray { color: var(--gray); }
+
+  /* ---------- Header: plain text on the grid, inverted over whatever is under it ---------- */
+  .top {
+    position: fixed; inset: 0 0 auto; z-index: 50; padding-block: 10px;
+    color: #fff; mix-blend-mode: difference;   /* black on paper, light on dark images, a complement on color */
+    align-items: baseline;
+    transition: transform .35s cubic-bezier(.2, .7, .1, 1);
+  }
+  /* out of the way while reading down, back as soon as the reader scrolls up or tabs into it */
+  .top.is-away:not(:focus-within) { transform: translateY(-120%); }
+  .top a:hover, .top button:hover { text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; }
+  .wordmark { grid-column: 1; font-weight: 500; }
+  .nav { grid-column: 2 / 4; display: flex; gap: .8em; }
+  .tagline { grid-column: 5; }
+  .contact { grid-column: 6; justify-self: end; }
+  .menu-btn { display: none; }
+
+  /* ---------- Hero ---------- */
+  .hero { height: 88svh; min-height: 520px; overflow: hidden; background: #1832C0; }
+  .hero svg { width: 100%; height: 100%; }
+  .hero__portrait { display: none; }
+  @media (max-aspect-ratio: 4/5) {
+    .hero svg { display: none; }
+    .hero .hero__portrait { display: block; } /* a portrait composition, fitted (meet) on the same blue: never cropped */
+  }
+
+  /* ---------- Statement: first line indented to column 2 ---------- */
+  .statement {
+    grid-column: 1 / -1; margin: 0; padding-block: clamp(80px, 13vw, 190px) clamp(64px, 9vw, 130px);
+    font-size: var(--t-display); font-weight: 600; line-height: 1; letter-spacing: -.012em;
+    text-indent: calc(var(--col) + var(--g));
+    hanging-punctuation: first;
+  }
+  /* A glyph that sits in the sentence like a word: cap height tall, on the baseline */
+  .glyph { display: inline-block; width: .86em; height: .86em; vertical-align: -.1em; margin-inline: .04em; }
+
+  /* ---------- What we do: hairline from column 2, label in 2, text in 5-6 ---------- */
+  .what { padding-bottom: clamp(80px, 12vw, 170px); row-gap: 14px; }
+  .what__rule { grid-column: 2 / -1; height: 1px; background: var(--ink); }
+  .what__label { grid-column: 2; margin: 0; font-size: var(--t-small); font-weight: 400; }
+  .what__body { grid-column: 5 / -1; margin: 0; text-indent: calc(var(--col) / 3); max-width: 31em; }
+  .links { grid-column: 5 / -1; margin: 70px 0 0; padding: 0; list-style: none; border-top: 1px solid var(--ink); }
+  .links a { display: flex; justify-content: space-between; align-items: center; padding: 9px 0 10px; border-bottom: 1px solid var(--ink); }
+  .links a:hover span:first-child { text-decoration: underline; text-underline-offset: 3px; }
+  .arrow { width: .7em; height: .7em; }
+
+  /* ---------- Cases: two columns, the right one dropped half a row ---------- */
+  .row-head { padding-bottom: 14px; align-items: baseline; }
+  .row-head h2 { grid-column: 1 / 4; margin: 0; font: inherit; }
+  .row-head a { grid-column: 4 / -1; justify-self: end; display: inline-flex; gap: .35em; align-items: center; white-space: nowrap; }
+  .row-head a:hover { color: var(--ink); }
+  .cases { row-gap: clamp(60px, 7vw, 110px); padding-bottom: clamp(100px, 12vw, 180px); }
+  .case { grid-column: span 3; display: grid; gap: 12px; align-content: start; }
+  .case:nth-child(even) { margin-top: clamp(120px, 26vw, 380px); }
+  .case__img { aspect-ratio: 10 / 7; overflow: hidden; }
+  .case__img svg { width: 100%; height: 100%; transition: transform .6s cubic-bezier(.2, .7, .1, 1); }
+  .case:hover .case__img svg, .case:focus-visible .case__img svg { transform: scale(1.025); }
+  .case__cap { display: grid; }
+  .case:hover .case__cap .gray, .case:focus-visible .case__cap .gray { color: var(--ink); }
+  .case:focus-visible { outline-offset: 6px; }
+
+  /* ---------- Notes ---------- */
+  .notes { row-gap: 40px; padding-bottom: clamp(90px, 11vw, 160px); }
+  .note { grid-column: span 2; display: grid; gap: 12px; align-content: start; }
+  .note__img { aspect-ratio: 1; overflow: hidden; }
+  .note__img svg { width: 100%; height: 100%; }
+  .note:hover .gray, .note:focus-visible .gray { color: var(--ink); }
+  .note__meta { font-size: var(--t-small); color: var(--gray); font-variant-numeric: tabular-nums; }
+
+  /* ---------- Footer: the same grid, inverted ---------- */
+  .foot { background: var(--night); color: #fff; padding-block: 18px 22px; row-gap: 56px; }
+  .foot .gray { color: var(--night-gray); }
+  .foot h2 { margin: 0 0 14px; padding-top: 12px; border-top: 1px solid #fff; font: inherit; font-size: var(--t-small); }
+  .foot ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 4px; }
+  .foot a:hover { text-decoration: underline; text-underline-offset: 3px; }
+  .foot__a { grid-column: 1 / 3; }
+  .foot__b { grid-column: 4; }
+  .foot__c { grid-column: 5 / -1; }
+  .foot__big { grid-column: 1 / -1; margin: 40px 0 0; font-size: clamp(64px, 17.4vw, 270px); font-weight: 600; line-height: .78; letter-spacing: -.045em; }
+  .foot__small { grid-column: 1 / -1; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; font-size: var(--t-small); }
+
+  /* ---------- Small screens: 4 columns, same rules ---------- */
+  @media (max-width: 760px) {
+    .nav, .tagline { display: none; }
+    .wordmark { grid-column: 1 / 3; }
+    .contact { grid-column: 3; justify-self: center; }
+    .menu-btn { display: block; grid-column: 4; justify-self: end; appearance: none; border: 0; background: none; color: inherit; font: inherit; padding: 0; cursor: pointer; }
+    .menu-btn svg { width: 22px; height: 14px; }
+    .row-head h2 { grid-column: 1 / 3; }
+    .row-head a { grid-column: 3 / -1; }
+    .what__rule { grid-column: 1 / -1; }
+    .what__label { grid-column: 1 / -1; }
+    .what__body { grid-column: 2 / -1; margin-top: 18px; }
+    .links { grid-column: 2 / -1; }
+    .case { grid-column: 1 / -1; }
+    .case:nth-child(even) { margin-top: 0; }
+    .note { grid-column: 1 / -1; }
+    .foot__a, .foot__b, .foot__c { grid-column: 1 / -1; }
+  }
+  @media (max-width: 760px) and (min-width: 480px) {
+    .case { grid-column: span 2; }
+    .case:nth-child(even) { margin-top: 90px; }
+  }
+
+  /* Mobile menu: the same three sizes, nothing new */
+  .sheet { position: fixed; inset: 0; z-index: 60; background: var(--ink); color: #fff; padding: 64px var(--m) 24px; display: grid; align-content: start; gap: 6px; }
+  .sheet[hidden] { display: none; }
+  .sheet a { font-size: var(--t-display); font-weight: 600; line-height: 1.05; letter-spacing: -.012em; }
+  .sheet button { position: absolute; top: 10px; right: var(--m); appearance: none; border: 0; background: none; color: inherit; font: inherit; cursor: pointer; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .top, .case__img svg { transition: none; }
+    .case:hover .case__img svg, .case:focus-visible .case__img svg { transform: none; }
+  }
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="top grid">
+  <a class="wordmark" href="#main">rheinlicht</a>
+  <nav class="nav" aria-label="Primary"><a href="#work">work</a><a href="#studio">studio</a><a href="#notes">notes</a></nav>
+  <span class="tagline">type and brand studio</span>
+  <a class="contact" href="#contact">contact</a>
+  <button class="menu-btn" type="button" aria-expanded="false" aria-controls="sheet"><span class="sr" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">Menu</span><svg viewBox="0 0 22 14" aria-hidden="true"><path d="M0 2h22M0 12h22" stroke="currentColor" stroke-width="1.6"/></svg></button>
+</header>
+<div class="sheet" id="sheet" hidden>
+  <button type="button" data-close>close</button>
+  <a href="#work">work</a><a href="#studio">studio</a><a href="#notes">notes</a><a href="#contact">contact</a>
+</div>
+<div class="page">
+
+
+<main id="main">
+  <div class="hero" role="img" aria-label="Campaign poster for the Rhine swim: a white sun over blue water and the date 18.08">
+    <svg viewBox="0 0 1440 800" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+      <rect width="1440" height="800" fill="#1832C0"/>
+      <circle cx="1020" cy="300" r="250" fill="#F5F1E8"/>
+      <g fill="none" stroke="#F5F1E8" stroke-width="10">
+        <path d="M0 560 Q90 520 180 560 T360 560 T540 560 T720 560 T900 560 T1080 560 T1260 560 T1440 560"/>
+        <path d="M0 620 Q90 580 180 620 T360 620 T540 620 T720 620 T900 620 T1080 620 T1260 620 T1440 620"/>
+        <path d="M0 680 Q90 640 180 680 T360 680 T540 680 T720 680 T900 680 T1080 680 T1260 680 T1440 680"/>
+      </g>
+      <text x="60" y="470" fill="#F5F1E8" font-family="Schibsted Grotesk, Helvetica, Arial, sans-serif" font-weight="600" font-size="260" letter-spacing="-10">18.08</text>
+      <text x="64" y="160" fill="#F5F1E8" font-family="Schibsted Grotesk, Helvetica, Arial, sans-serif" font-size="30">Rheinschwimmen</text>
+      <text x="64" y="196" fill="#F5F1E8" font-family="Schibsted Grotesk, Helvetica, Arial, sans-serif" font-size="30" opacity=".7">Basel · 17 Uhr · Mittlere Brücke</text>
+    </svg>
+    <svg class="hero__portrait" viewBox="0 0 800 1200" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+      <rect width="800" height="1200" fill="#1832C0"/>
+      <circle cx="560" cy="430" r="230" fill="#F5F1E8"/>
+      <text x="48" y="250" fill="#F5F1E8" font-family="Schibsted Grotesk, Helvetica, Arial, sans-serif" font-size="40">Rheinschwimmen</text>
+      <text x="48" y="300" fill="#F5F1E8" font-family="Schibsted Grotesk, Helvetica, Arial, sans-serif" font-size="40" opacity=".7">Basel · 17 Uhr</text>
+      <text x="40" y="860" fill="#F5F1E8" font-family="Schibsted Grotesk, Helvetica, Arial, sans-serif" font-weight="600" font-size="270" letter-spacing="-12">18.08</text>
+      <g fill="none" stroke="#F5F1E8" stroke-width="12">
+        <path d="M0 960 Q100 920 200 960 T400 960 T600 960 T800 960"/>
+        <path d="M0 1030 Q100 990 200 1030 T400 1030 T600 1030 T800 1030"/>
+        <path d="M0 1100 Q100 1060 200 1100 T400 1100 T600 1100 T800 1100"/>
+      </g>
+    </svg>
+  </div>
+
+  <div class="grid" id="studio">
+    <p class="statement">Independent type <svg class="glyph" viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="18.5" fill="none" stroke="currentColor" stroke-width="3"/><path d="M1.5 20 A18.5 18.5 0 0 1 38.5 20 Z" fill="currentColor"/></svg> and brand studio in Basel since 2009. We design identities, typefaces and campaigns for public institutions and the companies that keep a city running.</p>
+  </div>
+
+  <section class="grid what" aria-labelledby="what-title">
+    <div class="what__rule" aria-hidden="true"></div>
+    <h2 class="what__label" id="what-title">What we do</h2>
+    <p class="what__body">A good identity is mostly restraint: one typeface used well, a grid that holds, a color people can name. We start there, draw what is missing, and stay until the system runs without us. Most of our clients have been with us for more than five years.</p>
+    <ul class="links">
+      <li><a href="#studio"><span>Studio</span><svg class="arrow" viewBox="0 0 14 14" aria-hidden="true"><path d="M1 7h11M7.5 2.5 12 7l-4.5 4.5" fill="none" stroke="currentColor" stroke-width="1.3"/></svg></a></li>
+      <li><a href="#notes"><span>Typefaces</span><svg class="arrow" viewBox="0 0 14 14" aria-hidden="true"><path d="M1 7h11M7.5 2.5 12 7l-4.5 4.5" fill="none" stroke="currentColor" stroke-width="1.3"/></svg></a></li>
+      <li><a href="#contact"><span>Careers</span><svg class="arrow" viewBox="0 0 14 14" aria-hidden="true"><path d="M1 7h11M7.5 2.5 12 7l-4.5 4.5" fill="none" stroke="currentColor" stroke-width="1.3"/></svg></a></li>
+    </ul>
+  </section>
+
+  <div class="grid row-head" id="work"><h2>Case studies</h2><a class="gray" href="#work">All projects <svg class="arrow" viewBox="0 0 14 14" aria-hidden="true"><path d="M1 7h11M7.5 2.5 12 7l-4.5 4.5" fill="none" stroke="currentColor" stroke-width="1.3"/></svg></a></div>
+  <div class="grid cases">
+    <a class="case" href="#work">
+      <div class="case__img"><svg viewBox="0 0 600 420" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Signal red poster with stacked black bars forming steps"><rect width="600" height="420" fill="#E8402A"/><g fill="#0B0B0B"><rect x="60" y="290" width="480" height="40"/><rect x="140" y="230" width="400" height="40"/><rect x="220" y="170" width="320" height="40"/><rect x="300" y="110" width="240" height="40"/></g><text x="60" y="380" fill="#0B0B0B" font-family="Schibsted Grotesk, Arial, sans-serif" font-size="20" font-weight="600">Stadtbad Basel</text><text x="60" y="80" fill="#0B0B0B" font-family="Schibsted Grotesk, Arial, sans-serif" font-size="56" font-weight="600" letter-spacing="-2">Bahn 1–4</text></svg></div>
+      <span class="case__cap"><span>Stadtbad Basel</span><span class="gray">Four public pools, one sign system</span></span>
+    </a>
+    <a class="case" href="#work">
+      <div class="case__img"><svg viewBox="0 0 600 420" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Lime poster with a grid of black dots and one orange dot"><rect width="600" height="420" fill="#CFE84E"/><g fill="#0B0B0B"><circle cx="90" cy="90" r="16"/><circle cx="174" cy="90" r="16"/><circle cx="258" cy="90" r="16"/><circle cx="342" cy="90" r="16"/><circle cx="426" cy="90" r="16"/><circle cx="510" cy="90" r="16"/><circle cx="90" cy="170" r="16"/><circle cx="174" cy="170" r="16"/><circle cx="258" cy="170" r="16"/><circle cx="426" cy="170" r="16"/><circle cx="510" cy="170" r="16"/><circle cx="90" cy="250" r="16"/><circle cx="174" cy="250" r="16"/><circle cx="258" cy="250" r="16"/><circle cx="342" cy="250" r="16"/><circle cx="426" cy="250" r="16"/><circle cx="510" cy="250" r="16"/><circle cx="90" cy="330" r="16"/><circle cx="174" cy="330" r="16"/><circle cx="258" cy="330" r="16"/><circle cx="342" cy="330" r="16"/><circle cx="426" cy="330" r="16"/><circle cx="510" cy="330" r="16"/></g><circle cx="342" cy="170" r="30" fill="#F26B1D"/></svg></div>
+      <span class="case__cap"><span>Kunsthalle Riehen</span><span class="gray">A poster system for twelve shows a year</span></span>
+    </a>
+    <a class="case" href="#work">
+      <div class="case__img"><svg viewBox="0 0 600 420" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Warm paper poster with ink-blue concentric arcs, like a ferry crossing"><rect width="600" height="420" fill="#EFE9DF"/><g fill="none" stroke="#1832C0" stroke-width="14"><path d="M60 380 A240 240 0 0 1 540 380"/><path d="M110 380 A190 190 0 0 1 490 380"/><path d="M160 380 A140 140 0 0 1 440 380"/><path d="M210 380 A90 90 0 0 1 390 380"/></g><circle cx="300" cy="380" r="22" fill="#1832C0"/><text x="60" y="70" fill="#1832C0" font-family="Schibsted Grotesk, Arial, sans-serif" font-size="44" font-weight="600" letter-spacing="-1.5">Fähri Wild Maa</text></svg></div>
+      <span class="case__cap"><span>Rheinfähren</span><span class="gray">Wayfinding for four cable ferries</span></span>
+    </a>
+    <a class="case" href="#work">
+      <div class="case__img"><svg viewBox="0 0 600 420" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Black background with a white poster sheet showing a large 04 and fine rules"><rect width="600" height="420" fill="#121212"/><rect x="190" y="40" width="220" height="320" fill="#F7F5F0"/><text x="205" y="210" fill="#0B0B0B" font-family="Schibsted Grotesk, Arial, sans-serif" font-size="150" font-weight="600" letter-spacing="-8">04</text><g stroke="#0B0B0B" stroke-width="1.5"><path d="M205 250h190M205 268h190M205 286h120"/></g><text x="205" y="70" fill="#0B0B0B" font-family="Schibsted Grotesk, Arial, sans-serif" font-size="14">Messe Gestalt 2026</text><text x="205" y="340" fill="#E8402A" font-family="Schibsted Grotesk, Arial, sans-serif" font-size="14" font-weight="600">04.–07. März</text></svg></div>
+      <span class="case__cap"><span>Messe Gestalt</span><span class="gray">An identity that changes number every year</span></span>
+    </a>
+  </div>
+
+  <div class="grid row-head" id="notes"><h2>Notes from the studio</h2><a class="gray" href="#notes">All notes <svg class="arrow" viewBox="0 0 14 14" aria-hidden="true"><path d="M1 7h11M7.5 2.5 12 7l-4.5 4.5" fill="none" stroke="currentColor" stroke-width="1.3"/></svg></a></div>
+  <div class="grid notes">
+    <a class="note" href="#notes">
+      <div class="note__img"><svg viewBox="0 0 400 400" role="img" aria-label="Orange square with white wave lines"><rect width="400" height="400" fill="#F26B1D"/><g fill="none" stroke="#fff" stroke-width="8"><path d="M0 150 Q50 120 100 150 T200 150 T300 150 T400 150"/><path d="M0 200 Q50 170 100 200 T200 200 T300 200 T400 200"/><path d="M0 250 Q50 220 100 250 T200 250 T300 250 T400 250"/></g></svg></div>
+      <span class="note__meta">Process · 6 min</span>
+      <span>Why our signs are set in one weight <span class="gray">and what it cost us</span></span>
+    </a>
+    <a class="note" href="#notes">
+      <div class="note__img"><svg viewBox="0 0 400 400" role="img" aria-label="Cobalt square with a large white letter R"><rect width="400" height="400" fill="#1832C0"/><text x="70" y="330" fill="#F5F1E8" font-family="Schibsted Grotesk, Arial, sans-serif" font-size="330" font-weight="600" letter-spacing="-12">R</text></svg></div>
+      <span class="note__meta">Typefaces · 9 min</span>
+      <span>Drawing a grotesk for street names <span class="gray">from 40 metres away</span></span>
+    </a>
+    <a class="note" href="#notes">
+      <div class="note__img"><svg viewBox="0 0 400 400" role="img" aria-label="Paper square with a black half circle and a red line"><rect width="400" height="400" fill="#EFE9DF"/><path d="M80 260 A120 120 0 0 1 320 260 Z" fill="#0B0B0B"/><rect x="60" y="290" width="280" height="8" fill="#E8402A"/></svg></div>
+      <span class="note__meta">Studio · 4 min</span>
+      <span>Fifteen years, one grid <span class="gray">and three exceptions</span></span>
+    </a>
+  </div>
+</main>
+
+<footer class="grid foot" id="contact">
+  <div class="foot__a"><h2>Contact us</h2><ul><li><a href="#contact">Tell us about your project</a></li><li class="gray">+41 61 555 01 26</li><li class="gray">hallo@rheinlicht.example</li></ul></div>
+  <div class="foot__b"><h2>Elsewhere</h2><ul><li><a href="#contact">Instagram</a></li><li><a href="#contact">LinkedIn</a></li><li><a href="#contact">Are.na</a></li></ul></div>
+  <div class="foot__c"><h2>Studio</h2><ul><li>Klybeckstrasse 141</li><li>4057 Basel, Schweiz</li><li class="gray">Deutsch · English</li></ul></div>
+  <p class="foot__big" aria-hidden="true">rheinlicht</p>
+  <div class="foot__small"><span>© 2026 Rheinlicht GmbH</span><span class="gray">Set in one grotesk, three sizes</span></div>
+</footer>
+</div>
+
+<script>
+  // Mobile menu: a button that opens a full-screen sheet; Escape and any link close it.
+  (function () {
+    var btn = document.querySelector('.menu-btn'), sheet = document.getElementById('sheet');
+    if (!btn || !sheet) return;
+    function set(open) {
+      sheet.hidden = !open; btn.setAttribute('aria-expanded', String(open));
+      (open ? sheet.querySelector('a') : btn).focus();
+    }
+    btn.addEventListener('click', function () { set(sheet.hidden); });
+    sheet.addEventListener('click', function (e) { if (e.target.closest('a, [data-close]')) set(false); });
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !sheet.hidden) set(false); });
+  })();
+
+  // Header: hides while the reader scrolls down past the hero, returns on any scroll up.
+  (function () {
+    var top = document.querySelector('.top'), last = scrollY, queued = false;
+    addEventListener('scroll', function () {
+      if (queued) return; queued = true;
+      requestAnimationFrame(function () {
+        queued = false;
+        var y = scrollY, d = y - last;
+        if (Math.abs(d) < 6) return;
+        top.classList.toggle('is-away', d > 0 && y > innerHeight * 0.6);
+        last = y;
+      });
+    }, { passive: true });
+  })();
+</script>
+</body>
+</html>
