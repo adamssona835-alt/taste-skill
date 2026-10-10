@@ -1,6 +1,6 @@
 # Next Lesson Plan
 
-Status: pending
+Status: done
 Lesson: 005
 Date: 2026-10-10 (morning run 07:52 Europe/Stockholm)
 Planned: 2026-10-09 23:58
