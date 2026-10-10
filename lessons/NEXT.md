@@ -1,44 +1,40 @@
 # Next Lesson Plan
 
-Status: done
-Lesson: 005
-Date: 2026-10-10 (morning run 07:52 Europe/Stockholm)
-Planned: 2026-10-09 23:58
-
-Candidates checked tonight:
-- mariavasilyeva.com (Awwwards SOTD 9 Oct): not usable. Scroll is hijacked and the work is drawn in WebGL; every headless scroll stop shows the same near-empty frame.
-- odysseeclinic.com.au: rejected by the owner on 9 Oct, not offered again.
+Status: pending
+Lesson: 006
+Date: 2026-10-11 (morning run 07:52 Europe/Stockholm)
+Planned: 2026-10-10 23:57
 
 ## Site
 
-- **URL:** https://boc.studio
-- **Found in:** Awwwards Site of the Day, 19 Sep 2026 (https://www.awwwards.com/sites/boc-studio). Barcelona brand studio; tags: bold motion, playful micro-interactions.
-- **Area:** Layout and grid (last three: typography, scroll motion, imagery and art direction)
-- **Headless check:** captured 2026-10-09 23:57, desktop and mobile, screenshots checked by eye: work index, rows, sticky column and orange bar all render.
-- Note: this site was the first pick on 7 Oct, when the owner chose the backup instead. It was not rejected, and it is still the strongest layout candidate.
+- **URL:** https://milledollars.fr
+- **Found in:** Awwwards Site of the Day, 2 Oct 2026 (https://www.awwwards.com/sites_of_the_day). Paris creative bureau for high-end video production. It was the backup for lesson 005 and still fits.
+- **Area:** Page transitions (last three: layout and grid, typography, scroll motion)
+- **Headless check:** captured 2026-10-10 23:56, desktop and mobile, screenshots checked by eye: the inset rounded frame, the full-bleed project still, the corner labels, the split title ("Richard Mille" left, "The Dazzling Division" right), the "Discover" cue at the center and the plain-text menu all render. The background video does not play headless ("no supported source"); the poster frame shows.
 
 ## Technique to learn
 
-**Justified project strips.** The work index is a stack of projects; each project is one row of four to six images of different aspect ratios, all scaled to the same height so the row fills the content width exactly. The first and last image of a row run off both edges like a film strip, which tells you the row is a sequence, not a grid. Each row has a caption line above it on three columns: project name left, one-line idea centered, "View project" right. A sticky left column holds "Work / All / Filter +", and a thin orange bar at the top shows the studio name, an info toggle, a live local clock and a status word.
+**A one-screen project reel with framed transitions.** The whole home page is one project at a time, full bleed inside an inset frame with rounded corners and a hairline inner border. Small labels sit in the four corners (studio name split "Mille." top left and "Dollars" top right, a one-line descriptor top center, a counter "01" and the year at the vertical middle of each edge, the menu bottom left, sound bottom right). The client name sits left of center and the project title right of center, with "Discover" between them. Moving to the next project, or into a project page, is a transition: the image wipes or scales inside the frame while the labels stay put.
 
-Why it qualifies: premium (Awwwards SOTD), reproducible in plain CSS (`flex: <aspect-ratio> 1 0` per image, `aspect-ratio` on each), and not covered in `lessons/` or `skills/`.
+Why it qualifies: premium (Awwwards SOTD), reproducible with web standards (View Transitions API, same-document for the reel and cross-document `@view-transition` for real page changes, `clip-path` wipes as fallback), and not covered: no lesson or skill in the repo does page or slide transitions.
 
-The craft to get right: rows that are always exactly full width with no cropping inside the row, the edge bleed without horizontal page scroll, a minimum image height so wide panoramas do not shrink a row to a sliver, a filter that reflows rows with View Transitions, and a phone version (two rows of the strip as a horizontal scroll-snap band).
+The craft to get right: the frame and labels must never move during a transition (only the picture changes), the transition must be interruptible (fast clicks or wheel flicks queue no backlog), keyboard and wheel and swipe all navigate, reduced motion becomes an instant crossfade-free swap, video only plays for the visible project, the split title must not collide with the center cue on narrow screens, and every label over imagery needs a scrim (principle: scrim under text over imagery).
 
 ## Planned demo
 
-An invented Lisbon brand studio ("Ferro Atelier"): orange status bar with a live Lisbon clock, a hero marquee band, a sticky work column with filter chips (Identity, Packaging, Campaign), six project strips built from original generated imagery (posters, packaging and product shots drawn in SVG and canvas), an info overlay, and a contact footer.
+An invented Marseille film studio, **"Sel Noir"**: a reel of five projects (a perfume film, a ferry line campaign, a ceramic house, a night swim brand, a record sleeve shoot), each with an original generated still drawn in SVG and canvas (film grain, gradients, silhouettes) and an optional CSS-animated "video" loop. Home is the framed reel; "Discover" opens a project page (same document, a View Transition morphs the still into the project hero); a works index and an info view complete the four menu entries. Counter, year and client update per project.
 
 ## Morning steps
 
 1. Fetch the branch, re-read PROTOCOL.md, PRINCIPLES.md, IMPROVE.md and this file.
-2. Capture https://boc.studio again; measure row heights, gaps, the edge bleed and the caption line at 1440 and 390; look at hover states and the filter.
-3. Build the justified row with CSS only (`flex-grow` from each image's aspect ratio), then add the bleed with a negative inline margin inside an `overflow-x: clip` fence (principle 12).
-4. Filter chips as `aria-pressed` buttons; reflow with `document.startViewTransition` where available, instant otherwise and under reduced motion.
-5. Build the page, then write `skills/justified-strip-skill/SKILL.md` with code spliced from the demo.
-6. Run `verify-demo` (all passes) until OK, look at every contact sheet, fix at least three visual flaws, verify again.
-7. Score (every criterion at least 4, total at least 38/40), write the lesson, register, set this file to `Status: done`, commit `Lesson 005: Justified project strips (layout and grid)`, push, notify.
+2. Capture https://milledollars.fr again; measure the frame inset, radius and border, the corner label sizes and positions at 1440 and 390; record the transition between projects and into a project (screenshots mid-transition, timing).
+3. Build the frame and corner labels as fixed chrome that never re-renders; the project picture is the only thing that changes.
+4. Reel navigation: buttons, arrow keys, wheel (debounced, one step per gesture) and swipe; `document.startViewTransition` with named elements (`view-transition-name: still`) and a `clip-path` wipe; instant swap under reduced motion; ignore input while a transition runs, skip to the latest target.
+5. Project page: open with a View Transition that morphs the still into the page hero; back button and Escape return to the same project; update the URL hash so a reload lands on the same view.
+6. Write `skills/frame-reel-transition-skill/SKILL.md` with code spliced from the demo.
+7. Run `verify-demo` (all passes) until OK, take extra screenshots mid-transition and after rapid navigation, look at every sheet, fix at least three visual flaws, verify again.
+8. Score (every criterion at least 4, total at least 39/40, the current best after today's improvement of lesson 004), write the lesson, register, set this file to `Status: done`, commit `Lesson 006: Framed reel transitions (page transitions)`, push, notify.
 
 ## Backup
 
-https://milledollars.fr (Awwwards SOTD, 2 Oct 2026, Paris video studio): a one-screen project slider inside an inset rounded frame with labels in the four corners and the project title split left and right of center. Area: page transitions. Captured headless on 2026-10-09 23:58, screenshots checked by eye.
+https://www.trevornoah.com (Awwwards Site of the Day and Developer Award, Sep 2026, by OFF+BRAND, https://www.awwwards.com/sites/trevor-noah): a torn-paper collage portrait with objects bursting out of the head, cut-out stickers, and a pink-on-navy palette. Area: imagery and art direction (torn-edge cut-outs with SVG filters and masks). Captured headless on 2026-10-10 23:57, desktop and mobile, screenshots checked by eye: the collage hero, the statement and the media section render (a cookie banner covers the bottom right).
