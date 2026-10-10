@@ -6,7 +6,8 @@
 // widen the layout viewport (the page then renders zoomed out), and pages that
 // scroll past the end of their content, a body background or text that changes when a host page
 // (an embed, an artifact viewer) styles <body> itself, and page text that scrolls through
-// unbacked fixed chrome (a headline under the logo).
+// unbacked fixed chrome (a headline under the logo), and text below 3:1 on a plain background.
+// Pages with a prefers-color-scheme: dark block also get dark-desktop and dark-mobile passes.
 //
 // Passes (each one a set of screenshots in outDir):
 //   desktop, mobile            normal motion, evenly spaced scroll stops
@@ -76,6 +77,13 @@ const passes = [
   { tag: 'w360', vp: phone(360), motion: 'no-preference', stops: 2 },
   { tag: 'w430', vp: phone(430), motion: 'no-preference', stops: 2 },
 ];
+// A page that ships a dark scheme gets dark passes too: tokens that flip on one side of a pair
+// (white text hard-coded on an ink background that turns light) only show there.
+const pageSource = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
+if (/prefers-color-scheme:\s*dark/.test(pageSource)) passes.push(
+  { tag: 'dark-desktop', vp: desktop, motion: 'reduce', scheme: 'dark' },
+  { tag: 'dark-mobile', vp: phone(390), motion: 'reduce', scheme: 'dark' },
+);
 
 const problems = [];
 const shots = {};
@@ -124,9 +132,39 @@ const chromeHits = () => {
   return [...new Set(hits)];
 };
 
+// Text whose color is too close to the solid background behind it: white on a sheet that turned
+// light, gray on gray. Only judges text over a plain color (skips images, gradients, canvas,
+// blend modes and anything mid-fade), so a hit is a real near-invisible line.
+const lowContrast = () => {
+  const rgb = (c) => (c.match(/[\d.]+/g) || []).map(Number);
+  const lum = ([r, g, b]) => [r, g, b].map((v) => { v /= 255; return v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4; }).reduce((a, v, i) => a + v * [0.2126, 0.7152, 0.0722][i], 0);
+  const ratio = (a, b) => { const x = lum(a), y = lum(b); return (Math.max(x, y) + 0.05) / (Math.min(x, y) + 0.05); };
+  const out = [];
+  for (const el of document.body.querySelectorAll('*')) {
+    if (el.closest('svg') || ![...el.childNodes].some((n) => n.nodeType === 3 && n.textContent.trim())) continue; // SVG text is painted by fill
+    const r = el.getBoundingClientRect();
+    if (!r.width || r.bottom < 0 || r.top > innerHeight) continue;
+    const s = getComputedStyle(el), fg = rgb(s.color);
+    if (fg.length > 3 && fg[3] < 0.9) continue;
+    let bg = null, skip = false;
+    for (let e = el; e; e = e.parentElement) {
+      const t = getComputedStyle(e);
+      if (+t.opacity < 1 || t.visibility === 'hidden' || t.mixBlendMode !== 'normal' || t.backgroundImage !== 'none' || t.filter !== 'none') { skip = true; break; }
+      const c = rgb(t.backgroundColor);
+      if (c.length > 3 && c[3] === 0) continue;
+      if (c.length > 3 && c[3] < 0.9) { skip = true; break; }
+      bg = c; break;
+    }
+    if (skip || !bg) continue;
+    const k = ratio(fg, bg);
+    if (k < 3) out.push(`"${el.textContent.trim().slice(0, 24)}" ${k.toFixed(1)}:1`);
+  }
+  return out;
+};
+
 for (const pass of passes) {
   const { tag, vp } = pass;
-  const ctx = await browser.newContext({ viewport: { width: vp.width, height: vp.height }, isMobile: !!vp.isMobile, hasTouch: !!vp.hasTouch, reducedMotion: pass.motion });
+  const ctx = await browser.newContext({ viewport: { width: vp.width, height: vp.height }, isMobile: !!vp.isMobile, hasTouch: !!vp.hasTouch, reducedMotion: pass.motion, colorScheme: pass.scheme || 'light' });
   if (pass.fallback) await ctx.addInitScript(forceFallback);
   const page = await ctx.newPage();
   watch(page, tag);
@@ -135,7 +173,7 @@ for (const pass of passes) {
   const h = await page.evaluate(() => document.documentElement.scrollHeight);
   const n = pass.stops ?? steps;
   shots[tag] = [];
-  let overflowAt = null, chromeAt = null;
+  let overflowAt = null, chromeAt = null, faintAt = null;
   for (let i = 0; i <= n; i++) {
     const y = Math.round(((h - vp.height) * i) / n);
     await page.evaluate((y) => window.scrollTo(0, y), y);
@@ -146,7 +184,9 @@ for (const pass of passes) {
     // overflow can appear only once a section scrolls in, so check at every stop
     if (overflowAt === null && await page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth + 1)) overflowAt = i;
     if (chromeAt === null) { const hit = await page.evaluate(chromeHits); if (hit.length) chromeAt = [i, hit]; }
+    if (faintAt === null) { const hit = await page.evaluate(lowContrast); if (hit.length) faintAt = [i, hit]; }
   }
+  if (faintAt) problems.push(`[${tag}] text below 3:1 against its own background at stop ${faintAt[0]}: ${faintAt[1].slice(0, 3).join(', ')}`);
   if (chromeAt) problems.push(`[${tag}] page text scrolls through fixed chrome at stop ${chromeAt[0]} (give the header a backing band): ${chromeAt[1].slice(0, 2).join(', ')}`);
   if (overflowAt !== null) problems.push(`[${tag}] horizontal overflow (first seen at stop ${overflowAt})`);
   // On a phone, content that bleeds sideways (even under overflow-x: hidden on body) widens the
@@ -247,4 +287,4 @@ if (problems.length) {
   console.error(`FAILED with ${problems.length} problem(s):\n` + problems.join('\n'));
   process.exit(1);
 }
-console.log(`OK: no errors, no horizontal overflow, visible focus, clear chrome; desktop + mobile (360/390/430) + reduced motion + forced fallback rendered at ${steps} stops.`);
+console.log(`OK: no errors, no horizontal overflow, visible focus, clear chrome, readable text${passes.some((p) => p.scheme) ? " (light and dark)" : ""}; desktop + mobile (360/390/430) + reduced motion + forced fallback rendered at ${steps} stops.`);

@@ -71,6 +71,8 @@ Phones (< 760px): 4 columns, same rules. The statement still indents one column;
   --gray: #737373;               /* same size as the text it sits under, never smaller; 4.7:1 on white */
   --night: #0B0B0B;
   --night-gray: #9A9A9A;         /* 7.0:1 on --night */
+  --on-night: #FFFFFF;
+  color-scheme: light dark;
   --sans: 'Schibsted Grotesk', 'Helvetica Neue', Helvetica, Arial, sans-serif;
 
   --t-display: clamp(30px, 3.66vw, 56px);  /* 53px at 1440 */
@@ -90,6 +92,16 @@ Phones (< 760px): 4 columns, same rules. The statement still indents one column;
   .page * { --col: calc((100cqw - 2 * var(--m) - (var(--cols) - 1) * var(--g)) / var(--cols)); }
 }
 @media (max-width: 760px) { :root { --cols: 4; } }
+/* Dark: the same system with paper and ink swapped; the footer stays the inverse of the page */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --paper: #0F0F0F; --ink: #F2F1EC;
+    --gray: #9C9C9C;             /* 7.0:1 on --paper */
+    --night: #F2F1EC; --night-gray: #5C5C5C; --on-night: #0B0B0B;   /* 5.9:1 on --night */
+  }
+  /* a black poster on a black page loses its edge: a hairline gives it back */
+  .case__img, .note__img { outline: 1px solid rgba(242, 241, 236, .14); outline-offset: -1px; }
+}
 
 *, *::before, *::after { box-sizing: border-box; }
 html, body { background: var(--paper); color: var(--ink); }
@@ -212,7 +224,7 @@ Phones:
 }
 
 /* Mobile menu: the same three sizes, nothing new */
-.sheet { position: fixed; inset: 0; z-index: 60; background: var(--ink); color: #fff; padding: 64px var(--m) 24px; display: grid; align-content: start; gap: 6px; }
+.sheet { position: fixed; inset: 0; z-index: 60; background: var(--ink); color: var(--paper); padding: 64px var(--m) 24px; display: grid; align-content: start; gap: 6px; }
 .sheet[hidden] { display: none; }
 .sheet a { font-size: var(--t-display); font-weight: 600; line-height: 1.05; letter-spacing: -.012em; }
 .sheet button { position: absolute; top: 10px; right: var(--m); appearance: none; border: 0; background: none; color: inherit; font: inherit; cursor: pointer; }
@@ -249,7 +261,7 @@ Hero art direction for both orientations:
   document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !sheet.hidden) set(false); });
 })();
 
-// Header: hides while the reader scrolls down past the hero, returns on any scroll up.
+// Header: hides as soon as the reader scrolls down (the hero numerals would run through it), returns on any scroll up.
 (function () {
   var top = document.querySelector('.top'), last = scrollY, queued = false;
   addEventListener('scroll', function () {
@@ -258,7 +270,7 @@ Hero art direction for both orientations:
       queued = false;
       var y = scrollY, d = y - last;
       if (Math.abs(d) < 6) return;
-      top.classList.toggle('is-away', d > 0 && y > innerHeight * 0.6);
+      top.classList.toggle('is-away', d > 0 && y > 48); // leaves before the hero numerals reach it
       last = y;
     });
   }, { passive: true });
@@ -283,6 +295,7 @@ Hero art direction for both orientations:
 - **No JS:** every word, image and link in the content renders. On phones the menu button does nothing without JS, so the header only offers "contact"; for a site with real subpages, render the phone menu as a `<details>` element so it works without JS.
 - **Reduced motion:** the only motion is the header slide and a 2.5 percent image scale on hover; both are off.
 - **Contrast:** ink on paper 19.7:1, gray on paper 4.7:1, gray on black 7.0:1. With `difference`, the header text over a color is that color's inverse: over the first cobalt tried (#1F3FE0) it was a yellow at 4.1:1, which fails AA for 20px text, so the hero blue went one step darker to #1832C0 (inverse at 5.9:1). Compute the inverse contrast for every hero color you use; the header hides on scroll down, so the case images only pass under it briefly.
+- **Dark mode:** paper and ink swap (`#0F0F0F` / `#F2F1EC`, 16.9:1), the gray lightens to `#9C9C9C` (7.0:1), and the footer stays the inverse of the page, so it turns light (`#5C5C5C` gray on it at 5.9:1). The blended header needs no change: white `difference` over dark paper is light. Images keep their own colors; a hairline at 14 percent ink gives a black poster its edge back. Never hard-code `#fff` for text on `--ink` or `--night`: use `var(--paper)` and `var(--on-night)` so the pair flips together.
 - **Focus:** `outline: 2px solid currentColor` with a 3px offset, so it follows the blend in the header and the inversion in the footer.
 - **Semantics:** the statement is a `<p>` (it is a sentence), section labels are `<h2>` at body size, case images are SVG with `role="img"` and a description, the glyph is `aria-hidden`.
 
@@ -315,7 +328,7 @@ Hero art direction for both orientations:
 
 [`demo/index.html`](demo/index.html) is a complete page for an invented Basel type and brand studio, Rheinlicht: a blended header spread across the grid, a full-bleed swim-day poster (with its own portrait composition on phones), the indented statement with the half-sun mark, the "What we do" split, four staggered case studies with original poster art, three notes, and the inverted footer with a giant wordmark.
 
-Verified with `node scripts/verify-demo.mjs skills/swiss-grid-type-skill/demo` (desktop, phones at 360/390/430, reduced motion at every stop, forced fallback, focus visibility, host body reset).
+Verified with `node scripts/verify-demo.mjs skills/swiss-grid-type-skill/demo --stops 12` (desktop, phones at 360/390/430, reduced motion at every stop, forced fallback, focus visibility, host body reset, text under fixed chrome) plus dark mode, the phone menu and case hover screenshotted by hand.
 
 ![Demo preview](demo/preview.webp)
 
@@ -324,6 +337,7 @@ Lessons learned while building it (already folded into the rules above):
 - `container-type` on the page wrapper made the fixed header scroll with the page. The header and menu now live outside the container.
 - The "What we do" label was an `<h2>` and came out bold: a second weight at small size breaks the system. It is set to 400.
 - On phones the transparent header sat on top of the statement while reading. It now slides away on scroll down and returns on scroll up or keyboard focus.
+- (Improvement run, 2026-10-10) The header only left after 60 percent of a screen, so the giant hero numerals ran through the wordmark on the way; verify-demo's fixed-chrome check caught it at every pass. It now leaves after 48px. The page also had no dark mode, and the phone menu and footer hard-coded `#fff` text, which would have vanished once ink turned light; both now use tokens.
 - "All notes" wrapped onto two lines in a one-column cell on phones. Row-head cells were rebalanced and the link set to `nowrap`.
 - The landscape poster cropped with `slice` showed only "8" and half a sun on phones. A portrait composition fitted with `meet` replaced it.
 - The blended header over the first cobalt (#1F3FE0) came out as yellow at 4.1:1, failing AA. Darkening the hero blue to #1832C0 lifted the inverse to 5.9:1 without changing the look.
@@ -338,3 +352,5 @@ Lessons learned while building it (already folded into the rules above):
 4. Is the header plain text with no bar, legible over every hero color you use?
 5. Are the empty grid cells still empty?
 6. With JavaScript off, is every word, image and link still there?
+7. In dark mode, does every pair still flip together (menu sheet, footer, hairlines), and does every gray still pass?
+8. Does verify-demo's fixed-chrome check pass at `--stops 12`, so the header never sits on the hero type?

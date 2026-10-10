@@ -13,7 +13,7 @@ Rules distilled from every lesson so far. Each one has shown up more than once, 
 
 ## Check
 
-7. **Every state is a screenshot.** Dark mode, hover, focus, reduced motion, fallback, and every scroll stop inside pinned or scrubbed sections get looked at, not assumed. The worst flaw usually hides in the state nobody opened. verify-demo now renders reduced motion, forced fallback, 360/430 widths and focus on its own; dark mode and hover are still manual. (002 dark mode, 003 pinned sweep, 001 fallback)
+7. **Every state is a screenshot.** Dark mode, hover, focus, reduced motion, fallback, and every scroll stop inside pinned or scrubbed sections get looked at, not assumed. The worst flaw usually hides in the state nobody opened. verify-demo now renders reduced motion, forced fallback, 360/430 widths, focus, and dark mode when the page ships one (with a contrast check on every plain-background text box); hover is still manual. Colors that come in pairs (text on ink, text on the footer) are both tokens, so a scheme flips the pair together: a hard-coded `#fff` on a background that turns light disappears. (002 dark mode, 003 pinned sweep, 001 fallback)
 8. **A fallback shows the idea, not an apology.** With the feature forced off (`CSS.supports` false, no WebGL), the page still shows the form in a cheaper medium (a 2D-canvas still, a static frame), never just a gradient blob. (001, 003)
 9. **Generated or procedural imagery gets its own render-and-look loop** before it goes into a page. (003)
 
