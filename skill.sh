@@ -20,6 +20,7 @@ declare -A SKILLS=(
   [scroll-scrub-story-skill]="skills/scroll-scrub-story-skill/SKILL.md"
   [swiss-grid-type-skill]="skills/swiss-grid-type-skill/SKILL.md"
   [justified-strip-skill]="skills/justified-strip-skill/SKILL.md"
+  [frame-reel-skill]="skills/frame-reel-skill/SKILL.md"
 )
 
 if [[ $# -eq 0 ]]; then

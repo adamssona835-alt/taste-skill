@@ -28,6 +28,7 @@ The full, reusable version of each lesson lives in `skills/<slug>-skill/` with a
 | 003 | 2026-10-08 | [Scroll scrub story](2026-10-08-scroll-scrub-story.md) | Scroll motion | white-desert.com (Awwwards SOTD, 11 Sep 2026) | [`scroll-scrub-story-skill`](../skills/scroll-scrub-story-skill/SKILL.md) | 37 → 38/40 |
 | 004 | 2026-10-09 | [Swiss grid typography](2026-10-09-swiss-grid-type.md) | Typography | twks.ch (Awwwards SOTD, 7 Oct 2026) | [`swiss-grid-type-skill`](../skills/swiss-grid-type-skill/SKILL.md) | 38 → 39/40 |
 | 005 | 2026-10-10 | [Justified project strips](2026-10-10-justified-strip.md) | Layout and grid | boc.studio (Awwwards SOTD, 19 Sep 2026) | [`justified-strip-skill`](../skills/justified-strip-skill/SKILL.md) | 38/40 |
+| 006 | 2026-10-11 | [Frame reel transitions](2026-10-11-frame-reel.md) | Page transitions | milledollars.fr (Awwwards SOTD, 2 Oct 2026, date not re-confirmed) | [`frame-reel-skill`](../skills/frame-reel-skill/SKILL.md) | 39/40 |
 
 ## Improvement log
 

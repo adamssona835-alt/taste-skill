@@ -143,6 +143,7 @@ The `Install name` column is the exact value you pass to `--skill`.
 | **scroll-scrub-story-skill** | `scroll-scrub-story` | Cinematic, scrubbed scroll chapters: one `--p` per section drives word-by-word lighting, a drawn signature, an inset-to-full-bleed reveal, and a single pinned scene with strip wipes and gliding cards. Native scroll timelines with JS fallback, never scroll-jacks. |
 | **swiss-grid-type-skill** | `swiss-grid-type` | Swiss studio typography: one grotesk, three sizes, gray at the same size, every indent on a column (`text-indent` from a container-measured column), inline brand glyph, blend-mode text header, staggered cases. No JS needed for content. |
 | **justified-strip-skill** | `justified-strip` | Studio work index of justified image strips: every image at its own ratio, one shared row height from `flex: var(--ar) 1 0`, edge bleed, three-column captions, sticky filters with View Transitions, live-clock status bar, swipe band on phones. |
+| **frame-reel-skill** | `frame-reel` | One framed project at a time with edge labels; zoom-out, pan, zoom-in transitions between projects (one WAAPI transform on the stack), overview as the same stack zoomed out, case pages morphed in with View Transitions, hash-based state, plain stack on phones. |
 
 ### Image generation skills
 
@@ -167,6 +168,7 @@ These produce design images only (no code). Use with ChatGPT Images, Codex image
 - Add **scroll-scrub-story-skill** when the brief is a story told in chapters (luxury travel, hospitality, brand films) and scroll should drive the motion. 
 - Add **swiss-grid-type-skill** when the brand is a studio, agency or institution with strong work images and the site should step back into pure typography and grid. 
 - Add **justified-strip-skill** when a studio or maker has several images per project in mixed formats and the work index should show each project as a whole sequence. 
+- Add **frame-reel-skill** when a film, video or photo studio has a handful of strong projects and the home page should show one at a time, with the transition between them as the signature. 
 - Add **dither-tile-skill** when the brief is technical, editorial or Swiss and the imagery needs one engineered, printed look (or the client has no good photos). 
 - New techniques studied day by day land in [`lessons/`](lessons/README.md). 
 - Use **imagegen-frontend-web**, **imagegen-frontend-mobile**, or **brandkit** when the deliverable is **images** (comps, flows, identity boards), then pass results to your coding agent.
